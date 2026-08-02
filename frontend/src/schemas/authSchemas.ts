@@ -45,7 +45,24 @@ export const forgotPasswordSchema = z.object({
     .email("Please enter a valid email"),
 });
 
+// Reset Password Schema (for frontend page)
+export const resetPasswordSchema = z
+  .object({
+    newPassword: z
+      .string()
+      .min(8, "Password must be at least 8 characters")
+      .regex(/[A-Z]/, "Password must contain uppercase letter")
+      .regex(/[a-z]/, "Password must contain lowercase letter")
+      .regex(/[0-9]/, "Password must contain a number"),
+    confirmPassword: z.string().min(1, "Please confirm your password"),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
+  });
+
 // TypeScript types from schemas
 export type LoginFormData = z.infer<typeof loginSchema>;
 export type SignupFormData = z.infer<typeof signupSchema>;
 export type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
+export type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>;

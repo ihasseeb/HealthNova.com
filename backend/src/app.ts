@@ -2,6 +2,8 @@ import express, { Application, Request, Response } from "express";
 import cors from "cors";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
+import authRoutes from "./routes/auth.routes";
+import { errorHandler, notFoundHandler } from "./middlewares/error.middleware";
 
 const app: Application = express();
 
@@ -9,7 +11,7 @@ const app: Application = express();
 app.use(helmet());
 app.use(
   cors({
-    origin: "http://localhost:5173", // Frontend URL
+    origin: "http://localhost:5173",
     credentials: true,
   }),
 );
@@ -17,7 +19,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// Test Route
+// Test Routes
 app.get("/", (req: Request, res: Response) => {
   res.json({
     success: true,
@@ -26,12 +28,20 @@ app.get("/", (req: Request, res: Response) => {
   });
 });
 
-// Health Check
 app.get("/health", (req: Request, res: Response) => {
   res.json({
     status: "OK",
     timestamp: new Date().toISOString(),
   });
 });
+
+// API Routes
+app.use("/api/auth", authRoutes);
+
+// 404 Handler (must be after all routes)
+app.use(notFoundHandler);
+
+// Global Error Handler (must be LAST)
+app.use(errorHandler);
 
 export default app;

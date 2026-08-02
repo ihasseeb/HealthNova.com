@@ -3,7 +3,7 @@ import { useAuthStore } from "../store/authStore";
 
 // Axios instance create karo
 const api = axios.create({
-  baseURL: "http://localhost:5000/api", // backend URL (baad mein change karenge)
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000/api", // backend URL (baad mein change karenge)
   headers: {
     "Content-Type": "application/json",
   },
@@ -28,10 +28,13 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    // 401 Unauthorized - Auto logout
     if (error.response?.status === 401) {
-      useAuthStore.getState().logout();
-      window.location.href = "/login";
+      const currentPath = window.location.pathname;
+      // Don't redirect if already on auth pages
+      if (!["/login", "/signup", "/forgot-password"].includes(currentPath)) {
+        useAuthStore.getState().logout();
+        window.location.href = "/login";
+      }
     }
     return Promise.reject(error);
   },

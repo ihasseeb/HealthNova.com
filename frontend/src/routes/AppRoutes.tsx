@@ -5,6 +5,8 @@ import Home from "../pages/auth/HomePage";
 import Login from "../pages/auth/Login";
 import Signup from "../pages/auth/Signup";
 import ForgotPassword from "../pages/auth/ForgotPassword";
+import VerifyOTP from "../pages/auth/VerifyOTP";
+import ResetPassword from "../pages/auth/ResetPassword";
 import Dashboard from "../pages/Dashboard";
 import Profile from "../pages/Profile";
 import Settings from "../pages/Settings";
@@ -25,7 +27,9 @@ const AppRoutes = () => {
         <Route element={<AuthLayout />}>
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/verify-otp" element={<VerifyOTP />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
         </Route>
       </Route>
 
@@ -38,7 +42,7 @@ const AppRoutes = () => {
         </Route>
       </Route>
 
-      {/* 404 - Catch All Route */}
+      {/* 404 */}
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

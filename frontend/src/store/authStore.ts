@@ -7,6 +7,7 @@ interface User {
   name: string;
   email: string;
   role: string;
+  isverified?: boolean;
 }
 
 // Store ka type define karo
