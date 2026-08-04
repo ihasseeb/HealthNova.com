@@ -20,6 +20,9 @@ model User {
   resetTokenExpiry    DateTime?
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @updatedAt
+  
+  // Relations
+  healthProfile       HealthProfile?  // ← Add this line
 
   @@map("users")
 }
@@ -28,4 +31,68 @@ enum Role {
   USER
   DOCTOR
   ADMIN
+}
+
+// Health Profile Model
+model HealthProfile {
+  id                    String   @id @default(uuid())
+  userId                String   @unique
+  user                  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Basic Info
+  age                   Int
+  gender                Gender
+  height                Float    // in cm
+  weight                Float    // in kg
+  bloodGroup            String?
+  
+  // Health Info
+  activityLevel         ActivityLevel  @default(MODERATE)
+  goal                  HealthGoal     @default(MAINTAIN)
+  dietaryPreference     DietPreference @default(NON_VEG)
+  
+  // Arrays
+  allergies             String[]  @default([])
+  medicalConditions     String[]  @default([])
+  currentMedications    String[]  @default([])
+  
+  // Optional
+  bmi                   Float?
+  targetWeight          Float?
+  
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@map("health_profiles")
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum ActivityLevel {
+  SEDENTARY
+  LIGHT
+  MODERATE
+  ACTIVE
+  VERY_ACTIVE
+}
+
+enum HealthGoal {
+  WEIGHT_LOSS
+  WEIGHT_GAIN
+  MAINTAIN
+  MUSCLE_GAIN
+  IMPROVE_HEALTH
+}
+
+enum DietPreference {
+  VEG
+  NON_VEG
+  VEGAN
+  KETO
+  PALEO
+  MEDITERRANEAN
 }

@@ -33,15 +33,13 @@ export const useSignup = () => {
 // VERIFY OTP Hook
 export const useVerifyOTP = () => {
   const navigate = useNavigate();
-  const login = useAuthStore((state) => state.login);
 
   return useMutation({
     mutationFn: verifyOTP,
     onSuccess: (response) => {
-      const { user, token } = response.data;
-      login(user, token);
       toast.success(response.message || "Email verified! 🎉");
-      navigate("/dashboard");
+      toast.info("Please login to continue");
+      navigate("/login");
     },
     onError: (error: any) => {
       const message =

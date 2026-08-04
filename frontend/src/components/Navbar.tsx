@@ -119,6 +119,9 @@ const Navbar = () => {
                 <DropdownMenuItem onClick={() => navigate("/profile")}>
                   👤 My Profile
                 </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => navigate("/health-profile")}>
+                  🩺 Health Profile
+                </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => navigate("/settings")}>
                   ⚙️ Settings
                 </DropdownMenuItem>

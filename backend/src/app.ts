@@ -2,8 +2,10 @@ import express, { Application, Request, Response } from "express";
 import cors from "cors";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
-import authRoutes from "./routes/auth.routes";
+
 import { errorHandler, notFoundHandler } from "./middlewares/error.middleware";
+import authRoutes from "./routes/auth.routes";
+import healthProfileRoutes from "./routes/healthProfile.routes";
 
 const app: Application = express();
 
@@ -37,7 +39,7 @@ app.get("/health", (req: Request, res: Response) => {
 
 // API Routes
 app.use("/api/auth", authRoutes);
-
+app.use("/api/health-profile", healthProfileRoutes);
 // 404 Handler (must be after all routes)
 app.use(notFoundHandler);
 
