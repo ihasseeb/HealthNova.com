@@ -22,8 +22,13 @@ model User {
   updatedAt           DateTime  @updatedAt
   
   // Relations
-  healthProfile       HealthProfile?  // ← Add this line
-
+  healthProfile       HealthProfile?
+  symptomChecks       SymptomCheck[]     // ← ADD
+  dietPlans           DietPlan[]         // ← ADD
+  workoutPlans        WorkoutPlan[]      // ← ADD
+  chatMessages        ChatMessage[]      // ← ADD
+  healthReports       HealthReport[]     // ← ADD
+  
   @@map("users")
 }
 
@@ -95,4 +100,108 @@ enum DietPreference {
   KETO
   PALEO
   MEDITERRANEAN
+}
+
+// Symptom Check History
+model SymptomCheck {
+  id                  String   @id @default(uuid())
+  userId              String
+  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Input
+  symptoms            String   @db.Text
+  duration            String?
+  
+  // AI Response
+  severity            String   // LOW, MODERATE, HIGH, EMERGENCY
+  possibleCauses      String[]
+  recommendations     String[]
+  homeRemedies        String[]
+  whenToSeeDoctor     String?  @db.Text
+  warningSignsToWatch String[]
+  
+  createdAt           DateTime @default(now())
+  
+  @@map("symptom_checks")
+}
+
+// Diet Plans
+model DietPlan {
+  id                String   @id @default(uuid())
+  userId            String
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // AI Response (stored as JSON)
+  dailyCalories     Int
+  macros            Json     // { protein, carbs, fats }
+  waterIntake       String?
+  weeklyPlan        Json     // Full 7-day plan
+  tips              String[]
+  foodsToAvoid      String[]
+  supplements       String[]
+  
+  createdAt         DateTime @default(now())
+  
+  @@map("diet_plans")
+}
+
+// Workout Plans
+model WorkoutPlan {
+  id                    String   @id @default(uuid())
+  userId                String
+  user                  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // AI Response
+  planName              String
+  duration              String
+  daysPerWeek           Int
+  estimatedCaloriesBurn String?
+  weeklySchedule        Json     // Full 7-day schedule
+  tips                  String[]
+  safetyNotes           String[]
+  nutritionAdvice       String?  @db.Text
+  
+  createdAt             DateTime @default(now())
+  
+  @@map("workout_plans")
+}
+
+// Chat History
+model ChatMessage {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  role      String   // "user" or "assistant"
+  content   String   @db.Text
+  category  String?  // GENERAL, SYMPTOMS, DIET, etc.
+  
+  createdAt DateTime @default(now())
+  
+  @@map("chat_messages")
+  @@index([userId, createdAt])
+}
+
+// Health Reports
+model HealthReport {
+  id              String   @id @default(uuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Input
+  reportType      String
+  reportText      String   @db.Text
+  
+  // AI Response
+  summary         String   @db.Text
+  overallStatus   String   // NORMAL, ATTENTION_NEEDED, CONCERNING
+  keyFindings     Json     // Array of findings
+  abnormalValues  Json     // Array of abnormal values
+  recommendations String[]
+  followUpNeeded  Boolean  @default(false)
+  urgency         String   // LOW, MEDIUM, HIGH
+  
+  createdAt       DateTime @default(now())
+  
+  @@map("health_reports")
 }

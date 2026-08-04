@@ -6,6 +6,7 @@ import cookieParser from "cookie-parser";
 import { errorHandler, notFoundHandler } from "./middlewares/error.middleware";
 import authRoutes from "./routes/auth.routes";
 import healthProfileRoutes from "./routes/healthProfile.routes";
+import aiRoutes from "./routes/ai.routes";
 
 const app: Application = express();
 
@@ -40,6 +41,12 @@ app.get("/health", (req: Request, res: Response) => {
 // API Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/health-profile", healthProfileRoutes);
+
+// API Routes
+app.use("/api/auth", authRoutes);
+app.use("/api/health-profile", healthProfileRoutes);
+app.use("/api/ai", aiRoutes);
+
 // 404 Handler (must be after all routes)
 app.use(notFoundHandler);
 
