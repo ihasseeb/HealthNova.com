@@ -1,5 +1,4 @@
 import { Button } from "../../components/ui/button";
-import { Input } from "../../components/ui/input";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { useVerifyOTP, useResendOTP } from "../../hooks/useAuth";
 import { motion } from "framer-motion";
@@ -36,26 +35,23 @@ const VerifyOTP = () => {
 
   // Handle OTP input
   const handleChange = (index: number, value: string) => {
-    if (!/^\d*$/.test(value)) return; // Only numbers
+    if (!/^\d*$/.test(value)) return;
 
     const newOtp = [...otp];
-    newOtp[index] = value.slice(-1); // Only last digit
+    newOtp[index] = value.slice(-1);
     setOtp(newOtp);
 
-    // Auto-focus next input
     if (value && index < 5) {
       inputRefs.current[index + 1]?.focus();
     }
   };
 
-  // Handle backspace
   const handleKeyDown = (index: number, e: React.KeyboardEvent) => {
     if (e.key === "Backspace" && !otp[index] && index > 0) {
       inputRefs.current[index - 1]?.focus();
     }
   };
 
-  // Handle paste
   const handlePaste = (e: React.ClipboardEvent) => {
     e.preventDefault();
     const pasted = e.clipboardData.getData("text").slice(0, 6);
@@ -66,7 +62,6 @@ const VerifyOTP = () => {
     inputRefs.current[Math.min(pasted.length, 5)]?.focus();
   };
 
-  // Submit OTP
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const otpString = otp.join("");
@@ -79,7 +74,6 @@ const VerifyOTP = () => {
     verifyOTP({ email, otp: otpString });
   };
 
-  // Resend OTP
   const handleResend = () => {
     resendOTP({ email });
     setTimer(60);
@@ -90,7 +84,7 @@ const VerifyOTP = () => {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="space-y-6"
+      className="space-y-6 w-full"
     >
       {/* Icon */}
       <div className="flex justify-center">
@@ -106,17 +100,24 @@ const VerifyOTP = () => {
 
       {/* Header */}
       <div className="text-center space-y-2">
-        <h1 className="text-3xl font-bold text-slate-800">Verify Your Email</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold text-slate-800">
+          Verify Your Email
+        </h1>
         <p className="text-slate-500 text-sm">We've sent a 6-digit code to</p>
-        <p className="text-emerald-600 font-semibold">{email}</p>
+        <p className="text-emerald-600 font-semibold text-sm break-all px-2">
+          {email}
+        </p>
       </div>
 
       {/* OTP Form */}
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* OTP Boxes */}
-        <div className="flex justify-center gap-2" onPaste={handlePaste}>
+        {/* OTP Boxes - Fixed Sizing */}
+        <div
+          className="flex justify-center gap-1.5 sm:gap-2 md:gap-3 px-2"
+          onPaste={handlePaste}
+        >
           {otp.map((digit, index) => (
-            <Input
+            <input
               key={index}
               ref={(el) => {
                 inputRefs.current[index] = el;
@@ -127,7 +128,7 @@ const VerifyOTP = () => {
               value={digit}
               onChange={(e) => handleChange(index, e.target.value)}
               onKeyDown={(e) => handleKeyDown(index, e)}
-              className="w-12 h-14 text-center text-2xl font-bold border-2 focus-visible:ring-emerald-500"
+              className="w-11 h-14 sm:w-12 sm:h-14 md:w-14 md:h-16 text-center text-xl sm:text-2xl md:text-3xl font-bold border-2 border-slate-200 rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none transition bg-white"
             />
           ))}
         </div>
