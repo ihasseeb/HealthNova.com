@@ -1,7 +1,11 @@
+import dns from "dns";
+
+// Force IPv4 for entire application (BEFORE other imports)
+dns.setDefaultResultOrder("ipv4first");
+
 import app from "./app";
 import dotenv from "dotenv";
 
-// Load environment variables
 dotenv.config();
 
 const PORT = process.env.PORT || 5000;
