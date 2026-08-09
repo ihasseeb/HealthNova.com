@@ -317,3 +317,14 @@ a:focus-visible {
 .hover-lift:hover {
   transform: translateY(-2px);
 }
+
+/* Fix layout shift on dropdown open */
+body {
+  padding-right: 0 !important;
+  overflow-y: scroll !important;
+}
+
+/* Smooth dropdown */
+[data-radix-popper-content-wrapper] {
+  z-index: 9999 !important;
+}

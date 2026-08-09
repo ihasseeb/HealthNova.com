@@ -33,7 +33,7 @@ const Navbar = () => {
     <nav className="bg-white/80 backdrop-blur-md border-b border-emerald-100 sticky top-0 z-50">
       <div className="flex items-center justify-between px-4 md:px-8 py-4">
         {/* Logo - LEFT */}
-        <Link to="/" className="flex items-center gap-2">
+        <Link to="/" className="flex items-center gap-2 flex-shrink-0">
           <div className="w-9 h-9 md:w-10 md:h-10 bg-gradient-to-br from-emerald-400 to-teal-600 rounded-xl flex items-center justify-center shadow-lg text-lg">
             💚
           </div>
@@ -47,8 +47,9 @@ const Navbar = () => {
           </div>
         </Link>
 
-        {/* Desktop Menu - CENTER */}
+        {/* RIGHT SIDE - Menu + User (Grouped Together) */}
         <div className="hidden md:flex items-center gap-6">
+          {/* Menu Links */}
           <Link
             to="/"
             className="text-slate-600 hover:text-emerald-600 font-medium transition"
@@ -63,9 +64,9 @@ const Navbar = () => {
               >
                 Dashboard
               </Link>
-              <DropdownMenu>
+              <DropdownMenu modal={false}>
                 <DropdownMenuTrigger asChild>
-                  <button className="text-slate-600 hover:text-emerald-600 font-medium transition flex items-center gap-1.5">
+                  <button className="text-slate-600 hover:text-emerald-600 font-medium transition flex items-center gap-1.5 outline-none">
                     <span className="text-lg">🤖</span>
                     <span>AI Features</span>
                     <span className="text-xs">▼</span>
@@ -126,83 +127,83 @@ const Navbar = () => {
           >
             Pricing
           </Link>
-        </div>
 
-        {/* Desktop Auth - RIGHT (LAST) */}
-        <div className="hidden md:flex items-center gap-3">
-          {isAuthenticated ? (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button className="flex items-center gap-2 hover:bg-emerald-50 px-3 py-2 rounded-xl transition">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center text-white text-sm font-bold border-2 border-emerald-200 shadow-md">
-                    {user?.name ? getInitials(user.name) : "U"}
-                  </div>
-                  <div className="hidden lg:block text-left">
-                    <p className="text-sm font-semibold text-slate-800 leading-tight">
-                      {user?.name?.split(" ")[0] || "User"}
-                    </p>
-                    <p className="text-xs text-slate-500 leading-tight">
-                      {user?.role || "USER"}
-                    </p>
-                  </div>
-                  <span className="text-slate-400 text-xs">▼</span>
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuLabel>
-                  <div>
-                    <p className="font-semibold">{user?.name}</p>
-                    <p className="text-xs text-slate-500 font-normal">
-                      {user?.email}
-                    </p>
-                  </div>
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onClick={() => navigate("/dashboard")}
-                  className="cursor-pointer"
-                >
-                  <span className="mr-2">📊</span> Dashboard
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => navigate("/health-profile")}
-                  className="cursor-pointer"
-                >
-                  <span className="mr-2">🩺</span> Health Profile
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => navigate("/profile")}
-                  className="cursor-pointer"
-                >
-                  <span className="mr-2">👤</span> My Profile
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => navigate("/settings")}
-                  className="cursor-pointer"
-                >
-                  <span className="mr-2">⚙️</span> Settings
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onClick={() => logout()}
-                  className="text-red-600 focus:text-red-600 focus:bg-red-50 cursor-pointer"
-                >
-                  <span className="mr-2">🚪</span> Logout
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          ) : (
-            <>
-              <Link to="/login">
-                <Button variant="ghost">Login</Button>
-              </Link>
-              <Link to="/signup">
-                <Button className="bg-gradient-to-r from-emerald-500 to-teal-600">
-                  Get Started
-                </Button>
-              </Link>
-            </>
-          )}
+          {/* User Avatar - Right After Menu */}
+          <div className="border-l border-slate-200 pl-6 ml-2">
+            {isAuthenticated ? (
+              <DropdownMenu modal={false}>
+                <DropdownMenuTrigger asChild>
+                  <button className="flex items-center gap-2 hover:bg-emerald-50 px-3 py-2 rounded-xl transition outline-none">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center text-white text-sm font-bold border-2 border-emerald-200 shadow-md flex-shrink-0">
+                      {user?.name ? getInitials(user.name) : "U"}
+                    </div>
+                    <div className="hidden lg:block text-left">
+                      <p className="text-sm font-semibold text-slate-800 leading-tight">
+                        {user?.name?.split(" ")[0] || "User"}
+                      </p>
+                      <p className="text-xs text-slate-500 leading-tight">
+                        {user?.role || "USER"}
+                      </p>
+                    </div>
+                    <span className="text-slate-400 text-xs">▼</span>
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuLabel>
+                    <div>
+                      <p className="font-semibold">{user?.name}</p>
+                      <p className="text-xs text-slate-500 font-normal">
+                        {user?.email}
+                      </p>
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    onClick={() => navigate("/dashboard")}
+                    className="cursor-pointer"
+                  >
+                    <span className="mr-2">📊</span> Dashboard
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => navigate("/health-profile")}
+                    className="cursor-pointer"
+                  >
+                    <span className="mr-2">🩺</span> Health Profile
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => navigate("/profile")}
+                    className="cursor-pointer"
+                  >
+                    <span className="mr-2">👤</span> My Profile
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => navigate("/settings")}
+                    className="cursor-pointer"
+                  >
+                    <span className="mr-2">⚙️</span> Settings
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    onClick={() => logout()}
+                    className="text-red-600 focus:text-red-600 focus:bg-red-50 cursor-pointer"
+                  >
+                    <span className="mr-2">🚪</span> Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <div className="flex items-center gap-3">
+                <Link to="/login">
+                  <Button variant="ghost">Login</Button>
+                </Link>
+                <Link to="/signup">
+                  <Button className="bg-gradient-to-r from-emerald-500 to-teal-600">
+                    Get Started
+                  </Button>
+                </Link>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Mobile Menu Button */}
