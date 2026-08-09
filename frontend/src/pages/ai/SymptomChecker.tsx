@@ -315,7 +315,7 @@ const SymptomChecker = () => {
                 </p>
               </div>
             ) : (
-              history.map((check: any, i: number) => (
+              history.map((check: any) => (
                 <div
                   key={check.id}
                   className="bg-white rounded-2xl p-4 md:p-6 shadow-lg"
