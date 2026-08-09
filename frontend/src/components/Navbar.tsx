@@ -10,7 +10,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import { Avatar, AvatarFallback } from "./ui/avatar";
 import { useState } from "react";
 
 const Navbar = () => {
@@ -33,7 +32,7 @@ const Navbar = () => {
   return (
     <nav className="bg-white/80 backdrop-blur-md border-b border-emerald-100 sticky top-0 z-50">
       <div className="flex items-center justify-between px-4 md:px-8 py-4">
-        {/* Logo */}
+        {/* Logo - LEFT */}
         <Link to="/" className="flex items-center gap-2">
           <div className="w-9 h-9 md:w-10 md:h-10 bg-gradient-to-br from-emerald-400 to-teal-600 rounded-xl flex items-center justify-center shadow-lg text-lg">
             💚
@@ -48,7 +47,7 @@ const Navbar = () => {
           </div>
         </Link>
 
-        {/* Desktop Menu */}
+        {/* Desktop Menu - CENTER */}
         <div className="hidden md:flex items-center gap-6">
           <Link
             to="/"
@@ -129,7 +128,7 @@ const Navbar = () => {
           </Link>
         </div>
 
-        {/* Desktop Auth */}
+        {/* Desktop Auth - RIGHT (LAST) */}
         <div className="hidden md:flex items-center gap-3">
           {isAuthenticated ? (
             <DropdownMenu>
