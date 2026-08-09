@@ -11,10 +11,12 @@ import aiRoutes from "./routes/ai.routes";
 const app: Application = express();
 
 // Middlewares
-app.use(helmet());
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: [
+      "http://localhost:5173",
+      process.env.FRONTEND_URL || "", // ← Add production URL
+    ],
     credentials: true,
   }),
 );
