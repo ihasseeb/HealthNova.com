@@ -61,10 +61,13 @@ export const signupService = async (data: SignupInput) => {
     },
   });
 
-  await sendEmail({
+  // 🚀 Send OTP email in background (fire and forget)
+  sendEmail({
     to: user.email,
     subject: "🔐 Verify Your HealthNova AI Account",
     html: otpEmailTemplate(user.name, otp),
+  }).catch((err) => {
+    console.error("❌ OTP email failed:", err.message);
   });
 
   return {
@@ -133,13 +136,21 @@ export const verifyOTPService = async (data: VerifyOTPInput) => {
   const accessToken = generateAccessToken(tokenPayload);
   const refreshToken = generateRefreshToken(tokenPayload);
 
+  // 🚀 Send welcome email in background (fire and forget)
   sendEmail({
     to: verifiedUser.email,
     subject: "🎉 Welcome to HealthNova AI!",
     html: welcomeEmailTemplate(verifiedUser.name),
-  }).catch((err) => console.error("Welcome email failed:", err.message));
+  }).catch((err) => {
+    console.error("❌ Welcome email failed:", err.message);
+  });
 
-  return { user: verifiedUser, accessToken, refreshToken };
+  return {
+    user: verifiedUser,
+    accessToken,
+    refreshToken,
+    message: "Email verified successfully",
+  };
 };
 
 // RESEND OTP Service
@@ -173,10 +184,13 @@ export const resendOTPService = async (data: ResendOTPInput) => {
     data: { otp, otpExpiry },
   });
 
-  await sendEmail({
+  // 🚀 Send OTP email in background (fire and forget)
+  sendEmail({
     to: user.email,
     subject: "🔐 Your New HealthNova AI OTP",
     html: otpEmailTemplate(user.name, otp),
+  }).catch((err) => {
+    console.error("❌ Resend OTP email failed:", err.message);
   });
 
   return { message: "New OTP sent to your email" };
@@ -256,10 +270,13 @@ export const forgotPasswordService = async (data: ForgotPasswordInput) => {
 
   const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;
 
-  await sendEmail({
+  // 🚀 Send password reset email in background (fire and forget)
+  sendEmail({
     to: user.email,
     subject: "🔐 Reset Your HealthNova AI Password",
     html: forgotPasswordEmailTemplate(user.name, resetLink),
+  }).catch((err) => {
+    console.error("❌ Password reset email failed:", err.message);
   });
 
   return {
