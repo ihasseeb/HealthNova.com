@@ -1,49 +1,43 @@
 import nodemailer from "nodemailer";
 
-// Create transporter (email sender configuration)
 const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 465, // ← 465 (SSL) for Railway
-  secure: true, // ← MUST be true for port 465
+  host: "smtp.resend.com",
+  port: 465,
+  secure: true,
   auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASSWORD,
-  },
-  tls: {
-    rejectUnauthorized: false,
+    user: "resend",
+    pass: process.env.RESEND_API_KEY,
   },
 });
 
-// Verify connection on startup
+// Verify connection
 transporter.verify((error) => {
   if (error) {
     console.log("❌ Email service error:", error.message);
   } else {
-    console.log("✅ Email service ready to send messages");
+    console.log("✅ Email service ready! (Resend)");
   }
 });
 
-// Email options interface
-interface EmailOptions {
+export const sendEmail = async (options: {
   to: string;
   subject: string;
   html: string;
-}
-
-// Send Email Function
-export const sendEmail = async (options: EmailOptions) => {
+}) => {
   try {
+    console.log(`📧 Sending email to: ${options.to}`);
+
     const info = await transporter.sendMail({
-      from: process.env.EMAIL_FROM,
+      from: process.env.EMAIL_FROM || "onboarding@resend.dev",
       to: options.to,
       subject: options.subject,
       html: options.html,
     });
 
-    console.log(`📧 Email sent: ${info.messageId}`);
+    console.log("✅ Email sent:", info.messageId);
     return info;
   } catch (error: any) {
     console.error("❌ Email sending failed:", error.message);
-    throw new Error("Failed to send email");
+    throw error;
   }
 };
