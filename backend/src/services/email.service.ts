@@ -1,23 +1,8 @@
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
 
-const transporter = nodemailer.createTransport({
-  host: "smtp.resend.com",
-  port: 465,
-  secure: true,
-  auth: {
-    user: "resend",
-    pass: process.env.RESEND_API_KEY,
-  },
-});
+const resend = new Resend(process.env.RESEND_API_KEY);
 
-// Verify connection
-transporter.verify((error) => {
-  if (error) {
-    console.log("❌ Email service error:", error.message);
-  } else {
-    console.log("✅ Email service ready! (Resend)");
-  }
-});
+console.log("✅ Email service ready! (Resend HTTP API)");
 
 export const sendEmail = async (options: {
   to: string;
@@ -27,15 +12,20 @@ export const sendEmail = async (options: {
   try {
     console.log(`📧 Sending email to: ${options.to}`);
 
-    const info = await transporter.sendMail({
-      from: process.env.EMAIL_FROM || "onboarding@resend.dev",
+    const { data, error } = await resend.emails.send({
+      from: process.env.EMAIL_FROM || "HealthNova AI <onboarding@resend.dev>",
       to: options.to,
       subject: options.subject,
       html: options.html,
     });
 
-    console.log("✅ Email sent:", info.messageId);
-    return info;
+    if (error) {
+      console.error("❌ Email error:", error);
+      throw new Error(error.message);
+    }
+
+    console.log("✅ Email sent:", data?.id);
+    return data;
   } catch (error: any) {
     console.error("❌ Email sending failed:", error.message);
     throw error;
