@@ -6,6 +6,7 @@ from controllers.health_controller import (
     chat_controller,
     report_analyzer_controller,
     health_tips_controller,
+     analyze_report_image_controller, 
 )
 
 # Create Blueprint
@@ -18,3 +19,4 @@ health_bp.route("/workout-plan", methods=["POST"])(workout_plan_controller)
 health_bp.route("/chat", methods=["POST"])(chat_controller)
 health_bp.route("/analyze-report", methods=["POST"])(report_analyzer_controller)
 health_bp.route("/health-tips", methods=["POST"])(health_tips_controller)
+health_bp.route("/analyze-report-image", methods=["POST"])(analyze_report_image_controller)

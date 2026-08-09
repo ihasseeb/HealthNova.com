@@ -11,7 +11,7 @@ import {
 
 const HealthProfile = () => {
   const [isEditing, setIsEditing] = useState(false);
-  const { data, isLoading, isError } = useGetHealthProfile();
+  const { data, isLoading } = useGetHealthProfile();
   const { mutate: createProfile, isPending: isCreating } =
     useCreateHealthProfile();
   const { mutate: updateProfile, isPending: isUpdating } =

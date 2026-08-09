@@ -5,6 +5,132 @@ import { AppError } from "../utils/AppError";
 // AI Service base URL
 const AI_SERVICE_URL = process.env.AI_SERVICE_URL || "http://localhost:8000";
 
+interface HealthProfileContext {
+  age?: number | null;
+  gender?: string | null;
+  height?: number | null;
+  weight?: number | null;
+  bmi?: number | null;
+  activityLevel?: string | null;
+  goal?: string | null;
+  dietaryPreference?: string | null;
+  allergies?: string[] | null;
+  medicalConditions?: string[] | null;
+  currentMedications?: string[] | null;
+  targetWeight?: number | null;
+}
+
+interface AIServiceResponse<T> {
+  success: boolean;
+  data: T;
+  message?: string;
+}
+
+interface SymptomCheckInput {
+  symptoms: string[];
+  duration?: string | null;
+}
+
+interface SymptomCheckRequest {
+  symptoms: string[];
+  duration?: string | null;
+  age?: number | null;
+  gender?: string | null;
+  medicalConditions: string[];
+  currentMedications: string[];
+}
+
+interface SymptomCheckAIResponse {
+  severity: string;
+  possibleCauses?: string[];
+  recommendations?: string[];
+  homeRemedies?: string[];
+  whenToSeeDoctor?: string | null;
+  warningSignsToWatch?: string[];
+}
+
+interface DietPlanRequest {
+  age?: number | null;
+  gender?: string | null;
+  height?: number | null;
+  weight?: number | null;
+  bmi?: number | null;
+  activityLevel?: string | null;
+  goal?: string | null;
+  dietaryPreference?: string | null;
+  allergies?: string[] | null;
+  medicalConditions?: string[] | null;
+  targetWeight?: number | null;
+}
+
+interface DietPlanAIResponse {
+  dailyCalories: number;
+  macros: Record<string, number>;
+  waterIntake?: number | null;
+  weeklyPlan: string[];
+  tips?: string[];
+  foodsToAvoid?: string[];
+  supplements?: string[];
+}
+
+interface WorkoutPlanInput {
+  location?: string;
+  experience?: string;
+}
+
+interface WorkoutPlanRequest {
+  age?: number | null;
+  gender?: string | null;
+  height?: number | null;
+  weight?: number | null;
+  bmi?: number | null;
+  activityLevel?: string | null;
+  goal?: string | null;
+  medicalConditions?: string[] | null;
+  location: string;
+  experience: string;
+}
+
+interface WorkoutPlanAIResponse {
+  planName: string;
+  duration: string;
+  daysPerWeek: number;
+  estimatedCaloriesBurn?: number | null;
+  weeklySchedule: string[];
+  tips?: string[];
+  safetyNotes?: string[];
+  nutritionAdvice?: string | null;
+}
+
+interface ChatInput {
+  message: string;
+}
+
+interface ChatHistoryMessage {
+  role: string;
+  content: string;
+}
+
+interface ChatMessageRecord {
+  role: string;
+  content: string;
+  createdAt?: Date | string;
+}
+
+interface ChatRequest {
+  message: string;
+  userProfile: HealthProfileContext | null;
+  history: ChatHistoryMessage[];
+}
+
+interface ChatAIResponse {
+  reply: string;
+  suggestions?: string[];
+  category?: string | null;
+  needsDoctor?: boolean;
+  urgency?: string | null;
+}
+
 // Create axios instance for AI service
 const aiApi = axios.create({
   baseURL: AI_SERVICE_URL,
@@ -17,12 +143,20 @@ const aiApi = axios.create({
 // ================================
 // SYMPTOM CHECKER
 // ================================
-export const symptomCheckService = async (userId: string, data: any) => {
+export const symptomCheckService = async (
+  userId: string,
+  data: SymptomCheckInput,
+) => {
   try {
     // 1. Get user's health profile for context
     const profile = await prisma.healthProfile.findUnique({
       where: { userId },
     });
+
+    // 2. Handle symptoms (string or array)
+    const symptomsText = Array.isArray(data.symptoms)
+      ? data.symptoms.join(", ")
+      : data.symptoms;
 
     // 2. Prepare AI request data
     const aiRequest = {
@@ -47,7 +181,8 @@ export const symptomCheckService = async (userId: string, data: any) => {
     const symptomCheck = await prisma.symptomCheck.create({
       data: {
         userId,
-        symptoms: data.symptoms,
+        symptoms: symptomsText,
+
         duration: data.duration || null,
         severity: aiData.severity,
         possibleCauses: aiData.possibleCauses || [],
@@ -252,10 +387,12 @@ export const chatService = async (userId: string, data: any) => {
       take: 10,
     });
 
-    const history = recentMessages.reverse().map((msg) => ({
-      role: msg.role,
-      content: msg.content,
-    }));
+    const history = recentMessages
+      .reverse()
+      .map((msg: { role: any; content: any }) => ({
+        role: msg.role,
+        content: msg.content,
+      }));
 
     const aiRequest = {
       message: data.message,
@@ -425,5 +562,65 @@ export const healthTipsService = async (userId: string, data: any) => {
       );
     }
     throw new AppError(error.message || "Health tips failed", 500);
+  }
+};
+
+// ================================
+// ANALYZE REPORT IMAGE
+// ================================
+
+export const analyzeReportImageService = async (userId: string, data: any) => {
+  try {
+    const profile = await prisma.healthProfile.findUnique({
+      where: { userId },
+    });
+
+    const aiRequest = {
+      image: data.image,
+      reportType: data.reportType || "General",
+      userProfile: profile,
+    };
+
+    const aiResponse = await aiApi.post(
+      "/api/health/analyze-report-image",
+      aiRequest,
+      { timeout: 120000 }, // 2 min timeout for image
+    );
+
+    if (!aiResponse.data.success) {
+      throw new AppError("AI image analysis failed", 500);
+    }
+
+    const aiData = aiResponse.data.data;
+
+    // Save to database
+    const report = await prisma.healthReport.create({
+      data: {
+        userId,
+        reportType: data.reportType || "General",
+        reportText: aiData.extractedText || "Image analyzed",
+        summary: aiData.summary,
+        overallStatus: aiData.overallStatus,
+        keyFindings: aiData.keyFindings || [],
+        abnormalValues: aiData.abnormalValues || [],
+        recommendations: aiData.recommendations || [],
+        followUpNeeded: aiData.followUpNeeded || false,
+        urgency: aiData.urgency || "LOW",
+      },
+    });
+
+    return {
+      id: report.id,
+      ...aiData,
+      createdAt: report.createdAt,
+    };
+  } catch (error: any) {
+    if (error.response) {
+      throw new AppError(
+        error.response.data?.message || "AI service error",
+        500,
+      );
+    }
+    throw new AppError(error.message || "Image analysis failed", 500);
   }
 };

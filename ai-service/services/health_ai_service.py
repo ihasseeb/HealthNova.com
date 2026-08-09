@@ -1,11 +1,16 @@
 from services.groq_service import generate_response
 import json
-
+import base64
 
 def analyze_symptoms(data: dict) -> dict:
     """
     Analyze user symptoms using AI
     """
+    # Handle both string and array
+    symptoms = data.get('symptoms', 'No symptoms provided')
+    if isinstance(symptoms, list):
+        symptoms = ', '.join(symptoms)
+    
     # Build prompt
     prompt = f"""You are a medical AI assistant. Analyze the following symptoms and provide health guidance.
 
@@ -16,7 +21,7 @@ USER INFO:
 - Current Medications: {', '.join(data.get('currentMedications', [])) or 'None'}
 
 SYMPTOMS:
-{data.get('symptoms', 'No symptoms provided')}
+{symptoms}
 
 DURATION: {data.get('duration', 'Not specified')}
 
@@ -47,10 +52,8 @@ Important:
 """
 
     try:
-        # Get AI response
         response = generate_response(prompt)
         
-        # Clean response (remove markdown if any)
         cleaned = response.strip()
         if cleaned.startswith("```json"):
             cleaned = cleaned[7:]
@@ -60,7 +63,6 @@ Important:
             cleaned = cleaned[:-3]
         cleaned = cleaned.strip()
         
-        # Parse JSON
         result = json.loads(cleaned)
         return result
         
@@ -548,3 +550,91 @@ Guidelines:
         raise Exception(f"AI response format error: {str(e)}")
     except Exception as e:
         raise Exception(f"Health tips generation failed: {str(e)}")
+
+    
+def analyze_report_with_image(data: dict) -> dict:
+    """
+    Analyze medical report from image using Gemini Vision
+    """
+    image_base64 = data.get('image', '')
+    report_type = data.get('reportType', 'General')
+    user_info = data.get('userProfile', {})
+    
+    if not image_base64:
+        raise Exception("Image is required")
+    
+    profile_context = ""
+    if user_info:
+        profile_context = f"""
+USER PROFILE:
+- Age: {user_info.get('age', 'Not provided')}
+- Gender: {user_info.get('gender', 'Not provided')}
+- Medical Conditions: {', '.join(user_info.get('medicalConditions', [])) or 'None'}
+"""
+    
+    prompt = f"""You are a medical AI assistant. Analyze this medical report image and explain it in simple language.
+
+{profile_context}
+
+REPORT TYPE: {report_type}
+
+Please extract all the information from the image and provide analysis in this EXACT JSON format (only JSON, no extra text):
+
+{{
+  "extractedText": "All text extracted from the image",
+  "summary": "Brief overall summary in simple language",
+  "overallStatus": "NORMAL | ATTENTION_NEEDED | CONCERNING",
+  "keyFindings": [
+    {{
+      "test": "Test name",
+      "value": "Actual value",
+      "normalRange": "Normal range",
+      "status": "NORMAL | HIGH | LOW",
+      "meaning": "What this means in simple words"
+    }}
+  ],
+  "abnormalValues": [
+    {{
+      "test": "Test name",
+      "value": "Value",
+      "concern": "Why it's a concern",
+      "recommendation": "What to do"
+    }}
+  ],
+  "recommendations": ["Recommendation 1", "Recommendation 2"],
+  "dietaryAdvice": ["Diet tip 1", "Diet tip 2"],
+  "lifestyleChanges": ["Change 1", "Change 2"],
+  "followUpNeeded": true,
+  "urgency": "LOW | MEDIUM | HIGH",
+  "questionsForDoctor": ["Question 1", "Question 2"],
+  "disclaimer": "This is AI analysis. Please consult your doctor."
+}}
+
+Extract all values, numbers, and findings from the image carefully.
+"""
+
+    try:
+        # Import gemini vision service
+        from services.gemini_vision_service import analyze_image_with_gemini
+        
+        # Call Gemini Vision
+        result_text = analyze_image_with_gemini(image_base64, prompt)
+        
+        # Clean response
+        cleaned = result_text.strip()
+        if cleaned.startswith("```json"):
+            cleaned = cleaned[7:]
+        if cleaned.startswith("```"):
+            cleaned = cleaned[3:]
+        if cleaned.endswith("```"):
+            cleaned = cleaned[:-3]
+        cleaned = cleaned.strip()
+        
+        # Parse JSON (json already imported at top)
+        result = json.loads(cleaned)
+        return result
+        
+    except json.JSONDecodeError as e:
+        raise Exception(f"AI response format error: {str(e)}")
+    except Exception as e:
+        raise Exception(f"Image analysis failed: {str(e)}")

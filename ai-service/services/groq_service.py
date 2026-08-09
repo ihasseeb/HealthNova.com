@@ -56,3 +56,33 @@ AVAILABLE_MODELS = {
     "mixtral-8x7b-32768": "Long context (32k tokens)",
     "gemma2-9b-it": "Google's Gemma model",
 }
+
+def get_vision_model():
+    """Get best available vision model"""
+    preferred_vision_models = [
+        "meta-llama/llama-4-scout-17b-16e-instruct",
+        "meta-llama/llama-4-maverick-17b-128e-instruct",
+        "llama-3.2-11b-vision-preview",
+    ]
+    
+    try:
+        # Try each preferred model
+        for model in preferred_vision_models:
+            try:
+                # Quick test call
+                test_response = client.chat.completions.create(
+                    model=model,
+                    messages=[{"role": "user", "content": "test"}],
+                    max_tokens=5,
+                )
+                print(f"🎯 Using vision model: {model}")
+                return model
+            except:
+                continue
+        
+        return "meta-llama/llama-4-scout-17b-16e-instruct"
+    except Exception as e:
+        return "meta-llama/llama-4-scout-17b-16e-instruct"
+
+
+VISION_MODEL = get_vision_model()

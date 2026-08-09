@@ -6,6 +6,7 @@ from services.health_ai_service import (
     chat_with_ai,
     analyze_report,
     generate_health_tips,
+    analyze_report_with_image,
 )
 
 
@@ -161,6 +162,31 @@ def health_tips_controller():
         return jsonify({
             "success": True,
             "message": "Health tips generated successfully",
+            "data": result
+        })
+        
+    except Exception as e:
+        return jsonify({
+            "success": False,
+            "message": str(e)
+        }), 500
+
+def analyze_report_image_controller():
+    """Analyze medical report from image"""
+    try:
+        data = request.get_json()
+        
+        if not data or not data.get('image'):
+            return jsonify({
+                "success": False,
+                "message": "Image is required"
+            }), 400
+        
+        result = analyze_report_with_image(data)
+        
+        return jsonify({
+            "success": True,
+            "message": "Report image analyzed successfully",
             "data": result
         })
         

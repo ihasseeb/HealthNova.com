@@ -18,8 +18,8 @@ app.use(
     credentials: true,
   }),
 );
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: "40mb" })); // ← 40mb for images
+app.use(express.urlencoded({ extended: true, limit: "40mb" }));
 app.use(cookieParser());
 
 // Test Routes
@@ -37,10 +37,6 @@ app.get("/health", (req: Request, res: Response) => {
     timestamp: new Date().toISOString(),
   });
 });
-
-// API Routes
-app.use("/api/auth", authRoutes);
-app.use("/api/health-profile", healthProfileRoutes);
 
 // API Routes
 app.use("/api/auth", authRoutes);

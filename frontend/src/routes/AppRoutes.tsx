@@ -14,6 +14,14 @@ import Settings from "../pages/Settings";
 import NotFound from "../pages/NotFound";
 import ProtectedRoute from "./ProtectedRoute";
 import PublicRoute from "./PublicRoute";
+import SymptomChecker from "../pages/ai/SymptomChecker";
+import DietPlan from "../pages/ai/DietPlan";
+import WorkoutPlan from "../pages/ai/WorkoutPlan";
+import Chat from "../pages/ai/Chat";
+import ReportAnalyzer from "../pages/ai/ReportAnalyzer";
+import HealthTips from "../pages/ai/HealthTips";
+import Doctors from "../pages/Doctor";
+import Pricing from "../pages/Pricing";
 
 const AppRoutes = () => {
   return (
@@ -21,6 +29,8 @@ const AppRoutes = () => {
       {/* Public Routes */}
       <Route element={<MainLayout />}>
         <Route path="/" element={<Home />} />
+        <Route path="/doctors" element={<Doctors />} />
+        <Route path="/pricing" element={<Pricing />} />
       </Route>
 
       {/* Auth Routes */}
@@ -41,6 +51,12 @@ const AppRoutes = () => {
           <Route path="/profile" element={<Profile />} />
           <Route path="/health-profile" element={<HealthProfile />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/symptom-checker" element={<SymptomChecker />} />
+          <Route path="/diet-plan" element={<DietPlan />} />
+          <Route path="/workout-plan" element={<WorkoutPlan />} />
+          <Route path="/chat" element={<Chat />} />
+          <Route path="/report-analyzer" element={<ReportAnalyzer />} />
+          <Route path="/health-tips" element={<HealthTips />} />
         </Route>
       </Route>
 

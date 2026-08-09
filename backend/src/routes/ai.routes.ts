@@ -12,6 +12,7 @@ import {
   analyzeReport,
   getReportHistory,
   getHealthTips,
+  analyzeReportImage,
 } from "../controllers/ai.controller";
 import { validate } from "../middlewares/validate.middleware";
 import { authenticate } from "../middlewares/auth.middlewares";
@@ -52,4 +53,6 @@ router.get("/report-history", getReportHistory);
 // HEALTH TIPS
 router.post("/health-tips", validate(healthTipsSchema), getHealthTips);
 
+// ANALYZE REPORT IMAGE
+router.post("/analyze-report-image", analyzeReportImage);
 export default router;

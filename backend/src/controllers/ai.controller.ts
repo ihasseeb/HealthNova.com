@@ -12,6 +12,7 @@ import {
   analyzeReportService,
   getReportHistoryService,
   healthTipsService,
+  analyzeReportImageService,
 } from "../services/ai.service";
 import { successResponse } from "../utils/apiResponse";
 import { asyncHandler } from "../utils/asyncHandler";
@@ -135,5 +136,21 @@ export const getHealthTips = asyncHandler(
     const userId = req.user!.userId;
     const result = await healthTipsService(userId, req.body);
     return successResponse(res, 200, "Health tips generated", result);
+  },
+);
+
+// ================================
+// ANALYZE REPORT IMAGE
+// ================================
+export const analyzeReportImage = asyncHandler(
+  async (req: Request, res: Response) => {
+    const userId = req.user!.userId;
+    const result = await analyzeReportImageService(userId, req.body);
+    return successResponse(
+      res,
+      200,
+      "Report image analyzed successfully",
+      result,
+    );
   },
 );

@@ -18,7 +18,6 @@ const Navbar = () => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const { mutate: logout } = useLogout();
 
-  // Get initials from name (e.g., "Haseeb Ahmed" → "HA")
   const getInitials = (name: string) => {
     return name
       .split(" ")
@@ -30,7 +29,7 @@ const Navbar = () => {
 
   return (
     <nav className="flex items-center justify-between px-8 py-5 bg-white/80 backdrop-blur-md border-b border-emerald-100 sticky top-0 z-50">
-      {/* Logo - Left */}
+      {/* Logo */}
       <Link to="/" className="flex items-center gap-2">
         <div className="w-10 h-10 bg-gradient-to-br from-emerald-400 to-teal-600 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-200 text-xl">
           💚
@@ -53,25 +52,70 @@ const Navbar = () => {
           >
             Home
           </Link>
+
           {isAuthenticated && (
-            <Link
-              to="/dashboard"
-              className="text-slate-600 hover:text-emerald-600 font-medium transition"
-            >
-              Dashboard
-            </Link>
+            <>
+              <Link
+                to="/dashboard"
+                className="text-slate-600 hover:text-emerald-600 font-medium transition"
+              >
+                Dashboard
+              </Link>
+
+              {/* AI Features Dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className="text-slate-600 hover:text-emerald-600 font-medium transition flex items-center gap-1">
+                    🤖 AI Features
+                    <span className="text-xs">▼</span>
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-56">
+                  <DropdownMenuLabel>AI Tools</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    onClick={() => navigate("/symptom-checker")}
+                    className="cursor-pointer"
+                  >
+                    🩺 Symptom Checker
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => navigate("/diet-plan")}
+                    className="cursor-pointer"
+                  >
+                    🥗 Diet Plan
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => navigate("/workout-plan")}
+                    className="cursor-pointer"
+                  >
+                    💪 Workout Plan
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => navigate("/chat")}
+                    className="cursor-pointer"
+                  >
+                    💬 AI Chat
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate("/health-tips")}>
+                    💡 Health Tips
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => navigate("/report-analyzer")}
+                    className="cursor-pointer"
+                  >
+                    📄 Report Analyzer
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </>
           )}
+
           <Link
             to="/doctors"
             className="text-slate-600 hover:text-emerald-600 font-medium transition"
           >
             Doctors
-          </Link>
-          <Link
-            to="/services"
-            className="text-slate-600 hover:text-emerald-600 font-medium transition"
-          >
-            Services
           </Link>
           <Link
             to="/pricing"
@@ -84,7 +128,6 @@ const Navbar = () => {
         {/* Auth Section */}
         <div className="flex items-center gap-3 border-l border-slate-200 pl-6">
           {isAuthenticated ? (
-            // Logged IN - Show User Dropdown
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button className="flex items-center gap-3 hover:bg-emerald-50 px-3 py-2 rounded-xl transition">
@@ -113,29 +156,79 @@ const Navbar = () => {
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => navigate("/dashboard")}>
+                <DropdownMenuItem
+                  onClick={() => navigate("/dashboard")}
+                  className="cursor-pointer"
+                >
                   📊 Dashboard
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate("/profile")}>
-                  👤 My Profile
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate("/health-profile")}>
+                <DropdownMenuItem
+                  onClick={() => navigate("/health-profile")}
+                  className="cursor-pointer"
+                >
                   🩺 Health Profile
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate("/settings")}>
-                  ⚙️ Settings
+                <DropdownMenuItem
+                  onClick={() => navigate("/profile")}
+                  className="cursor-pointer"
+                >
+                  👤 My Profile
                 </DropdownMenuItem>
+
+                <DropdownMenuSeparator />
+                <DropdownMenuLabel className="text-xs text-slate-500">
+                  AI Features
+                </DropdownMenuLabel>
+                <DropdownMenuItem
+                  onClick={() => navigate("/symptom-checker")}
+                  className="cursor-pointer"
+                >
+                  🩺 Symptom Checker
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => navigate("/diet-plan")}
+                  className="cursor-pointer"
+                >
+                  🥗 Diet Plan
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => navigate("/workout-plan")}
+                  className="cursor-pointer"
+                >
+                  💪 Workout Plan
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => navigate("/chat")}
+                  className="cursor-pointer"
+                >
+                  💬 AI Chat
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => navigate("/report-analyzer")}
+                  className="cursor-pointer"
+                >
+                  📄 Report Analyzer
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => navigate("/health-tips")}>
+                  💡 Health Tips
+                </DropdownMenuItem>
+
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
+                  onClick={() => navigate("/settings")}
+                  className="cursor-pointer"
+                >
+                  ⚙️ Settings
+                </DropdownMenuItem>
+                <DropdownMenuItem
                   onClick={() => logout()}
-                  className="text-red-600 focus:text-red-600 focus:bg-red-50"
+                  className="text-red-600 focus:text-red-600 focus:bg-red-50 cursor-pointer"
                 >
                   🚪 Logout
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            // Logged OUT - Show Login/Signup
             <>
               <Link to="/login">
                 <Button
