@@ -21,6 +21,7 @@ const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const getInitials = (name: string) => {
+    if (!name) return "U";
     return name
       .split(" ")
       .map((word) => word[0])
@@ -51,7 +52,7 @@ const Navbar = () => {
         <div className="hidden md:flex items-center gap-6">
           <Link
             to="/"
-            className="text-slate-600 hover:text-emerald-600 font-medium"
+            className="text-slate-600 hover:text-emerald-600 font-medium transition"
           >
             Home
           </Link>
@@ -59,14 +60,16 @@ const Navbar = () => {
             <>
               <Link
                 to="/dashboard"
-                className="text-slate-600 hover:text-emerald-600 font-medium"
+                className="text-slate-600 hover:text-emerald-600 font-medium transition"
               >
                 Dashboard
               </Link>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className="text-slate-600 hover:text-emerald-600 font-medium flex items-center gap-1">
-                    🤖 AI ▼
+                  <button className="text-slate-600 hover:text-emerald-600 font-medium transition flex items-center gap-1.5">
+                    <span className="text-lg">🤖</span>
+                    <span>AI Features</span>
+                    <span className="text-xs">▼</span>
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="start" className="w-56">
@@ -74,25 +77,39 @@ const Navbar = () => {
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
                     onClick={() => navigate("/symptom-checker")}
+                    className="cursor-pointer"
                   >
-                    🩺 Symptom Checker
+                    <span className="mr-2">🩺</span> Symptom Checker
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate("/diet-plan")}>
-                    🥗 Diet Plan
+                  <DropdownMenuItem
+                    onClick={() => navigate("/diet-plan")}
+                    className="cursor-pointer"
+                  >
+                    <span className="mr-2">🥗</span> Diet Plan
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate("/workout-plan")}>
-                    💪 Workout Plan
+                  <DropdownMenuItem
+                    onClick={() => navigate("/workout-plan")}
+                    className="cursor-pointer"
+                  >
+                    <span className="mr-2">💪</span> Workout Plan
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate("/chat")}>
-                    💬 AI Chat
+                  <DropdownMenuItem
+                    onClick={() => navigate("/chat")}
+                    className="cursor-pointer"
+                  >
+                    <span className="mr-2">💬</span> AI Chat
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={() => navigate("/report-analyzer")}
+                    className="cursor-pointer"
                   >
-                    📄 Report Analyzer
+                    <span className="mr-2">📄</span> Report Analyzer
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate("/health-tips")}>
-                    💡 Health Tips
+                  <DropdownMenuItem
+                    onClick={() => navigate("/health-tips")}
+                    className="cursor-pointer"
+                  >
+                    <span className="mr-2">💡</span> Health Tips
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -100,13 +117,13 @@ const Navbar = () => {
           )}
           <Link
             to="/doctors"
-            className="text-slate-600 hover:text-emerald-600 font-medium"
+            className="text-slate-600 hover:text-emerald-600 font-medium transition"
           >
             Doctors
           </Link>
           <Link
             to="/pricing"
-            className="text-slate-600 hover:text-emerald-600 font-medium"
+            className="text-slate-600 hover:text-emerald-600 font-medium transition"
           >
             Pricing
           </Link>
@@ -117,13 +134,19 @@ const Navbar = () => {
           {isAuthenticated ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="flex items-center gap-2 hover:bg-emerald-50 px-2 py-1 rounded-xl">
-                  <Avatar className="w-9 h-9 border-2 border-emerald-200">
-                    <AvatarFallback className="bg-gradient-to-br from-emerald-400 to-teal-600 text-white text-sm font-bold">
-                      {user?.name ? getInitials(user.name) : "U"}
-                    </AvatarFallback>
-                  </Avatar>
-                  <span className="text-slate-400 text-sm">▼</span>
+                <button className="flex items-center gap-2 hover:bg-emerald-50 px-3 py-2 rounded-xl transition">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center text-white text-sm font-bold border-2 border-emerald-200 shadow-md">
+                    {user?.name ? getInitials(user.name) : "U"}
+                  </div>
+                  <div className="hidden lg:block text-left">
+                    <p className="text-sm font-semibold text-slate-800 leading-tight">
+                      {user?.name?.split(" ")[0] || "User"}
+                    </p>
+                    <p className="text-xs text-slate-500 leading-tight">
+                      {user?.role || "USER"}
+                    </p>
+                  </div>
+                  <span className="text-slate-400 text-xs">▼</span>
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
@@ -136,21 +159,36 @@ const Navbar = () => {
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => navigate("/dashboard")}>
-                  📊 Dashboard
+                <DropdownMenuItem
+                  onClick={() => navigate("/dashboard")}
+                  className="cursor-pointer"
+                >
+                  <span className="mr-2">📊</span> Dashboard
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate("/health-profile")}>
-                  🩺 Health Profile
+                <DropdownMenuItem
+                  onClick={() => navigate("/health-profile")}
+                  className="cursor-pointer"
+                >
+                  <span className="mr-2">🩺</span> Health Profile
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate("/settings")}>
-                  ⚙️ Settings
+                <DropdownMenuItem
+                  onClick={() => navigate("/profile")}
+                  className="cursor-pointer"
+                >
+                  <span className="mr-2">👤</span> My Profile
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => navigate("/settings")}
+                  className="cursor-pointer"
+                >
+                  <span className="mr-2">⚙️</span> Settings
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={() => logout()}
-                  className="text-red-600"
+                  className="text-red-600 focus:text-red-600 focus:bg-red-50 cursor-pointer"
                 >
-                  🚪 Logout
+                  <span className="mr-2">🚪</span> Logout
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -179,7 +217,7 @@ const Navbar = () => {
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden bg-white border-t border-emerald-100 px-4 py-4 space-y-2">
+        <div className="md:hidden bg-white border-t border-emerald-100 px-4 py-4 space-y-2 max-h-[calc(100vh-80px)] overflow-y-auto">
           <Link
             to="/"
             onClick={() => setMobileMenuOpen(false)}
@@ -197,8 +235,8 @@ const Navbar = () => {
                 📊 Dashboard
               </Link>
               <div className="py-2">
-                <p className="text-xs font-semibold text-slate-500 mb-2">
-                  AI TOOLS
+                <p className="text-xs font-semibold text-slate-500 mb-2 uppercase">
+                  🤖 AI Features
                 </p>
                 <div className="space-y-1 pl-2">
                   <button
@@ -206,7 +244,7 @@ const Navbar = () => {
                       navigate("/symptom-checker");
                       setMobileMenuOpen(false);
                     }}
-                    className="block py-1.5 text-slate-700 text-sm"
+                    className="block w-full text-left py-2 text-slate-700 text-sm hover:text-emerald-600"
                   >
                     🩺 Symptom Checker
                   </button>
@@ -215,7 +253,7 @@ const Navbar = () => {
                       navigate("/diet-plan");
                       setMobileMenuOpen(false);
                     }}
-                    className="block py-1.5 text-slate-700 text-sm"
+                    className="block w-full text-left py-2 text-slate-700 text-sm hover:text-emerald-600"
                   >
                     🥗 Diet Plan
                   </button>
@@ -224,7 +262,7 @@ const Navbar = () => {
                       navigate("/workout-plan");
                       setMobileMenuOpen(false);
                     }}
-                    className="block py-1.5 text-slate-700 text-sm"
+                    className="block w-full text-left py-2 text-slate-700 text-sm hover:text-emerald-600"
                   >
                     💪 Workout Plan
                   </button>
@@ -233,7 +271,7 @@ const Navbar = () => {
                       navigate("/chat");
                       setMobileMenuOpen(false);
                     }}
-                    className="block py-1.5 text-slate-700 text-sm"
+                    className="block w-full text-left py-2 text-slate-700 text-sm hover:text-emerald-600"
                   >
                     💬 AI Chat
                   </button>
@@ -242,7 +280,7 @@ const Navbar = () => {
                       navigate("/report-analyzer");
                       setMobileMenuOpen(false);
                     }}
-                    className="block py-1.5 text-slate-700 text-sm"
+                    className="block w-full text-left py-2 text-slate-700 text-sm hover:text-emerald-600"
                   >
                     📄 Report Analyzer
                   </button>
@@ -251,7 +289,7 @@ const Navbar = () => {
                       navigate("/health-tips");
                       setMobileMenuOpen(false);
                     }}
-                    className="block py-1.5 text-slate-700 text-sm"
+                    className="block w-full text-left py-2 text-slate-700 text-sm hover:text-emerald-600"
                   >
                     💡 Health Tips
                   </button>
@@ -281,26 +319,48 @@ const Navbar = () => {
             💰 Pricing
           </Link>
 
-          <div className="pt-2 border-t border-slate-200">
+          <div className="pt-3 border-t border-slate-200">
             {isAuthenticated ? (
               <>
                 <div className="py-2 flex items-center gap-3">
-                  <Avatar className="w-10 h-10 border-2 border-emerald-200">
-                    <AvatarFallback className="bg-gradient-to-br from-emerald-400 to-teal-600 text-white text-sm font-bold">
-                      {user?.name ? getInitials(user.name) : "U"}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <p className="font-semibold text-sm">{user?.name}</p>
-                    <p className="text-xs text-slate-500">{user?.email}</p>
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center text-white text-sm font-bold border-2 border-emerald-200">
+                    {user?.name ? getInitials(user.name) : "U"}
                   </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-sm truncate">
+                      {user?.name}
+                    </p>
+                    <p className="text-xs text-slate-500 truncate">
+                      {user?.email}
+                    </p>
+                  </div>
+                </div>
+                <div className="space-y-1 pt-2">
+                  <button
+                    onClick={() => {
+                      navigate("/profile");
+                      setMobileMenuOpen(false);
+                    }}
+                    className="block w-full text-left py-2 text-slate-700 text-sm hover:text-emerald-600"
+                  >
+                    👤 My Profile
+                  </button>
+                  <button
+                    onClick={() => {
+                      navigate("/settings");
+                      setMobileMenuOpen(false);
+                    }}
+                    className="block w-full text-left py-2 text-slate-700 text-sm hover:text-emerald-600"
+                  >
+                    ⚙️ Settings
+                  </button>
                 </div>
                 <Button
                   onClick={() => {
                     logout();
                     setMobileMenuOpen(false);
                   }}
-                  className="w-full bg-red-500 hover:bg-red-600 text-white mt-2"
+                  className="w-full bg-red-500 hover:bg-red-600 text-white mt-3"
                 >
                   🚪 Logout
                 </Button>
