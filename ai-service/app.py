@@ -20,6 +20,7 @@ app.register_blueprint(health_bp)  # ← NEW
 
 # Run app
 if __name__ == "__main__":
-    port = int(os.getenv("FLASK_PORT", 8000))
-    print(f"\n🤖 AI Service starting on http://localhost:{port}")
-    app.run(debug=True, port=port)
+    # Railway provides PORT env variable
+    port = int(os.getenv("PORT", os.getenv("FLASK_PORT", 8000)))
+    print(f"\n🤖 AI Service starting on port {port}")
+    app.run(debug=False, host="0.0.0.0", port=port)
