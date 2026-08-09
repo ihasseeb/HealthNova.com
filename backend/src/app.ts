@@ -2,26 +2,47 @@ import express, { Application, Request, Response } from "express";
 import cors from "cors";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
-
-import { errorHandler, notFoundHandler } from "./middlewares/error.middleware";
 import authRoutes from "./routes/auth.routes";
 import healthProfileRoutes from "./routes/healthProfile.routes";
 import aiRoutes from "./routes/ai.routes";
+import { errorHandler, notFoundHandler } from "./middlewares/error.middleware";
 
 const app: Application = express();
 
-// Middlewares
+// CORS - Allow multiple origins
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:5174",
+  "https://welcoming-serenity-production.up.railway.app",
+  process.env.FRONTEND_URL,
+].filter(Boolean);
+
+app.use(helmet());
+
 app.use(
   cors({
-    origin: [
-      "http://localhost:5173",
-      process.env.FRONTEND_URL || "", // ← Add production URL
-    ],
+    origin: function (origin, callback) {
+      // Allow requests with no origin (mobile apps, curl, Postman)
+      if (!origin) return callback(null, true);
+
+      if (
+        allowedOrigins.indexOf(origin) !== -1 ||
+        allowedOrigins.includes("*")
+      ) {
+        callback(null, true);
+      } else {
+        console.log("❌ CORS blocked:", origin);
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   }),
 );
-app.use(express.json({ limit: "40mb" })); // ← 40mb for images
-app.use(express.urlencoded({ extended: true, limit: "40mb" }));
+
+app.use(express.json({ limit: "20mb" }));
+app.use(express.urlencoded({ extended: true, limit: "20mb" }));
 app.use(cookieParser());
 
 // Test Routes
@@ -45,10 +66,10 @@ app.use("/api/auth", authRoutes);
 app.use("/api/health-profile", healthProfileRoutes);
 app.use("/api/ai", aiRoutes);
 
-// 404 Handler (must be after all routes)
+// 404 Handler
 app.use(notFoundHandler);
 
-// Global Error Handler (must be LAST)
+// Global Error Handler
 app.use(errorHandler);
 
 export default app;
