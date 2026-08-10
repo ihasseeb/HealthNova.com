@@ -1,6 +1,6 @@
 import dns from "dns";
 
-// Force IPv4 for entire application (BEFORE other imports)
+// Force IPv4 (Railway compatibility)
 dns.setDefaultResultOrder("ipv4first");
 
 import app from "./app";

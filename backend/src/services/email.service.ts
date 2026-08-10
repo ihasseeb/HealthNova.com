@@ -1,13 +1,9 @@
 import nodemailer from "nodemailer";
-import dns from "dns";
-
-// Force IPv4 for entire process
-dns.setDefaultResultOrder("ipv4first");
 
 const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
+  host: "mail.privateemail.com",
   port: 465,
-  secure: true,
+  secure: true, // true for 465, false for 587
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASSWORD,
@@ -15,9 +11,8 @@ const transporter = nodemailer.createTransport({
   tls: {
     rejectUnauthorized: false,
   },
-  // Force IPv4 connection
+  // Force IPv4 for Railway
   family: 4,
-  // Additional connection options
   connectionTimeout: 60000,
   greetingTimeout: 30000,
   socketTimeout: 60000,
@@ -28,7 +23,7 @@ transporter.verify((error) => {
   if (error) {
     console.log("❌ Email service error:", error.message);
   } else {
-    console.log("✅ Email service ready! (Gmail SMTP)");
+    console.log("✅ Email service ready! (Namecheap Private Email)");
   }
 });
 
