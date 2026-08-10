@@ -5,7 +5,7 @@ import api from "./api";
 // ================================
 
 export const symptomCheck = async (data: {
-  symptoms: string[];
+  symptoms: string;
   duration?: string;
 }) => {
   const response = await api.post("ai/symptom-check", data);

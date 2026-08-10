@@ -18,12 +18,9 @@ const SymptomChecker = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (symptoms.trim().length < 10) return;
+    if (symptoms.length < 10) return;
     checkSymptoms({
-      symptoms: symptoms
-        .split(",")
-        .map((symptom) => symptom.trim())
-        .filter(Boolean),
+      symptoms,
       duration,
     });
   };
