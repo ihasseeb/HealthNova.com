@@ -22,6 +22,7 @@ import ReportAnalyzer from "../pages/ai/ReportAnalyzer";
 import HealthTips from "../pages/ai/HealthTips";
 import Doctors from "../pages/Doctor";
 import Pricing from "../pages/Pricing";
+import GoogleSuccess from "../pages/auth/GoogleSuccess";
 
 const AppRoutes = () => {
   return (
@@ -31,6 +32,7 @@ const AppRoutes = () => {
         <Route path="/" element={<Home />} />
         <Route path="/doctors" element={<Doctors />} />
         <Route path="/pricing" element={<Pricing />} />
+        <Route path="/auth/google/success" element={<GoogleSuccess />} />
       </Route>
 
       {/* Auth Routes */}

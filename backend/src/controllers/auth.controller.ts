@@ -10,6 +10,10 @@ import {
   changePasswordService,
   refreshTokenService,
 } from "../services/auth.service";
+import {
+  getGoogleAuthUrl,
+  googleAuthCallbackService,
+} from "../services/googleAuth.service";
 import { successResponse } from "../utils/apiResponse";
 import { asyncHandler } from "../utils/asyncHandler";
 import { AppError } from "../utils/AppError";
@@ -125,5 +129,43 @@ export const refreshToken = asyncHandler(
     return successResponse(res, 200, "Token refreshed successfully", {
       token: accessToken,
     });
+  },
+);
+
+// GOOGLE AUTH - Redirect to Google
+export const googleAuth = asyncHandler(async (req: Request, res: Response) => {
+  const url = getGoogleAuthUrl();
+  res.redirect(url);
+});
+
+// GOOGLE AUTH CALLBACK
+export const googleAuthCallback = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { code } = req.query;
+
+    if (!code) {
+      return res.redirect(`${process.env.FRONTEND_URL}/login?error=no_code`);
+    }
+
+    try {
+      const { user, accessToken, refreshToken } =
+        await googleAuthCallbackService(code as string);
+
+      // Set refresh token cookie
+      res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "none",
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      });
+
+      // Redirect to frontend with token
+      const redirectUrl = `${process.env.FRONTEND_URL}/auth/google/success?token=${accessToken}&user=${encodeURIComponent(JSON.stringify(user))}`;
+      res.redirect(redirectUrl);
+    } catch (error: any) {
+      res.redirect(
+        `${process.env.FRONTEND_URL}/login?error=${encodeURIComponent(error.message)}`,
+      );
+    }
   },
 );

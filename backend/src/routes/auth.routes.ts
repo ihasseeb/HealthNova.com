@@ -8,6 +8,8 @@ import {
   forgotPassword,
   resetPassword,
   getCurrentUser,
+  googleAuth,
+  googleAuthCallback,
 } from "../controllers/auth.controller";
 import { validate } from "../middlewares/validate.middleware";
 import { authenticate } from "../middlewares/auth.middlewares";
@@ -31,6 +33,8 @@ router.post("/login", validate(loginSchema), login);
 router.post("/logout", logout);
 router.post("/forgot-password", validate(forgotPasswordSchema), forgotPassword);
 router.post("/reset-password", validate(resetPasswordSchema), resetPassword);
+router.get("/google", googleAuth);
+router.get("/google/callback", googleAuthCallback);
 
 // Protected Routes
 router.get("/me", authenticate, getCurrentUser);
