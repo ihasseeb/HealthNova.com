@@ -13,7 +13,7 @@ const app: Application = express();
 const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:5174",
-  "https://welcoming-serenity-production.up.railway.app",
+  "https://healthnovaai.up.railway.app",
   process.env.FRONTEND_URL,
 ].filter(Boolean);
 
