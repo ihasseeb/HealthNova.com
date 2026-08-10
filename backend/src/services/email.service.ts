@@ -1,31 +1,8 @@
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
 
-const transporter = nodemailer.createTransport({
-  host: "mail.privateemail.com",
-  port: 465,
-  secure: true, // true for 465, false for 587
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASSWORD,
-  },
-  tls: {
-    rejectUnauthorized: false,
-  },
-  // Force IPv4 for Railway
-  family: 4,
-  connectionTimeout: 60000,
-  greetingTimeout: 30000,
-  socketTimeout: 60000,
-} as any);
+const resend = new Resend(process.env.RESEND_API_KEY);
 
-// Verify connection on startup
-transporter.verify((error) => {
-  if (error) {
-    console.log("❌ Email service error:", error.message);
-  } else {
-    console.log("✅ Email service ready! (Namecheap Private Email)");
-  }
-});
+console.log("✅ Email service ready! (Resend)");
 
 export const sendEmail = async (options: {
   to: string;
@@ -35,15 +12,20 @@ export const sendEmail = async (options: {
   try {
     console.log(`📧 Sending email to: ${options.to}`);
 
-    const info = await transporter.sendMail({
-      from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
+    const { data, error } = await resend.emails.send({
+      from: process.env.EMAIL_FROM || "HealthNova AI <haseeb@ihaseeb.site>",
       to: options.to,
       subject: options.subject,
       html: options.html,
     });
 
-    console.log("✅ Email sent:", info.messageId);
-    return info;
+    if (error) {
+      console.error("❌ Email error:", JSON.stringify(error));
+      throw new Error(error.message);
+    }
+
+    console.log("✅ Email sent:", data?.id);
+    return data;
   } catch (error: any) {
     console.error("❌ Email sending failed:", error.message);
     throw error;
