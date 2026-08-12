@@ -1,0 +1,42 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "🚀 Debug Backend (Dev)",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "cwd": "${workspaceFolder}/backend",
+      "console": "integratedTerminal",
+      "skipFiles": ["<node_internals>/**"]
+    },
+    {
+      "name": "🎯 Debug Compiled Backend",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/backend/dist/server.js",
+      "cwd": "${workspaceFolder}/backend",
+      "outFiles": ["${workspaceFolder}/backend/dist/**/*.js"],
+      "sourceMaps": true,
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "🐍 Debug AI Service",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/ai-service/app.py",
+      "cwd": "${workspaceFolder}/ai-service",
+      "python": "${workspaceFolder}/ai-service/venv/Scripts/python.exe",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "⚡ Debug Frontend",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:5173",
+      "webRoot": "${workspaceFolder}/frontend/src",
+      "sourceMaps": true
+    }
+  ]
+}

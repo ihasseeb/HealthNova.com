@@ -1,0 +1,70 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "🚀 Debug Backend (Node.js)",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "cwd": "${workspaceFolder}/backend",
+      "console": "integratedTerminal",
+      "skipFiles": ["<node_internals>/**"],
+      "env": {
+        "NODE_ENV": "development"
+      }
+    },
+    {
+      "name": "🐍 Debug AI Service (Python Flask)",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/ai-service/app.py",
+      "cwd": "${workspaceFolder}/ai-service",
+      "console": "integratedTerminal",
+      "python": "${workspaceFolder}/ai-service/venv/Scripts/python.exe",
+      "env": {
+        "FLASK_ENV": "development",
+        "FLASK_DEBUG": "1"
+      },
+      "justMyCode": false
+    },
+    {
+      "name": "⚡ Debug Frontend (Vite)",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "cwd": "${workspaceFolder}/frontend",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "🌐 Debug Frontend Browser (Chrome)",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:5173",
+      "webRoot": "${workspaceFolder}/frontend/src",
+      "sourceMaps": true
+    },
+    {
+      "name": "🧪 Test Backend Only",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/backend/src/server.ts",
+      "cwd": "${workspaceFolder}/backend",
+      "runtimeArgs": ["-r", "tsx/cjs"],
+      "console": "integratedTerminal",
+      "skipFiles": ["<node_internals>/**"]
+    }
+  ],
+  "compounds": [
+    {
+      "name": "🔥 Debug Full Stack (All Services)",
+      "configurations": [
+        "🚀 Debug Backend (Node.js)",
+        "🐍 Debug AI Service (Python Flask)",
+        "⚡ Debug Frontend (Vite)"
+      ],
+      "stopAll": true
+    }
+  ]
+}
