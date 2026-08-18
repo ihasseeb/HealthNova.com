@@ -13,7 +13,7 @@ import prescriptionRoutes from "./routes/prescription.routes";
 import chatRoutes from "./routes/chat.routes";
 import paymentRoutes from "./routes/payment.routes";
 import notificationRoutes from "./routes/notification.routes";
-import medicalRecordRoutes from "./routes/medicalRecord.Routes";
+import medicalRecordRoutes from "./routes/medicalReports.routes";
 const app: Application = express();
 
 // CORS - Allow multiple origins
