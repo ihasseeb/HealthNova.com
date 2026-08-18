@@ -6,7 +6,7 @@ import {
   deleteHealthProfile,
 } from "../controllers/healthProfile.controller";
 import { validate } from "../middlewares/validate.middleware";
-import { authenticate } from "../middlewares/auth.middlewares";
+import { authenticate } from "../middlewares/auth.middleware";
 import {
   createHealthProfileSchema,
   updateHealthProfileSchema,
