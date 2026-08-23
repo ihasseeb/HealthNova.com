@@ -1,7 +1,9 @@
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
 import { useAuthStore } from "../store/authStore";
 import { useLogout } from "../hooks/useAuth";
+import NotificationBell from "./NotificationBell";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,7 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import { useState } from "react";
+import { Avatar, AvatarFallback } from "./ui/avatar";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -32,7 +34,7 @@ const Navbar = () => {
   return (
     <nav className="bg-white/80 backdrop-blur-md border-b border-emerald-100 sticky top-0 z-50">
       <div className="flex items-center justify-between px-4 md:px-8 py-4">
-        {/* Logo - LEFT */}
+        {/* 1. Logo - LEFT */}
         <Link to="/" className="flex items-center gap-2 flex-shrink-0">
           <div className="w-9 h-9 md:w-10 md:h-10 bg-gradient-to-br from-emerald-400 to-teal-600 rounded-xl flex items-center justify-center shadow-lg text-lg">
             💚
@@ -47,15 +49,16 @@ const Navbar = () => {
           </div>
         </Link>
 
-        {/* RIGHT SIDE - Menu + User (Grouped Together) */}
+        {/* 2. RIGHT SIDE - Navigation Links + Controls Grouped Together */}
         <div className="hidden md:flex items-center gap-6">
-          {/* Menu Links */}
+          {/* Navigation Links */}
           <Link
             to="/"
             className="text-slate-600 hover:text-emerald-600 font-medium transition"
           >
             Home
           </Link>
+
           {isAuthenticated && (
             <>
               <Link
@@ -64,6 +67,8 @@ const Navbar = () => {
               >
                 Dashboard
               </Link>
+
+              {/* AI Features Dropdown */}
               <DropdownMenu modal={false}>
                 <DropdownMenuTrigger asChild>
                   <button className="text-slate-600 hover:text-emerald-600 font-medium transition flex items-center gap-1.5 outline-none">
@@ -115,6 +120,7 @@ const Navbar = () => {
               </DropdownMenu>
             </>
           )}
+
           <Link
             to="/doctors"
             className="text-slate-600 hover:text-emerald-600 font-medium transition"
@@ -128,69 +134,77 @@ const Navbar = () => {
             Pricing
           </Link>
 
-          {/* User Avatar - Right After Menu */}
-          <div className="border-l border-slate-200 pl-6 ml-2">
+          {/* User Controls & Bell Icon */}
+          <div className="border-l border-slate-200 pl-6 flex items-center gap-3">
             {isAuthenticated ? (
-              <DropdownMenu modal={false}>
-                <DropdownMenuTrigger asChild>
-                  <button className="flex items-center gap-2 hover:bg-emerald-50 px-3 py-2 rounded-xl transition outline-none">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center text-white text-sm font-bold border-2 border-emerald-200 shadow-md flex-shrink-0">
-                      {user?.name ? getInitials(user.name) : "U"}
-                    </div>
-                    <div className="hidden lg:block text-left">
-                      <p className="text-sm font-semibold text-slate-800 leading-tight">
-                        {user?.name?.split(" ")[0] || "User"}
-                      </p>
-                      <p className="text-xs text-slate-500 leading-tight">
-                        {user?.role || "USER"}
-                      </p>
-                    </div>
-                    <span className="text-slate-400 text-xs">▼</span>
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56">
-                  <DropdownMenuLabel>
-                    <div>
-                      <p className="font-semibold">{user?.name}</p>
-                      <p className="text-xs text-slate-500 font-normal">
-                        {user?.email}
-                      </p>
-                    </div>
-                  </DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem
-                    onClick={() => navigate("/dashboard")}
-                    className="cursor-pointer"
-                  >
-                    <span className="mr-2">📊</span> Dashboard
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => navigate("/health-profile")}
-                    className="cursor-pointer"
-                  >
-                    <span className="mr-2">🩺</span> Health Profile
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => navigate("/profile")}
-                    className="cursor-pointer"
-                  >
-                    <span className="mr-2">👤</span> My Profile
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => navigate("/settings")}
-                    className="cursor-pointer"
-                  >
-                    <span className="mr-2">⚙️</span> Settings
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem
-                    onClick={() => logout()}
-                    className="text-red-600 focus:text-red-600 focus:bg-red-50 cursor-pointer"
-                  >
-                    <span className="mr-2">🚪</span> Logout
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <>
+                {/* Real-time Notification Bell */}
+                <NotificationBell />
+
+                {/* User Avatar Dropdown */}
+                <DropdownMenu modal={false}>
+                  <DropdownMenuTrigger asChild>
+                    <button className="flex items-center gap-2 hover:bg-emerald-50 px-3 py-2 rounded-xl transition outline-none">
+                      <Avatar className="w-9 h-9 border-2 border-emerald-200">
+                        <AvatarFallback className="bg-gradient-to-br from-emerald-400 to-teal-600 text-white text-sm font-bold">
+                          {user?.name ? getInitials(user.name) : "U"}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="hidden lg:block text-left">
+                        <p className="text-sm font-semibold text-slate-800 leading-tight">
+                          {user?.name?.split(" ")[0] || "User"}
+                        </p>
+                        <p className="text-xs text-slate-500 leading-tight">
+                          {user?.role || "USER"}
+                        </p>
+                      </div>
+                      <span className="text-slate-400 text-xs">▼</span>
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56">
+                    <DropdownMenuLabel>
+                      <div>
+                        <p className="font-semibold">{user?.name}</p>
+                        <p className="text-xs text-slate-500 font-normal">
+                          {user?.email}
+                        </p>
+                      </div>
+                    </DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      onClick={() => navigate("/dashboard")}
+                      className="cursor-pointer"
+                    >
+                      <span className="mr-2">📊</span> Dashboard
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => navigate("/health-profile")}
+                      className="cursor-pointer"
+                    >
+                      <span className="mr-2">🩺</span> Health Profile
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => navigate("/profile")}
+                      className="cursor-pointer"
+                    >
+                      <span className="mr-2">👤</span> My Profile
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => navigate("/settings")}
+                      className="cursor-pointer"
+                    >
+                      <span className="mr-2">⚙️</span> Settings
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      onClick={() => logout()}
+                      className="text-red-600 focus:text-red-600 focus:bg-red-50 cursor-pointer"
+                    >
+                      <span className="mr-2">🚪</span> Logout
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </>
             ) : (
               <div className="flex items-center gap-3">
                 <Link to="/login">
@@ -206,16 +220,19 @@ const Navbar = () => {
           </div>
         </div>
 
-        {/* Mobile Menu Button */}
-        <button
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="md:hidden w-10 h-10 flex items-center justify-center text-2xl"
-        >
-          {mobileMenuOpen ? "✕" : "☰"}
-        </button>
+        {/* 3. MOBILE CONTROLS (Notification Bell + Hamburger Button) */}
+        <div className="flex items-center gap-2 md:hidden">
+          {isAuthenticated && <NotificationBell />}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="w-10 h-10 flex items-center justify-center text-2xl text-slate-700"
+          >
+            {mobileMenuOpen ? "✕" : "☰"}
+          </button>
+        </div>
       </div>
 
-      {/* Mobile Menu */}
+      {/* 4. MOBILE MENU DRAWER */}
       {mobileMenuOpen && (
         <div className="md:hidden bg-white border-t border-emerald-100 px-4 py-4 space-y-2 max-h-[calc(100vh-80px)] overflow-y-auto">
           <Link
@@ -225,6 +242,7 @@ const Navbar = () => {
           >
             🏠 Home
           </Link>
+
           {isAuthenticated && (
             <>
               <Link
@@ -234,6 +252,8 @@ const Navbar = () => {
               >
                 📊 Dashboard
               </Link>
+
+              {/* Mobile AI Tools Section */}
               <div className="py-2">
                 <p className="text-xs font-semibold text-slate-500 mb-2 uppercase">
                   🤖 AI Features
@@ -295,6 +315,7 @@ const Navbar = () => {
                   </button>
                 </div>
               </div>
+
               <Link
                 to="/health-profile"
                 onClick={() => setMobileMenuOpen(false)}
@@ -304,6 +325,7 @@ const Navbar = () => {
               </Link>
             </>
           )}
+
           <Link
             to="/doctors"
             onClick={() => setMobileMenuOpen(false)}
@@ -311,6 +333,7 @@ const Navbar = () => {
           >
             👨‍⚕️ Doctors
           </Link>
+
           <Link
             to="/pricing"
             onClick={() => setMobileMenuOpen(false)}
@@ -319,13 +342,16 @@ const Navbar = () => {
             💰 Pricing
           </Link>
 
+          {/* Mobile User Profile & Logout */}
           <div className="pt-3 border-t border-slate-200">
             {isAuthenticated ? (
               <>
                 <div className="py-2 flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center text-white text-sm font-bold border-2 border-emerald-200">
-                    {user?.name ? getInitials(user.name) : "U"}
-                  </div>
+                  <Avatar className="w-10 h-10 border-2 border-emerald-200">
+                    <AvatarFallback className="bg-gradient-to-br from-emerald-400 to-teal-600 text-white text-sm font-bold">
+                      {user?.name ? getInitials(user.name) : "U"}
+                    </AvatarFallback>
+                  </Avatar>
                   <div className="flex-1 min-w-0">
                     <p className="font-semibold text-sm truncate">
                       {user?.name}
@@ -335,6 +361,7 @@ const Navbar = () => {
                     </p>
                   </div>
                 </div>
+
                 <div className="space-y-1 pt-2">
                   <button
                     onClick={() => {
@@ -355,6 +382,7 @@ const Navbar = () => {
                     ⚙️ Settings
                   </button>
                 </div>
+
                 <Button
                   onClick={() => {
                     logout();
