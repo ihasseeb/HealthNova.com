@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
 import { useAuthStore } from "../store/authStore";
 import { useLogout } from "../hooks/useAuth";
-import NotificationBell from "./NotificationBell";
+import NotificationBell from "../pages/NotificationBell";
 import {
   DropdownMenu,
   DropdownMenuContent,
