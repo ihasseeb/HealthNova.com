@@ -31,6 +31,9 @@ const Navbar = () => {
       .slice(0, 2);
   };
 
+  const isDoctor = user?.role === "DOCTOR";
+  const isAdmin = user?.role === "ADMIN";
+
   return (
     <nav className="bg-white/80 backdrop-blur-md border-b border-emerald-100 sticky top-0 z-50">
       <div className="flex items-center justify-between px-4 md:px-8 py-4">
@@ -49,9 +52,8 @@ const Navbar = () => {
           </div>
         </Link>
 
-        {/* 2. RIGHT SIDE - Navigation Links + Controls Grouped Together */}
+        {/* 2. Desktop Navigation Menu */}
         <div className="hidden md:flex items-center gap-6">
-          {/* Navigation Links */}
           <Link
             to="/"
             className="text-slate-600 hover:text-emerald-600 font-medium transition"
@@ -61,24 +63,53 @@ const Navbar = () => {
 
           {isAuthenticated && (
             <>
+              {/* Dashboard Link based on Role */}
               <Link
-                to="/dashboard"
+                to={
+                  isAdmin
+                    ? "/admin/dashboard"
+                    : isDoctor
+                      ? "/doctor/dashboard"
+                      : "/dashboard"
+                }
                 className="text-slate-600 hover:text-emerald-600 font-medium transition"
               >
-                Dashboard
+                {isAdmin
+                  ? "Admin Portal"
+                  : isDoctor
+                    ? "Doctor Portal"
+                    : "Dashboard"}
               </Link>
+
+              {/* Patient Only Quick Links */}
+              {!isDoctor && !isAdmin && (
+                <>
+                  <Link
+                    to="/appointments"
+                    className="text-slate-600 hover:text-emerald-600 font-medium transition"
+                  >
+                    My Appointments
+                  </Link>
+                  <Link
+                    to="/prescriptions"
+                    className="text-slate-600 hover:text-emerald-600 font-medium transition"
+                  >
+                    Prescriptions
+                  </Link>
+                </>
+              )}
 
               {/* AI Features Dropdown */}
               <DropdownMenu modal={false}>
                 <DropdownMenuTrigger asChild>
                   <button className="text-slate-600 hover:text-emerald-600 font-medium transition flex items-center gap-1.5 outline-none">
                     <span className="text-lg">🤖</span>
-                    <span>AI Features</span>
+                    <span>AI Tools</span>
                     <span className="text-xs">▼</span>
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="start" className="w-56">
-                  <DropdownMenuLabel>AI Tools</DropdownMenuLabel>
+                  <DropdownMenuLabel>AI Health Features</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
                     onClick={() => navigate("/symptom-checker")}
@@ -138,10 +169,8 @@ const Navbar = () => {
           <div className="border-l border-slate-200 pl-6 flex items-center gap-3">
             {isAuthenticated ? (
               <>
-                {/* Real-time Notification Bell */}
                 <NotificationBell />
 
-                {/* User Avatar Dropdown */}
                 <DropdownMenu modal={false}>
                   <DropdownMenuTrigger asChild>
                     <button className="flex items-center gap-2 hover:bg-emerald-50 px-3 py-2 rounded-xl transition outline-none">
@@ -171,30 +200,99 @@ const Navbar = () => {
                       </div>
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem
-                      onClick={() => navigate("/dashboard")}
-                      className="cursor-pointer"
-                    >
-                      <span className="mr-2">📊</span> Dashboard
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => navigate("/health-profile")}
-                      className="cursor-pointer"
-                    >
-                      <span className="mr-2">🩺</span> Health Profile
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => navigate("/profile")}
-                      className="cursor-pointer"
-                    >
-                      <span className="mr-2">👤</span> My Profile
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => navigate("/settings")}
-                      className="cursor-pointer"
-                    >
-                      <span className="mr-2">⚙️</span> Settings
-                    </DropdownMenuItem>
+
+                    {/* Role Specific Links */}
+                    {isDoctor ? (
+                      <>
+                        <DropdownMenuItem
+                          onClick={() => navigate("/doctor/dashboard")}
+                          className="cursor-pointer"
+                        >
+                          <span className="mr-2">👨‍⚕️</span> Doctor Portal
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => navigate("/doctor/appointments")}
+                          className="cursor-pointer"
+                        >
+                          <span className="mr-2">📅</span> Patient Visits
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() =>
+                            navigate("/doctor/create-prescription")
+                          }
+                          className="cursor-pointer"
+                        >
+                          <span className="mr-2">📋</span> Issue Prescription
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => navigate("/doctor-chat")}
+                          className="cursor-pointer"
+                        >
+                          <span className="mr-2">💬</span> Patient Messages
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => navigate("/doctor/profile-setup")}
+                          className="cursor-pointer"
+                        >
+                          <span className="mr-2">⚙️</span> Credentials Setup
+                        </DropdownMenuItem>
+                      </>
+                    ) : isAdmin ? (
+                      <>
+                        <DropdownMenuItem
+                          onClick={() => navigate("/admin/dashboard")}
+                          className="cursor-pointer"
+                        >
+                          <span className="mr-2">🛡️</span> Admin Dashboard
+                        </DropdownMenuItem>
+                      </>
+                    ) : (
+                      <>
+                        <DropdownMenuItem
+                          onClick={() => navigate("/dashboard")}
+                          className="cursor-pointer"
+                        >
+                          <span className="mr-2">📊</span> Dashboard
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => navigate("/health-profile")}
+                          className="cursor-pointer"
+                        >
+                          <span className="mr-2">🩺</span> Health Profile
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => navigate("/appointments")}
+                          className="cursor-pointer"
+                        >
+                          <span className="mr-2">📅</span> My Appointments
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => navigate("/prescriptions")}
+                          className="cursor-pointer"
+                        >
+                          <span className="mr-2">💊</span> My Prescriptions
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => navigate("/medical-records")}
+                          className="cursor-pointer"
+                        >
+                          <span className="mr-2">📁</span> Medical Vault
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => navigate("/payment/history")}
+                          className="cursor-pointer"
+                        >
+                          <span className="mr-2">💳</span> Billing & Receipts
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => navigate("/profile")}
+                          className="cursor-pointer"
+                        >
+                          <span className="mr-2">👤</span> Account Settings
+                        </DropdownMenuItem>
+                      </>
+                    )}
+
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
                       onClick={() => logout()}
@@ -220,7 +318,7 @@ const Navbar = () => {
           </div>
         </div>
 
-        {/* 3. MOBILE CONTROLS (Notification Bell + Hamburger Button) */}
+        {/* 3. Mobile Navigation Controls */}
         <div className="flex items-center gap-2 md:hidden">
           {isAuthenticated && <NotificationBell />}
           <button
@@ -232,7 +330,7 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* 4. MOBILE MENU DRAWER */}
+      {/* 4. Mobile Drawer */}
       {mobileMenuOpen && (
         <div className="md:hidden bg-white border-t border-emerald-100 px-4 py-4 space-y-2 max-h-[calc(100vh-80px)] overflow-y-auto">
           <Link
@@ -246,17 +344,43 @@ const Navbar = () => {
           {isAuthenticated && (
             <>
               <Link
-                to="/dashboard"
+                to={isDoctor ? "/doctor/dashboard" : "/dashboard"}
                 onClick={() => setMobileMenuOpen(false)}
                 className="block py-2 text-slate-700 font-medium"
               >
-                📊 Dashboard
+                📊 {isDoctor ? "Doctor Portal" : "Dashboard"}
               </Link>
 
-              {/* Mobile AI Tools Section */}
+              {!isDoctor && !isAdmin && (
+                <>
+                  <Link
+                    to="/appointments"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="block py-2 text-slate-700 font-medium"
+                  >
+                    📅 My Appointments
+                  </Link>
+                  <Link
+                    to="/prescriptions"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="block py-2 text-slate-700 font-medium"
+                  >
+                    💊 My Prescriptions
+                  </Link>
+                  <Link
+                    to="/medical-records"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="block py-2 text-slate-700 font-medium"
+                  >
+                    📁 Medical Records
+                  </Link>
+                </>
+              )}
+
+              {/* AI Features Mobile */}
               <div className="py-2">
                 <p className="text-xs font-semibold text-slate-500 mb-2 uppercase">
-                  🤖 AI Features
+                  🤖 AI Tools
                 </p>
                 <div className="space-y-1 pl-2">
                   <button
@@ -264,7 +388,7 @@ const Navbar = () => {
                       navigate("/symptom-checker");
                       setMobileMenuOpen(false);
                     }}
-                    className="block w-full text-left py-2 text-slate-700 text-sm hover:text-emerald-600"
+                    className="block w-full text-left py-2 text-slate-700 text-sm"
                   >
                     🩺 Symptom Checker
                   </button>
@@ -273,7 +397,7 @@ const Navbar = () => {
                       navigate("/diet-plan");
                       setMobileMenuOpen(false);
                     }}
-                    className="block w-full text-left py-2 text-slate-700 text-sm hover:text-emerald-600"
+                    className="block w-full text-left py-2 text-slate-700 text-sm"
                   >
                     🥗 Diet Plan
                   </button>
@@ -282,7 +406,7 @@ const Navbar = () => {
                       navigate("/workout-plan");
                       setMobileMenuOpen(false);
                     }}
-                    className="block w-full text-left py-2 text-slate-700 text-sm hover:text-emerald-600"
+                    className="block w-full text-left py-2 text-slate-700 text-sm"
                   >
                     💪 Workout Plan
                   </button>
@@ -291,7 +415,7 @@ const Navbar = () => {
                       navigate("/chat");
                       setMobileMenuOpen(false);
                     }}
-                    className="block w-full text-left py-2 text-slate-700 text-sm hover:text-emerald-600"
+                    className="block w-full text-left py-2 text-slate-700 text-sm"
                   >
                     💬 AI Chat
                   </button>
@@ -300,29 +424,12 @@ const Navbar = () => {
                       navigate("/report-analyzer");
                       setMobileMenuOpen(false);
                     }}
-                    className="block w-full text-left py-2 text-slate-700 text-sm hover:text-emerald-600"
+                    className="block w-full text-left py-2 text-slate-700 text-sm"
                   >
                     📄 Report Analyzer
                   </button>
-                  <button
-                    onClick={() => {
-                      navigate("/health-tips");
-                      setMobileMenuOpen(false);
-                    }}
-                    className="block w-full text-left py-2 text-slate-700 text-sm hover:text-emerald-600"
-                  >
-                    💡 Health Tips
-                  </button>
                 </div>
               </div>
-
-              <Link
-                to="/health-profile"
-                onClick={() => setMobileMenuOpen(false)}
-                className="block py-2 text-slate-700 font-medium"
-              >
-                🩺 Health Profile
-              </Link>
             </>
           )}
 
@@ -334,65 +441,17 @@ const Navbar = () => {
             👨‍⚕️ Doctors
           </Link>
 
-          <Link
-            to="/pricing"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block py-2 text-slate-700 font-medium"
-          >
-            💰 Pricing
-          </Link>
-
-          {/* Mobile User Profile & Logout */}
           <div className="pt-3 border-t border-slate-200">
             {isAuthenticated ? (
-              <>
-                <div className="py-2 flex items-center gap-3">
-                  <Avatar className="w-10 h-10 border-2 border-emerald-200">
-                    <AvatarFallback className="bg-gradient-to-br from-emerald-400 to-teal-600 text-white text-sm font-bold">
-                      {user?.name ? getInitials(user.name) : "U"}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-sm truncate">
-                      {user?.name}
-                    </p>
-                    <p className="text-xs text-slate-500 truncate">
-                      {user?.email}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="space-y-1 pt-2">
-                  <button
-                    onClick={() => {
-                      navigate("/profile");
-                      setMobileMenuOpen(false);
-                    }}
-                    className="block w-full text-left py-2 text-slate-700 text-sm hover:text-emerald-600"
-                  >
-                    👤 My Profile
-                  </button>
-                  <button
-                    onClick={() => {
-                      navigate("/settings");
-                      setMobileMenuOpen(false);
-                    }}
-                    className="block w-full text-left py-2 text-slate-700 text-sm hover:text-emerald-600"
-                  >
-                    ⚙️ Settings
-                  </button>
-                </div>
-
-                <Button
-                  onClick={() => {
-                    logout();
-                    setMobileMenuOpen(false);
-                  }}
-                  className="w-full bg-red-500 hover:bg-red-600 text-white mt-3"
-                >
-                  🚪 Logout
-                </Button>
-              </>
+              <Button
+                onClick={() => {
+                  logout();
+                  setMobileMenuOpen(false);
+                }}
+                className="w-full bg-red-500 hover:bg-red-600 text-white mt-2"
+              >
+                🚪 Logout
+              </Button>
             ) : (
               <div className="space-y-2 pt-2">
                 <Link
@@ -409,9 +468,7 @@ const Navbar = () => {
                   onClick={() => setMobileMenuOpen(false)}
                   className="block"
                 >
-                  <Button className="w-full bg-gradient-to-r from-emerald-500 to-teal-600">
-                    Get Started
-                  </Button>
+                  <Button className="w-full bg-emerald-600">Get Started</Button>
                 </Link>
               </div>
             )}

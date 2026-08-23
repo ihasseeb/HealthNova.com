@@ -35,6 +35,7 @@ import PaymentSuccess from "../pages/patient/PaymentSuccess";
 import PaymentCancel from "../pages/patient/PaymentCancel";
 import AdminDashboard from "../pages/admin/AdminDashboard";
 import NotificationsPage from "../pages/NotificationBell";
+import MedicalRecordsPage from "../pages/patient/MedicalRecordsPage";
 const AppRoutes = () => {
   return (
     <Routes>
@@ -66,6 +67,8 @@ const AppRoutes = () => {
           <Route path="/payment/cancel" element={<PaymentCancel />} />
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="/notifications" element={<NotificationsPage />} />
+          <Route path="/medical-records" element={<MedicalRecordsPage />} />
+
           {/* General User Routes */}
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/profile" element={<Profile />} />
