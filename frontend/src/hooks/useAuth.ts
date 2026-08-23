@@ -70,25 +70,29 @@ export const useLogin = () => {
 
   return useMutation({
     mutationFn: loginUser,
+    onMutate: () => {
+      toast.loading("Logging in...", { id: "login" });
+    },
     onSuccess: (response) => {
       const { user, token } = response.data;
       login(user, token);
-      toast.success(`Welcome back, ${user.name}! 👋`);
-      navigate("/dashboard");
+      toast.success(`Welcome back, ${user.name}! 👋`, { id: "login" });
+
+      // 🎯 Role-Based Smart Redirect
+      if (user.role === "ADMIN") {
+        navigate("/admin/dashboard");
+      } else if (user.role === "DOCTOR") {
+        navigate("/doctor/dashboard");
+      } else {
+        navigate("/dashboard");
+      }
     },
     onError: (error: any) => {
       const message = error.response?.data?.message || "Login failed";
-
-      // If not verified, redirect to OTP page
-      if (message.toLowerCase().includes("verify")) {
-        toast.error(message);
-        return;
-      }
-      toast.error(message);
+      toast.error(message, { id: "login" });
     },
   });
 };
-
 // LOGOUT Hook
 export const useLogout = () => {
   const navigate = useNavigate();

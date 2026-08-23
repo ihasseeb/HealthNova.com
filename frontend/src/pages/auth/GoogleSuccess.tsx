@@ -17,7 +17,15 @@ const GoogleSuccess = () => {
         const user = JSON.parse(decodeURIComponent(userStr));
         login(user, token);
         toast.success(`Welcome, ${user.name}! 👋`);
-        navigate("/dashboard");
+
+        // 🎯 Role-based redirect for Google Login
+        if (user.role === "ADMIN") {
+          navigate("/admin/dashboard");
+        } else if (user.role === "DOCTOR") {
+          navigate("/doctor/dashboard");
+        } else {
+          navigate("/dashboard");
+        }
       } catch (error) {
         toast.error("Login failed");
         navigate("/login");
