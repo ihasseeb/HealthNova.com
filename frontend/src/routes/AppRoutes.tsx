@@ -34,7 +34,7 @@ import PaymentHistory from "../pages/patient/PaymentHistory";
 import PaymentSuccess from "../pages/patient/PaymentSuccess";
 import PaymentCancel from "../pages/patient/PaymentCancel";
 import AdminDashboard from "../pages/admin/AdminDashboard";
-import NotificationsPage from "../pages/patient/NotificationPage";
+import NotificationsPage from "../pages/NotificationBell";
 const AppRoutes = () => {
   return (
     <Routes>

@@ -90,6 +90,7 @@ const DoctorPatientChat = () => {
       }
       socket.off("new_message", handleNewMessage);
       socket.off("user_typing", handleUserTyping);
+      disconnectSocket();
     };
   }, [token, selectedRoomId, queryClient, user?.id]);
 

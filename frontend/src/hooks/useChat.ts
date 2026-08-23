@@ -46,7 +46,7 @@ export const useSendMessage = () => {
 
   return useMutation({
     mutationFn: (data: SendMessageFormData) => sendChatMessage(data),
-    onSuccess: (res, variables) => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
         queryKey: ["chatMessages", variables.roomId],
       });
