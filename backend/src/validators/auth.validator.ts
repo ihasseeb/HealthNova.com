@@ -13,6 +13,7 @@ export const signupSchema = z.object({
     .regex(/[A-Z]/, "Password must contain uppercase letter")
     .regex(/[a-z]/, "Password must contain lowercase letter")
     .regex(/[0-9]/, "Password must contain a number"),
+  role: z.enum(["PATIENT", "DOCTOR"]).optional().default("PATIENT"),
 });
 
 // Login Schema

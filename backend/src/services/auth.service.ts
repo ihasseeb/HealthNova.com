@@ -48,6 +48,7 @@ export const signupService = async (data: SignupInput) => {
       name: data.name,
       email: data.email,
       password: hashedPassword,
+      role: data.role || "PATIENT",
       otp,
       otpExpiry,
     },

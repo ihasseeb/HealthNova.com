@@ -6,17 +6,42 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signupSchema, type SignupFormData } from "../../schemas/authSchemas";
 import { useSignup } from "../../hooks/useAuth";
+import { motion } from "framer-motion";
+import {
+  Mail,
+  Lock,
+  User,
+  ShieldCheck,
+  UserPlus,
+  Stethoscope,
+} from "lucide-react";
+import { useState } from "react";
 
 const Signup = () => {
   const { mutate, isPending } = useSignup();
+  const [role, setRole] = useState<"PATIENT" | "DOCTOR">("PATIENT");
 
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<SignupFormData>({
     resolver: zodResolver(signupSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+      role: "PATIENT",
+    },
   });
+
+  // Handle Role Change
+  const handleRoleChange = (selectedRole: "PATIENT" | "DOCTOR") => {
+    setRole(selectedRole);
+    setValue("role", selectedRole);
+  };
 
   const onSubmit = (data: SignupFormData) => {
     mutate(data);
@@ -24,19 +49,59 @@ const Signup = () => {
 
   return (
     <div className="space-y-6">
-      {/* Icon */}
+      {/* Icon based on Role */}
       <div className="flex justify-center">
-        <div className="w-16 h-16 bg-gradient-to-br from-emerald-400 via-teal-500 to-cyan-600 rounded-2xl flex items-center justify-center shadow-xl shadow-emerald-200 rotate-3 hover:rotate-6 transition text-3xl">
-          🚀
-        </div>
+        <motion.div
+          key={role}
+          initial={{ scale: 0, rotate: -180 }}
+          animate={{ scale: 1, rotate: 0 }}
+          transition={{ duration: 0.5, type: "spring" }}
+          className={`w-16 h-16 rounded-2xl flex items-center justify-center shadow-xl rotate-3 hover:rotate-6 transition text-white ${
+            role === "DOCTOR"
+              ? "bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-600 shadow-blue-200"
+              : "bg-gradient-to-br from-emerald-400 via-teal-500 to-cyan-600 shadow-emerald-200"
+          }`}
+        >
+          {role === "DOCTOR" ? (
+            <Stethoscope className="w-8 h-8" />
+          ) : (
+            <UserPlus className="w-8 h-8" />
+          )}
+        </motion.div>
       </div>
 
       {/* Header */}
       <div className="text-center space-y-2">
         <h1 className="text-3xl font-bold text-slate-800">Create Account</h1>
         <p className="text-slate-500 text-sm">
-          Join HealthNova and take control of your health.
+          Join HealthNova as a {role === "PATIENT" ? "Patient" : "Doctor"}
         </p>
+      </div>
+
+      {/* Role Decider Tabs */}
+      <div className="flex bg-slate-100 p-1 rounded-xl">
+        <button
+          type="button"
+          onClick={() => handleRoleChange("PATIENT")}
+          className={`flex-1 py-2 text-sm font-bold rounded-lg transition-all ${
+            role === "PATIENT"
+              ? "bg-white text-emerald-600 shadow-sm"
+              : "text-slate-500 hover:text-slate-700"
+          }`}
+        >
+          👨‍👩‍👧‍👦 I'm a Patient
+        </button>
+        <button
+          type="button"
+          onClick={() => handleRoleChange("DOCTOR")}
+          className={`flex-1 py-2 text-sm font-bold rounded-lg transition-all ${
+            role === "DOCTOR"
+              ? "bg-white text-blue-600 shadow-sm"
+              : "text-slate-500 hover:text-slate-700"
+          }`}
+        >
+          👨‍⚕️ I'm a Doctor
+        </button>
       </div>
 
       {/* Form */}
@@ -44,15 +109,13 @@ const Signup = () => {
         {/* Full Name */}
         <div className="space-y-2">
           <Label htmlFor="name" className="text-slate-700 font-medium">
-            Full Name
+            Full Name {role === "DOCTOR" && "(with Title)"}
           </Label>
           <div className="relative">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-emerald-500">
-              👤
-            </span>
+            <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <Input
               id="name"
-              placeholder="John Doe"
+              placeholder={role === "DOCTOR" ? "Dr. John Doe" : "John Doe"}
               className="pl-10 h-11 border-slate-200 focus-visible:ring-emerald-500"
               {...register("name")}
             />
@@ -68,9 +131,7 @@ const Signup = () => {
             Email Address
           </Label>
           <div className="relative">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-emerald-500">
-              📧
-            </span>
+            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <Input
               id="email"
               type="email"
@@ -91,9 +152,7 @@ const Signup = () => {
               Password
             </Label>
             <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-emerald-500">
-                🔒
-              </span>
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
               <Input
                 id="password"
                 type="password"
@@ -117,9 +176,7 @@ const Signup = () => {
               Confirm
             </Label>
             <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-emerald-500">
-                ✅
-              </span>
+              <ShieldCheck className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
               <Input
                 id="confirmPassword"
                 type="password"
@@ -140,21 +197,17 @@ const Signup = () => {
         <Button
           type="submit"
           disabled={isPending}
-          className="w-full bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-600 hover:opacity-90 h-12 text-base font-semibold shadow-lg shadow-emerald-200"
+          className={`w-full h-12 text-base font-semibold shadow-lg text-white ${
+            role === "DOCTOR"
+              ? "bg-gradient-to-r from-blue-500 to-indigo-600 hover:opacity-90 shadow-blue-200"
+              : "bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-600 hover:opacity-90 shadow-emerald-200"
+          }`}
         >
-          {isPending ? "Creating Account..." : "Create My Account"}
+          {isPending
+            ? "Creating Account..."
+            : `Join as ${role === "PATIENT" ? "Patient" : "Doctor"}`}
         </Button>
       </form>
-
-      {/* Divider */}
-      <div className="relative">
-        <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-slate-200" />
-        </div>
-        <div className="relative flex justify-center text-xs">
-          <span className="px-3 bg-white text-slate-400">OR</span>
-        </div>
-      </div>
 
       {/* Login Link */}
       <p className="text-center text-sm text-slate-500">
