@@ -4,6 +4,7 @@ import {
   createDoctorProfile,
   updateDoctorProfile,
   DoctorProfileInput,
+  getAllVerifiedDoctors,
 } from "../services/doctorService";
 import { toast } from "sonner";
 
@@ -48,5 +49,13 @@ export const useUpdateDoctorProfile = () => {
     onError: (error: any) => {
       toast.error(error.response?.data?.message || "Failed to update profile");
     },
+  });
+};
+
+// Hook to get all verified doctors
+export const useGetAllVerifiedDoctors = () => {
+  return useQuery({
+    queryKey: ["verifiedDoctors"],
+    queryFn: getAllVerifiedDoctors,
   });
 };

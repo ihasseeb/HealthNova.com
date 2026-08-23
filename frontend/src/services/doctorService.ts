@@ -32,3 +32,9 @@ export const updateDoctorProfile = async (
   const response = await api.put("/doctor/profile", data);
   return response.data;
 };
+
+// Get All Verified Doctors (Public)
+export const getAllVerifiedDoctors = async () => {
+  const response = await api.get("/doctor/all");
+  return response.data;
+};

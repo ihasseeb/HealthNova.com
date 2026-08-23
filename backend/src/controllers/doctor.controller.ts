@@ -3,6 +3,7 @@ import {
   createDoctorProfileService,
   updateDoctorProfileService,
   getDoctorProfileService,
+  getAllVerifiedDoctorsService,
 } from "../services/doctor.service";
 import { successResponse } from "../utils/apiResponse";
 import { asyncHandler } from "../utils/asyncHandler";
@@ -36,6 +37,16 @@ export const updateDoctorProfile = asyncHandler(
     const profile = await updateDoctorProfileService(userId, req.body);
     return successResponse(res, 200, "Doctor profile updated successfully", {
       profile,
+    });
+  },
+);
+
+// GET ALL VERIFIED DOCTORS
+export const getAllVerifiedDoctors = asyncHandler(
+  async (req: Request, res: Response) => {
+    const doctors = await getAllVerifiedDoctorsService();
+    return successResponse(res, 200, "Verified doctors fetched successfully", {
+      doctors,
     });
   },
 );

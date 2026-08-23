@@ -96,3 +96,18 @@ export const updateDoctorProfileService = async (
 
   return profile;
 };
+
+// GET ALL VERIFIED DOCTORS (Public for Patients)
+export const getAllVerifiedDoctorsService = async () => {
+  const doctors = await prisma.doctorProfile.findMany({
+    where: { isVerified: true },
+    include: {
+      user: {
+        select: { id: true, name: true, email: true },
+      },
+    },
+    orderBy: { createdAt: "desc" },
+  });
+
+  return doctors;
+};
