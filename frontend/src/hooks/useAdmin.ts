@@ -7,7 +7,6 @@ import {
 } from "../services/adminService";
 import { toast } from "sonner";
 
-// Get Platform Stats Hook
 export const useGetDashboardStats = () => {
   return useQuery({
     queryKey: ["adminDashboardStats"],
@@ -15,7 +14,6 @@ export const useGetDashboardStats = () => {
   });
 };
 
-// Get Pending Doctors Hook
 export const useGetPendingDoctors = () => {
   return useQuery({
     queryKey: ["pendingDoctors"],
@@ -23,7 +21,7 @@ export const useGetPendingDoctors = () => {
   });
 };
 
-// Verify Doctor Hook
+// Yahan ID pass hona zaroori hai!
 export const useVerifyDoctor = () => {
   const queryClient = useQueryClient();
 
@@ -40,7 +38,6 @@ export const useVerifyDoctor = () => {
   });
 };
 
-// Get All Users Hook
 export const useGetAllUsers = (params?: { role?: string; page?: number }) => {
   return useQuery({
     queryKey: ["allUsers", params],

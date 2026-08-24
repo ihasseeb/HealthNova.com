@@ -170,7 +170,7 @@ const AdminDashboard = () => {
         {/* Tab 2: Doctor Verifications */}
         {activeTab === "verifications" && (
           <div className="space-y-4">
-            {pendingDoctors.length === 0 ? (
+            {!pendingDoctors || pendingDoctors.length === 0 ? (
               <div className="bg-white rounded-2xl p-12 text-center shadow-sm border border-slate-100">
                 <div className="text-5xl mb-3">✅</div>
                 <h3 className="text-xl font-bold text-slate-800">
@@ -192,10 +192,10 @@ const AdminDashboard = () => {
                     <div className="flex justify-between items-start mb-4">
                       <div>
                         <h3 className="font-bold text-lg text-slate-800">
-                          {doc.user.name}
+                          {doc.user?.name || "Unknown Doctor"}
                         </h3>
                         <p className="text-xs text-slate-500">
-                          {doc.user.email}
+                          {doc.user?.email || "No email"}
                         </p>
                       </div>
                       <span className="bg-amber-100 text-amber-800 text-[10px] font-bold px-2 py-1 rounded">
@@ -222,25 +222,34 @@ const AdminDashboard = () => {
                           {doc.experience} Years
                         </span>
                       </div>
+
+                      {/* SAFELY MAP QUALIFICATIONS (Error might be here if undefined) */}
                       <div className="pt-2 mt-2 border-t border-slate-200">
                         <span className="text-slate-500 block mb-1">
                           Qualifications:
                         </span>
                         <div className="flex flex-wrap gap-1">
-                          {doc.qualifications.map((q: string, i: number) => (
-                            <span
-                              key={i}
-                              className="bg-white border border-slate-200 px-2 py-0.5 rounded text-xs text-slate-600"
-                            >
-                              {q}
+                          {Array.isArray(doc.qualifications) &&
+                          doc.qualifications.length > 0 ? (
+                            doc.qualifications.map((q: string, i: number) => (
+                              <span
+                                key={i}
+                                className="bg-white border border-slate-200 px-2 py-0.5 rounded text-xs text-slate-600"
+                              >
+                                {q}
+                              </span>
+                            ))
+                          ) : (
+                            <span className="text-xs text-slate-400">
+                              None listed
                             </span>
-                          ))}
+                          )}
                         </div>
                       </div>
                     </div>
 
                     <Button
-                      onClick={() => verifyMutation.mutate(doc.id)}
+                      onClick={() => verifyMutation.mutate(doc.id)} // Pass ID correctly here
                       disabled={verifyMutation.isPending}
                       className="w-full bg-emerald-600 hover:bg-emerald-700"
                     >

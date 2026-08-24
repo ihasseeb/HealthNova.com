@@ -5,16 +5,18 @@ import { SendMessageFormData, CreateRoomFormData } from "../schemas/chatSchema";
 let socket: Socket | null = null;
 
 // Initialize Socket.io Connection with JWT Token
+// Double check your socket url!
 export const connectSocket = (token: string) => {
   if (!socket) {
-    socket = io(
+    // Railway par VITE_API_URL ka "api" hata kar root url socket ko dena hota hai
+    const url =
       import.meta.env.VITE_API_URL?.replace("/api", "") ||
-        "http://localhost:5000",
-      {
-        auth: { token },
-        transports: ["websocket"],
-      },
-    );
+      "http://localhost:5000";
+    socket = io(url, {
+      auth: { token },
+      transports: ["websocket"],
+    });
+    // ...
 
     socket.on("connect", () => {
       console.log("⚡ Connected to Socket.io Server:", socket?.id);
