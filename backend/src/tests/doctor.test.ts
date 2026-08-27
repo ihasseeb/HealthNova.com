@@ -4,6 +4,9 @@ import app from "../app";
 import prisma from "../lib/prisma";
 import { generateAccessToken } from "../utils/jwt";
 
+// Allow longer time for integration hooks/tests
+jest.setTimeout(20000);
+
 describe("Doctor & Admin Verification Integration Tests", () => {
   let doctorUser: any;
   let doctorToken: string;
@@ -16,6 +19,10 @@ describe("Doctor & Admin Verification Integration Tests", () => {
   const adminEmail = `test_admin_${timestamp}@example.com`;
 
   beforeAll(async () => {
+    // Ensure any leftover test users are removed to avoid duplicate profile errors
+    await prisma.user.deleteMany({ where: { email: doctorEmail } });
+    await prisma.user.deleteMany({ where: { email: adminEmail } });
+
     // 1. Create a Doctor User
     doctorUser = await prisma.user.create({
       data: {
@@ -53,12 +60,18 @@ describe("Doctor & Admin Verification Integration Tests", () => {
 
   afterAll(async () => {
     // Cleanup created test data
-    await prisma.doctorProfile.deleteMany({
-      where: { userId: doctorUser.id },
-    });
-    await prisma.user.deleteMany({
-      where: { id: { in: [doctorUser.id, adminUser.id] } },
-    });
+    if (doctorUser?.id) {
+      await prisma.doctorProfile.deleteMany({
+        where: { userId: doctorUser.id },
+      });
+    }
+
+    const userIds: string[] = [];
+    if (doctorUser?.id) userIds.push(doctorUser.id);
+    if (adminUser?.id) userIds.push(adminUser.id);
+    if (userIds.length > 0) {
+      await prisma.user.deleteMany({ where: { id: { in: userIds } } });
+    }
   });
 
   // 1. Create Doctor Profile
