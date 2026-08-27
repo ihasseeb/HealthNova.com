@@ -1,0 +1,30 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: healthnova-ingress
+  namespace: healthnova
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/use-regex: "true"
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: healthnova.local
+      http:
+        paths:
+          # API Requests -> Route to Backend Service
+          - path: /api(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: healthnova-backend-svc
+                port:
+                  number: 5000
+          # UI Requests -> Route to Frontend Service
+          - path: /(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: healthnova-frontend-svc
+                port:
+                  number: 4173

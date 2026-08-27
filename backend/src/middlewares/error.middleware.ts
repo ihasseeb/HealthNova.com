@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { AppError } from "../utils/AppError";
 import { errorResponse } from "../utils/apiResponse";
+import logger from "../utils/logger";
 
 // Global Error Handler
 export const errorHandler = (
@@ -9,8 +10,10 @@ export const errorHandler = (
   res: Response,
   next: NextFunction,
 ) => {
-  // Log error for debugging
-  console.error("❌ Error:", err.message);
+  // Use Winston to log the error
+  logger.error(`${req.method} ${req.originalUrl} - ${err.message}`, {
+    stack: err.stack,
+  });
 
   // AppError (custom errors)
   if (err instanceof AppError) {

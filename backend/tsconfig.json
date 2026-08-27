@@ -11,6 +11,7 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
+    "types": ["jest", "node"],
     "moduleResolution": "Node16",
     "allowSyntheticDefaultImports": true,
     "paths": {

@@ -3,6 +3,8 @@ import app from "./app";
 import dotenv from "dotenv";
 import http from "http";
 import { initSocket } from "./lib/socket";
+import logger from "./utils/logger";
+// import { startSystemMonitoring } from "./utils/systemMonitor"; // ← Import Karo
 
 // Force IPv4 (Railway compatibility)
 dns.setDefaultResultOrder("ipv4first");
@@ -18,5 +20,9 @@ const httpServer = http.createServer(app);
 initSocket(httpServer);
 
 app.listen(PORT, () => {
-  console.log(`\n🚀 Server running on http://localhost:${PORT}`);
+  logger.info(`🚀 Server running on http://localhost:${PORT}`);
+  logger.info(`📅 Started at: ${new Date().toLocaleString()}`);
+
+  // Har 30 Seconds par Terminal + Log File mein System Stats print honge
+  // startSystemMonitoring(30000); // 20,000 ms = 20 Seconds
 });

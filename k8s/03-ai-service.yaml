@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: healthnova-ai-service
+  namespace: healthnova
+  labels:
+    app: healthnova-ai-service
+spec:
+  replicas: 2   //Replicas 2 → Is AI service ke 2 instances chalenge load distribution ke liye.
+  selector:
+    matchLabels:
+      app: healthnova-ai-service
+  template:
+    metadata:
+      labels:
+        app: healthnova-ai-service
+    spec:
+      containers:
+        - name: ai-service
+          image: ihasseeb/healthnova-ai-service:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - configMapRef:
+                name: healthnova-config
+            - secretRef:
+                name: healthnova-secrets
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: healthnova-ai-service-svc
+  namespace: healthnova
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8000
+      targetPort: 8000
+      protocol: TCP
+  selector:
+    app: healthnova-ai-service
