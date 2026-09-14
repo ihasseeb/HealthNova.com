@@ -17,6 +17,7 @@ import paymentRoutes from "./routes/payment.routes";
 import notificationRoutes from "./routes/notification.routes";
 import medicalRecordRoutes from "./routes/medicalReports.routes";
 import { errorHandler, notFoundHandler } from "./middlewares/error.middleware";
+import n8nRoutes from "./routes/n8n.routes";
 
 const app: Application = express();
 
@@ -75,6 +76,8 @@ app.use("/api/payments", paymentRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/medical-records", medicalRecordRoutes);
 
+//n8n Routes
+app.use("/api/n8n-callback", n8nRoutes);
 // Error Handlers
 app.use(notFoundHandler);
 app.use(errorHandler);

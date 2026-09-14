@@ -37,6 +37,7 @@ model User {
   subscription  Subscription?
   notifications Notification[]
   medicalRecords MedicalRecord[]
+  moodLogs    MoodLog[]
   @@map("users")
 }
 
@@ -489,4 +490,26 @@ model MedicalRecord {
   @@map("medical_records")
   @@index([userId])
   @@index([category])
+}
+
+// Mental Health & Mood Tracker
+model MoodLog {
+  id            String   @id @default(uuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // User Input
+  moodScore     Int      // 1 (Terrible) to 5 (Awesome)
+  emotions      String[] // e.g., ["Stressed", "Tired", "Anxious"]
+  journalText   String?  @db.Text
+  
+  // AI Response
+  aiAnalysis    String?  @db.Text
+  severity      String?  // LOW, MODERATE, HIGH (for alerts)
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  @@map("mood_logs")
+  @@index([userId, createdAt]) // Chart rendering fast karne ke liye index
 }

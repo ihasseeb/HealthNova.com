@@ -5,10 +5,7 @@
   "scripts": {
     "dev": "nodemon --exec tsx src/server.ts",
     "build": "prisma generate && tsc",
-    "start": "node dist/server.js",
-    "postinstall": "prisma generate",
-    "test": "jest --setupFiles=./src/tests/jest.setup.js --runInBand --detectOpenHandles",
-    "test:coverage": "jest --setupFiles=./src/tests/jest.setup.js --coverage --runInBand --detectOpenHandles"
+    "start": "node dist/server.js"
   },
   "keywords": [],
   "author": "",

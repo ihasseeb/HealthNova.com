@@ -1,24 +1,20 @@
-# Base image
 FROM node:22-alpine
 
-# Set working directory
 WORKDIR /app
 
-# Copy package files
+# Copy package files AND prisma folder first
 COPY package*.json ./
+COPY prisma ./prisma/
 
-# Install dependencies
+# Now npm ci can safely run 'prisma generate'
 RUN npm ci
 
 # Copy rest of the code
 COPY . .
 
-# Generate Prisma Client & Build TypeScript
-RUN npx prisma generate
+# Build TypeScript
 RUN npm run build
 
-# Expose port
 EXPOSE 5000
 
-# Start command (Runs compiled JS)
 CMD ["npm", "start"]

@@ -13,11 +13,14 @@ export const arcjetMiddleware = async (
     return next();
   }
 
-  // Skip Stripe Webhook
-  if (req.originalUrl === "/api/payments/webhook") {
+  // 👇 ADD THIS: Local Development mein ya AI Test Route ke liye Arcjet Skip karein
+  if (
+    process.env.NODE_ENV === "development" ||
+    req.originalUrl.includes("/triage-test") ||
+    req.originalUrl === "/api/payments/webhook"
+  ) {
     return next();
   }
-
   try {
     // Load Arcjet dynamically
     const { aj, isSpoofedBot } = await getArcjet();

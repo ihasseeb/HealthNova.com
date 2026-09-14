@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import {
   symptomCheckService,
   getSymptomHistoryService,
@@ -16,6 +16,34 @@ import {
 } from "../services/ai.service";
 import { successResponse } from "../utils/apiResponse";
 import { asyncHandler } from "../utils/asyncHandler";
+import { N8nService } from "../services/n8n.service";
+
+//n8n Service Example Usage
+export const getAiTriage = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { symptoms, age } = req.body;
+    const patientName =
+      (req.user as { name?: string } | undefined)?.name || "Patient";
+
+    // Call n8n Workflow
+    const aiResponse = await N8nService.triggerAiTriage({
+      patientName,
+      symptoms,
+      age,
+    });
+
+    return res.status(200).json({
+      success: true,
+      data: aiResponse,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 // ================================
 // SYMPTOM CHECKER
