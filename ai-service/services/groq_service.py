@@ -1,23 +1,23 @@
-from groq import Groq
 import os
 from dotenv import load_dotenv
+from groq import Groq
 
 load_dotenv()
 
 API_KEY = os.getenv("GROQ_API_KEY")
 
 if not API_KEY:
-    raise ValueError("❌ GROQ_API_KEY not found in .env")
+    raise ValueError("❌ GROQ_API_KEY not found in environment variables")
 
-API_KEY = API_KEY.strip('"\'')
+API_KEY = API_KEY.strip("\"'")
 
 client = Groq(api_key=API_KEY)
 
-# Currently active Groq models (removed decommissioned models)
+# Currently active and supported Groq models
 GROQ_MODELS = [
     "llama-3.3-70b-versatile",
     "llama-3.1-8b-instant",
-    "gemma2-9b-it",
+    "deepseek-r1-distill-llama-70b",
 ]
 
 DEFAULT_MODEL = GROQ_MODELS[0]
