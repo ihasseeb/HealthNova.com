@@ -9,32 +9,49 @@ API_KEY = os.getenv("GROQ_API_KEY")
 if not API_KEY:
     raise ValueError("❌ GROQ_API_KEY not found in .env")
 
-# Initialize Groq client
+# Clean key from quotes if present
+API_KEY = API_KEY.strip('"\'')
+
 client = Groq(api_key=API_KEY)
 
-# Default model (best free tier)
-DEFAULT_MODEL = "llama-3.3-70b-versatile"
+# Active Groq Models (Order of priority)
+GROQ_MODELS = [
+    "llama-3.1-8b-instant",       # Primary fast & active model
+    "llama3-70b-8192",            # Reliable high capacity
+    "llama-3.3-70b-versatile",     # Backup
+    "mixtral-8x7b-32768",         # Long context backup
+]
+
+DEFAULT_MODEL = GROQ_MODELS[0]
 
 
-def generate_response(prompt: str, model: str = DEFAULT_MODEL) -> str:
+def generate_response(prompt: str, model: str = None) -> str:
     """
-    Generate AI response using Groq
+    Generate AI response using Groq with automatic model fallback
     """
-    try:
-        chat_completion = client.chat.completions.create(
-            messages=[
-                {
-                    "role": "user",
-                    "content": prompt,
-                }
-            ],
-            model=model,
-            temperature=0.7,
-            max_tokens=2000,
-        )
-        return chat_completion.choices[0].message.content
-    except Exception as e:
-        raise Exception(f"Groq AI generation failed: {str(e)}")
+    models_to_try = [model] if model else GROQ_MODELS
+    last_error = None
+
+    for target_model in models_to_try:
+        try:
+            chat_completion = client.chat.completions.create(
+                messages=[
+                    {
+                        "role": "user",
+                        "content": prompt,
+                    }
+                ],
+                model=target_model,
+                temperature=0.7,
+                max_tokens=2000,
+            )
+            return chat_completion.choices[0].message.content
+        except Exception as e:
+            print(f"⚠️ Groq model {target_model} failed: {str(e)}")
+            last_error = e
+            continue
+
+    raise Exception(f"Groq AI generation failed. Last error: {str(last_error)}")
 
 
 def test_groq() -> str:
@@ -44,45 +61,13 @@ def test_groq() -> str:
 
 
 def get_current_model() -> str:
-    """Return currently used model"""
+    """Return currently active primary model"""
     return DEFAULT_MODEL
 
 
-# Available Groq models (for reference)
 AVAILABLE_MODELS = {
-    "llama-3.3-70b-versatile": "Best quality, most capable",
-    "llama-3.1-8b-instant": "Fast, good for simple tasks",
-    "llama-3.1-70b-versatile": "High quality, versatile",
-    "mixtral-8x7b-32768": "Long context (32k tokens)",
-    "gemma2-9b-it": "Google's Gemma model",
+    "llama-3.1-8b-instant": "Fast, high availability",
+    "llama3-70b-8192": "High quality 70b model",
+    "llama-3.3-70b-versatile": "Versatile 70b model",
+    "mixtral-8x7b-32768": "32k context window",
 }
-
-def get_vision_model():
-    """Get best available vision model"""
-    preferred_vision_models = [
-        "meta-llama/llama-4-scout-17b-16e-instruct",
-        "meta-llama/llama-4-maverick-17b-128e-instruct",
-        "llama-3.2-11b-vision-preview",
-    ]
-    
-    try:
-        # Try each preferred model
-        for model in preferred_vision_models:
-            try:
-                # Quick test call
-                test_response = client.chat.completions.create(
-                    model=model,
-                    messages=[{"role": "user", "content": "test"}],
-                    max_tokens=5,
-                )
-                print(f"🎯 Using vision model: {model}")
-                return model
-            except:
-                continue
-        
-        return "meta-llama/llama-4-scout-17b-16e-instruct"
-    except Exception as e:
-        return "meta-llama/llama-4-scout-17b-16e-instruct"
-
-
-VISION_MODEL = get_vision_model()
