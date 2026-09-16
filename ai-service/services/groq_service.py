@@ -4,35 +4,50 @@ from groq import Groq
 
 load_dotenv()
 
+# Get API key from environment
 API_KEY = os.getenv("GROQ_API_KEY")
 
 if not API_KEY:
-    raise ValueError("❌ GROQ_API_KEY not found in environment variables")
+    raise ValueError("❌ GROQ_API_KEY environment variable mein nahi mila! Railway settings check karein.")
 
-API_KEY = API_KEY.strip("\"'")
+API_KEY = API_KEY.strip().strip("\"'")
 
 client = Groq(api_key=API_KEY)
 
-# Sirf 100% Active aur Official Production Models
-GROQ_MODELS = [
-    "llama-3.3-70b-versatile",
-    "llama-3.1-8b-instant",
-]
 
-DEFAULT_MODEL = GROQ_MODELS[0]
+def get_available_models():
+    """Dynamically fetch available models from your Groq account"""
+    try:
+        models_data = client.models.list()
+        active_models = [m.id for m in models_data.data if m.active]
+        print(f"✅ Active models on your Groq account: {active_models}")
+        return active_models
+    except Exception as e:
+        print(f"⚠️ Could not fetch models list dynamically: {e}")
+        # Fallback list agar API list fetch fail ho
+        return [
+            "llama-3.3-70b-versatile",
+            "llama-3.1-8b-instant",
+            "llama3-70b-8192",
+            "llama3-8b-8192",
+            "mixtral-8x7b-32768",
+        ]
 
 
 def generate_response(prompt: str, model: str = None) -> str:
     """
-    Generate AI response using Groq with automatic model fallback
+    Generate AI response with dynamic model fallback
     """
-    # Agar user ne aisa model pass kiya jo list mein nahi ya decommissioned ho gaya hai
-    if model and model not in GROQ_MODELS:
-        models_to_try = [model] + GROQ_MODELS
-    elif model:
+    if model:
         models_to_try = [model]
     else:
-        models_to_try = GROQ_MODELS
+        available_models = get_available_models()
+        # Chat models ko filter karein (whisper audio models ko nikaal kar)
+        chat_models = [
+            m for m in available_models 
+            if not m.startswith("whisper") and "guard" not in m
+        ]
+        models_to_try = chat_models if chat_models else ["llama-3.1-8b-instant"]
 
     errors = []
 
@@ -56,7 +71,6 @@ def generate_response(prompt: str, model: str = None) -> str:
             errors.append(error_msg)
             continue
 
-    # Agar saare models fail ho jayein toh details show karein
     raise Exception(f"Groq AI generation failed. Details: {' | '.join(errors)}")
 
 
@@ -67,5 +81,5 @@ def test_groq() -> str:
 
 
 def get_current_model() -> str:
-    """Return currently active primary model"""
-    return DEFAULT_MODEL
+    models = get_available_models()
+    return models[0] if models else "llama-3.1-8b-instant"
