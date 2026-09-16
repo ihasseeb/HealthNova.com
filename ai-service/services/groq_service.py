@@ -9,17 +9,15 @@ API_KEY = os.getenv("GROQ_API_KEY")
 if not API_KEY:
     raise ValueError("❌ GROQ_API_KEY not found in .env")
 
-# Clean key from quotes if present
 API_KEY = API_KEY.strip('"\'')
 
 client = Groq(api_key=API_KEY)
 
-# Active Groq Models (Order of priority)
+# Currently active Groq models (removed decommissioned models)
 GROQ_MODELS = [
-    "llama-3.1-8b-instant",       # Primary fast & active model
-    "llama3-70b-8192",            # Reliable high capacity
-    "llama-3.3-70b-versatile",     # Backup
-    "mixtral-8x7b-32768",         # Long context backup
+    "llama-3.3-70b-versatile",
+    "llama-3.1-8b-instant",
+    "gemma2-9b-it",
 ]
 
 DEFAULT_MODEL = GROQ_MODELS[0]
@@ -63,11 +61,3 @@ def test_groq() -> str:
 def get_current_model() -> str:
     """Return currently active primary model"""
     return DEFAULT_MODEL
-
-
-AVAILABLE_MODELS = {
-    "llama-3.1-8b-instant": "Fast, high availability",
-    "llama3-70b-8192": "High quality 70b model",
-    "llama-3.3-70b-versatile": "Versatile 70b model",
-    "mixtral-8x7b-32768": "32k context window",
-}
