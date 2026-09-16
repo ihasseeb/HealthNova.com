@@ -13,11 +13,10 @@ API_KEY = API_KEY.strip("\"'")
 
 client = Groq(api_key=API_KEY)
 
-# Currently active and supported Groq models
+# Sirf 100% Active aur Official Production Models
 GROQ_MODELS = [
     "llama-3.3-70b-versatile",
     "llama-3.1-8b-instant",
-    "deepseek-r1-distill-llama-70b",
 ]
 
 DEFAULT_MODEL = GROQ_MODELS[0]
@@ -27,8 +26,15 @@ def generate_response(prompt: str, model: str = None) -> str:
     """
     Generate AI response using Groq with automatic model fallback
     """
-    models_to_try = [model] if model else GROQ_MODELS
-    last_error = None
+    # Agar user ne aisa model pass kiya jo list mein nahi ya decommissioned ho gaya hai
+    if model and model not in GROQ_MODELS:
+        models_to_try = [model] + GROQ_MODELS
+    elif model:
+        models_to_try = [model]
+    else:
+        models_to_try = GROQ_MODELS
+
+    errors = []
 
     for target_model in models_to_try:
         try:
@@ -45,11 +51,13 @@ def generate_response(prompt: str, model: str = None) -> str:
             )
             return chat_completion.choices[0].message.content
         except Exception as e:
-            print(f"⚠️ Groq model {target_model} failed: {str(e)}")
-            last_error = e
+            error_msg = f"Model {target_model} failed: {str(e)}"
+            print(f"⚠️ {error_msg}")
+            errors.append(error_msg)
             continue
 
-    raise Exception(f"Groq AI generation failed. Last error: {str(last_error)}")
+    # Agar saare models fail ho jayein toh details show karein
+    raise Exception(f"Groq AI generation failed. Details: {' | '.join(errors)}")
 
 
 def test_groq() -> str:
