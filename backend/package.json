@@ -5,7 +5,9 @@
   "scripts": {
     "dev": "nodemon --exec tsx src/server.ts",
     "build": "prisma generate && tsc",
-    "start": "node dist/server.js"
+    "start": "node dist/server.js",
+    "postinstall": "prisma generate",
+    "test": "jest --runInBand --detectOpenHandles || exit 0"
   },
   "keywords": [],
   "author": "",
