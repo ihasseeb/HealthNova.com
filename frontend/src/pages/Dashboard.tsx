@@ -7,7 +7,7 @@ import { useGetHealthProfile } from "../hooks/useHealthProfile";
 const Dashboard = () => {
   const navigate = useNavigate();
   const user = useAuthStore((state) => state.user);
-  const { data: profileData } = useGetHealthProfile();
+  const { data: profileData, isLoading } = useGetHealthProfile();
 
   const profile = profileData?.data?.profile;
 
@@ -49,6 +49,12 @@ const Dashboard = () => {
       description: "Daily personalized advice",
       path: "/health-tips",
     },
+    {
+      icon: "🧠",
+      title: "Mental Health",
+      description: "Mood tracking & AI therapy",
+      path: "/mental-health",
+    },
   ];
 
   // Core Management Links
@@ -82,6 +88,14 @@ const Dashboard = () => {
       badge: "Finance",
     },
   ];
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-emerald-50 via-white to-cyan-50">
+        <div className="text-4xl animate-spin">💚</div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-cyan-50 p-4 md:p-8">
@@ -173,7 +187,7 @@ const Dashboard = () => {
             </div>
             <div className="bg-white rounded-2xl p-4 md:p-5 shadow-sm border border-emerald-100 text-center">
               <p className="text-sm md:text-base font-bold text-emerald-700 truncate">
-                {profile.goal?.replace("_", " ") || "Maintain"}
+                {profile.goal?.replace(/_/g, " ") || "Maintain"}
               </p>
               <p className="text-xs text-slate-500 mt-0.5">Current Goal</p>
             </div>

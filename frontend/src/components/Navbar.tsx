@@ -422,12 +422,6 @@ const Navbar = () => {
                   >
                     💪 Workout Plan
                   </button>
-                  <DropdownMenuItem
-                    onClick={() => navigate("/mental-health")}
-                    className="cursor-pointer"
-                  >
-                    <span className="mr-2">🧠</span> Mental Health
-                  </DropdownMenuItem>
                   <button
                     onClick={() => {
                       navigate("/chat");
