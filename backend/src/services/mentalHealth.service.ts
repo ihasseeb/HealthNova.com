@@ -1,7 +1,7 @@
 import prisma from "../lib/prisma";
 import axios from "axios";
 import { AppError } from "../utils/AppError";
-import type { CreateMoodLogInput } from "../validators/mentalhealth.validator";
+import type { CreateMoodLogInput } from "../validators/mentalHealths.validator";
 
 const AI_SERVICE_URL = process.env.AI_SERVICE_URL || "http://localhost:8000";
 const aiApi = axios.create({ baseURL: AI_SERVICE_URL });
