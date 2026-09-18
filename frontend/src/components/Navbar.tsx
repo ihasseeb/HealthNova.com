@@ -124,6 +124,12 @@ const Navbar = () => {
                     <span className="mr-2">🥗</span> Diet Plan
                   </DropdownMenuItem>
                   <DropdownMenuItem
+                    onClick={() => navigate("/mental-health")}
+                    className="cursor-pointer"
+                  >
+                    <span className="mr-2">🧠</span> Mental Health
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
                     onClick={() => navigate("/workout-plan")}
                     className="cursor-pointer"
                   >
@@ -410,6 +416,12 @@ const Navbar = () => {
                   >
                     💪 Workout Plan
                   </button>
+                  <DropdownMenuItem
+                    onClick={() => navigate("/mental-health")}
+                    className="cursor-pointer"
+                  >
+                    <span className="mr-2">🧠</span> Mental Health
+                  </DropdownMenuItem>
                   <button
                     onClick={() => {
                       navigate("/chat");

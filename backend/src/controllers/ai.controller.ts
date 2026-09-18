@@ -13,6 +13,7 @@ import {
   getReportHistoryService,
   healthTipsService,
   analyzeReportImageService,
+  analyzePreConsultation,
 } from "../services/ai.service";
 import { successResponse } from "../utils/apiResponse";
 import { asyncHandler } from "../utils/asyncHandler";
@@ -182,3 +183,15 @@ export const analyzeReportImage = asyncHandler(
     );
   },
 );
+
+export const handlePreConsultation = async (req: Request, res: Response) => {
+  try {
+    const result = await analyzePreConsultation(req.body);
+
+    // Optionally save to Prisma DB here (e.g., as an Intake form record)
+
+    res.status(200).json(result);
+  } catch (error: any) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};

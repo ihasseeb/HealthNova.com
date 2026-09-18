@@ -638,3 +638,61 @@ Extract all values, numbers, and findings from the image carefully.
         raise Exception(f"AI response format error: {str(e)}")
     except Exception as e:
         raise Exception(f"Image analysis failed: {str(e)}")
+    
+
+
+def generate_pre_consultation_hpi(data):
+    """
+    Generates a structured History of Present Illness (HPI) from patient's raw input.
+    """
+    patient_profile = data.get("patientProfile", {})
+    chief_complaint = data.get("chiefComplaint", "Not specified")
+    symptoms = data.get("symptoms", [])
+    duration = data.get("duration", "Not specified")
+    current_meds = data.get("currentMedications", "None")
+
+    prompt = f"""
+    You are an expert Clinical Intake Nurse and Medical Assistant. 
+    Your task is to take the patient's self-reported pre-consultation answers and convert them into a structured clinical 'History of Present Illness' (HPI) report for the doctor.
+
+    Patient Profile:
+    - Age/Gender: {patient_profile.get('age', 'Unknown')} / {patient_profile.get('gender', 'Unknown')}
+    - Existing Conditions: {patient_profile.get('medicalConditions', 'None')}
+    - Current Medications: {current_meds}
+
+    Current Issue:
+    - Chief Complaint: {chief_complaint}
+    - Associated Symptoms: {', '.join(symptoms) if isinstance(symptoms, list) else symptoms}
+    - Duration: {duration}
+
+    Analyze this data and return ONLY a strict JSON object with the following structure. Do not include any markdown formatting, code blocks, or extra prose. Just raw JSON.
+
+    {{
+        "hpiSummary": "A concise, professional 3-4 line clinical summary of the patient's current situation.",
+        "keySymptoms": ["List of main symptoms to focus on"],
+        "redFlags": ["Any critical warnings, alarming symptoms, or drug interaction risks. Leave empty if none."],
+        "triageLevel": "Routine | Urgent | Emergency",
+        "suggestedQuestionsForDoctor": ["3 specific clinical questions the doctor should ask the patient to narrow down the diagnosis"]
+    }}
+    """
+
+    try:
+        raw_response = generate_response(prompt)
+        
+        # Clean markdown fences if any (Standard pattern)
+        cleaned_response = raw_response.strip()
+        if cleaned_response.startswith("```json"):
+            cleaned_response = cleaned_response[7:]
+        elif cleaned_response.startswith("```"):
+            cleaned_response = cleaned_response[3:]
+        if cleaned_response.endswith("```"):
+            cleaned_response = cleaned_response[:-3]
+            
+        result_json = json.loads(cleaned_response.strip())
+        return result_json
+        
+    except json.JSONDecodeError as e:
+        print(f"JSON Parse Error in Pre-Consultation AI: {e}")
+        raise Exception("Failed to parse AI response into clinical format.")
+    except Exception as e:
+        raise Exception(f"AI Generation Error: {str(e)}")

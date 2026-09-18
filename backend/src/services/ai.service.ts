@@ -624,3 +624,16 @@ export const analyzeReportImageService = async (userId: string, data: any) => {
     throw new AppError(error.message || "Image analysis failed", 500);
   }
 };
+
+// Existing axios instance (aiApi)
+export const analyzePreConsultation = async (patientData: any) => {
+  try {
+    const response = await aiApi.post(
+      "/api/health/pre-consultation",
+      patientData,
+    );
+    return response.data; // { success, message, data }
+  } catch (error) {
+    throw new Error("Failed to generate pre-consultation HPI from AI service");
+  }
+};

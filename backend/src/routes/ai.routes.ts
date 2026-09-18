@@ -14,6 +14,7 @@ import {
   getReportHistory,
   getHealthTips,
   analyzeReportImage,
+  handlePreConsultation,
 } from "../controllers/ai.controller";
 import { validate } from "../middlewares/validate.middleware";
 import { authenticate } from "../middlewares/auth.middleware";
@@ -92,4 +93,7 @@ router.post("/health-tips", validate(healthTipsSchema), getHealthTips);
 
 // ANALYZE REPORT IMAGE
 router.post("/analyze-report-image", analyzeReportImage);
+
+// PRE-CONSULTATION HPI
+router.post("/pre-consultation", handlePreConsultation);
 export default router;

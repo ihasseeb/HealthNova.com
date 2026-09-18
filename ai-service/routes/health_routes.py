@@ -1,5 +1,6 @@
 from flask import Blueprint
 from controllers.health_controller import (
+    handle_pre_consultation,
     symptom_checker_controller,
     diet_plan_controller,
     workout_plan_controller,
@@ -20,3 +21,4 @@ health_bp.route("/chat", methods=["POST"])(chat_controller)
 health_bp.route("/analyze-report", methods=["POST"])(report_analyzer_controller)
 health_bp.route("/health-tips", methods=["POST"])(health_tips_controller)
 health_bp.route("/analyze-report-image", methods=["POST"])(analyze_report_image_controller)
+health_bp.route('/pre-consultation', methods=['POST'])(handle_pre_consultation)
