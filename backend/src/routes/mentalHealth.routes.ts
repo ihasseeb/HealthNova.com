@@ -5,7 +5,7 @@ import {
 } from "../controllers/mentalHealth.controller";
 import { validate } from "../middlewares/validate.middleware";
 import { authenticate } from "../middlewares/auth.middleware";
-import { createMoodLogSchema } from "../validators/mentalHealth.validator";
+import { createMoodLogSchema } from "../validators/mentalhealth.validator";
 
 const router = Router();
 
