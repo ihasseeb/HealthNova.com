@@ -8,6 +8,7 @@ from controllers.health_controller import (
     report_analyzer_controller,
     health_tips_controller,
      analyze_report_image_controller, 
+     mental_health_controller,
 )
 
 # Create Blueprint
@@ -22,3 +23,4 @@ health_bp.route("/analyze-report", methods=["POST"])(report_analyzer_controller)
 health_bp.route("/health-tips", methods=["POST"])(health_tips_controller)
 health_bp.route("/analyze-report-image", methods=["POST"])(analyze_report_image_controller)
 health_bp.route('/pre-consultation', methods=['POST'])(handle_pre_consultation)
+health_bp.route("/mental-health", methods=["POST"])(mental_health_controller)

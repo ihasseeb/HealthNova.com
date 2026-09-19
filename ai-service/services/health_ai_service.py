@@ -696,3 +696,59 @@ def generate_pre_consultation_hpi(data):
         raise Exception("Failed to parse AI response into clinical format.")
     except Exception as e:
         raise Exception(f"AI Generation Error: {str(e)}")
+
+
+def analyze_mental_health(data: dict) -> dict:
+    """
+    Analyze user mood and journal entry to provide therapeutic guidance
+    """
+    mood_score = data.get('moodScore', 3)
+    emotions = ', '.join(data.get('emotions', [])) or 'Not specified'
+    journal_text = data.get('journalText', 'No text provided')
+
+    prompt = f"""You are a compassionate, empathetic Mental Health AI Therapist for HealthNova AI.
+
+USER MOOD ENTRY:
+- Mood Score: {mood_score}/5 (1 is worst, 5 is best)
+- Emotions Experienced: {emotions}
+- Journal Entry: "{journal_text}"
+
+Provide a structured response in this EXACT JSON format (only JSON, no extra text):
+
+{{
+  "aiAnalysis": "A warm, empathetic 2-3 sentence response acknowledging their feelings and offering therapeutic insight.",
+  "severity": "LOW" | "MODERATE" | "HIGH",
+  "copingStrategies": [
+    "Strategy 1 (e.g. 4-7-8 breathing exercise)",
+    "Strategy 2 (e.g. 10-minute mindful walk)"
+  ],
+  "affirmation": "A positive daily affirmation",
+  "referDoctor": true or false
+}}
+
+Guidelines:
+- If mood_score <= 2 or journal expresses extreme distress, set severity to "HIGH" and referDoctor to true.
+- Be supportive, non-judgmental, and highly practical.
+"""
+
+    try:
+        # Generate response using Groq
+        response = generate_response(prompt)
+
+        # Clean response
+        cleaned = response.strip()
+        if cleaned.startswith("```json"):
+            cleaned = cleaned[7:]
+        if cleaned.startswith("```"):
+            cleaned = cleaned[3:]
+        if cleaned.endswith("```"):
+            cleaned = cleaned[:-3]
+        cleaned = cleaned.strip()
+
+        result = json.loads(cleaned)
+        return result
+
+    except json.JSONDecodeError as e:
+        raise Exception(f"AI response format error: {str(e)}")
+    except Exception as e:
+        raise Exception(f"Mental health analysis failed: {str(e)}")

@@ -7,7 +7,8 @@ from services.health_ai_service import (
     analyze_report,
     generate_health_tips,
     analyze_report_with_image,
-    generate_pre_consultation_hpi
+    generate_pre_consultation_hpi,
+    analyze_mental_health
 )
 
 
@@ -204,23 +205,49 @@ def handle_pre_consultation():
     """Controller to handle pre-consultation intake requests"""
     try:
         data = request.get_json()
-        
+
         if not data:
             return jsonify({"success": False, "message": "No input data provided"}), 400
-            
+
         if "chiefComplaint" not in data:
             return jsonify({"success": False, "message": "Chief complaint is required"}), 400
-            
+
         # Call the service
         hpi_data = generate_pre_consultation_hpi(data)
-        
+
         # Standardized response format
         return jsonify({
             "success": True,
             "message": "Pre-consultation intake analyzed successfully",
             "data": hpi_data
         }), 200
-        
+
+    except Exception as e:
+        return jsonify({
+            "success": False,
+            "message": str(e)
+        }), 500
+
+
+def mental_health_controller():
+    """Analyze mood & journal entry endpoint"""
+    try:
+        data = request.get_json()
+
+        if not data or 'moodScore' not in data:
+            return jsonify({
+                "success": False,
+                "message": "moodScore and emotions are required"
+            }), 400
+
+        result = analyze_mental_health(data)
+
+        return jsonify({
+            "success": True,
+            "message": "Mental health analyzed successfully",
+            "data": result
+        }), 200
+
     except Exception as e:
         return jsonify({
             "success": False,
