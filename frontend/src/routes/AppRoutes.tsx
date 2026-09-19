@@ -37,6 +37,7 @@ import AdminDashboard from "../pages/admin/AdminDashboard";
 import NotificationsPage from "../pages/NotificationBell";
 import MedicalRecordsPage from "../pages/patient/MedicalRecordsPage";
 import MentalHealth from "../pages/patient/MentalHealth";
+import VideoConsultation from "../pages/VideoConsultation";
 const AppRoutes = () => {
   return (
     <Routes>
@@ -70,6 +71,10 @@ const AppRoutes = () => {
           <Route path="/notifications" element={<NotificationsPage />} />
           <Route path="/medical-records" element={<MedicalRecordsPage />} />
           <Route path="/mental-health" element={<MentalHealth />} />
+          <Route
+            path="/video-call/:appointmentId"
+            element={<VideoConsultation />}
+          />
 
           {/* General User Routes */}
           <Route path="/dashboard" element={<Dashboard />} />

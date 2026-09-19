@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { Button } from "../../components/ui/button";
+import { useNavigate } from "react-router-dom";
 import {
   useGetPatientAppointments,
   useCancelAppointment,
@@ -8,6 +9,7 @@ import {
 const PatientAppointments = () => {
   const { data, isLoading } = useGetPatientAppointments();
   const cancelMutation = useCancelAppointment();
+  const navigate = useNavigate();
 
   const appointments = data?.data?.appointments || [];
 
@@ -127,6 +129,15 @@ const PatientAppointments = () => {
                     className="w-full border-red-200 text-red-600 hover:bg-red-50 text-xs"
                   >
                     ❌ Cancel Appointment
+                  </Button>
+                )}
+
+                {apt.status === "CONFIRMED" && apt.type === "VIDEO_CALL" && (
+                  <Button
+                    onClick={() => navigate(`/video-call/${apt.id}`)}
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-xs mb-2"
+                  >
+                    📹 Join Video Call
                   </Button>
                 )}
               </motion.div>

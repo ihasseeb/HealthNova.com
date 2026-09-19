@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "../../components/ui/button";
+import { useNavigate } from "react-router-dom";
 import {
   useGetDoctorAppointments,
   useUpdateAppointmentStatus,
@@ -14,6 +15,7 @@ const DoctorAppointments = () => {
   const { data, isLoading } = useGetDoctorAppointments();
   const updateStatus = useUpdateAppointmentStatus();
   const setSchedule = useSetDoctorAvailability();
+  const navigate = useNavigate();
 
   const appointments = data?.data?.appointments || [];
 
@@ -163,18 +165,30 @@ const DoctorAppointments = () => {
                     )}
 
                     {apt.status === "CONFIRMED" && (
-                      <Button
-                        size="sm"
-                        onClick={() =>
-                          updateStatus.mutate({
-                            appointmentId: apt.id,
-                            data: { status: "COMPLETED" },
-                          })
-                        }
-                        className="w-full bg-blue-600 hover:bg-blue-700 text-xs"
-                      >
-                        🏁 Mark as Completed
-                      </Button>
+                      <>
+                        <Button
+                          size="sm"
+                          onClick={() =>
+                            updateStatus.mutate({
+                              appointmentId: apt.id,
+                              data: { status: "COMPLETED" },
+                            })
+                          }
+                          className="w-full bg-blue-600 hover:bg-blue-700 text-xs"
+                        >
+                          🏁 Mark as Completed
+                        </Button>
+
+                        {apt.type === "VIDEO_CALL" && (
+                          <Button
+                            size="sm"
+                            onClick={() => navigate(`/video-call/${apt.id}`)}
+                            className="w-full bg-blue-600 hover:bg-blue-700 text-xs mt-2"
+                          >
+                            📹 Join Video Call
+                          </Button>
+                        )}
+                      </>
                     )}
                   </div>
                 ))}
