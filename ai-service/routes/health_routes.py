@@ -8,7 +8,7 @@ from controllers.health_controller import (
     report_analyzer_controller,
     health_tips_controller,
      analyze_report_image_controller, 
-     mental_health_controller,
+     mental_health_controller
 )
 
 # Create Blueprint
