@@ -96,3 +96,15 @@ export const analyzeReportImage = async (data: {
   const response = await api.post("/ai/analyze-report-image", data);
   return response.data;
 };
+
+// AI Voice Scribe
+export const generateVoicePrescription = async (audioBlob: Blob) => {
+  const formData = new FormData();
+  formData.append("audio", audioBlob, "prescription.webm");
+
+  // Notice we send FormData, so we let axios set the correct Content-Type boundary
+  const response = await api.post("/ai/voice-scribe", formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+  return response.data;
+};

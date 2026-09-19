@@ -13,6 +13,7 @@ import {
   getReportHistory,
   getHealthTips,
   analyzeReportImage,
+  generateVoicePrescription,
 } from "../services/ai-Service";
 import { toast } from "sonner";
 
@@ -178,6 +179,16 @@ export const useAnalyzeReportImage = () => {
     },
     onError: (error: any) => {
       toast.error(error.response?.data?.message || "Analysis failed");
+    },
+  });
+};
+
+//AI VOICE DESCRIBER
+export const useVoiceScribe = () => {
+  return useMutation({
+    mutationFn: (audioBlob: Blob) => generateVoicePrescription(audioBlob),
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || "Voice processing failed");
     },
   });
 };
