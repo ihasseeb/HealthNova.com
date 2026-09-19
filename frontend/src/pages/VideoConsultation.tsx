@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/authStore";
-import { connectSocket, disconnectSocket } from "../services/chatService";
+import { connectSocket } from "../services/chatService";
 import { Button } from "../components/ui/button";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
