@@ -38,6 +38,7 @@ import NotificationsPage from "../pages/NotificationBell";
 import MedicalRecordsPage from "../pages/patient/MedicalRecordsPage";
 import MentalHealth from "../pages/patient/MentalHealth";
 import VideoConsultation from "../pages/VideoConsultation";
+import DoctorPrescriptions from "../pages/doctor/DoctorPrescription";
 const AppRoutes = () => {
   return (
     <Routes>
@@ -75,13 +76,11 @@ const AppRoutes = () => {
             path="/video-call/:appointmentId"
             element={<VideoConsultation />}
           />
-
           {/* General User Routes */}
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/health-profile" element={<HealthProfile />} />
           <Route path="/settings" element={<Settings />} />
-
           {/* Patient Appointments */}
           <Route path="/appointments" element={<PatientAppointments />} />
           <Route path="/prescriptions" element={<PatientPrescriptions />} />
@@ -92,19 +91,27 @@ const AppRoutes = () => {
           <Route path="/chat" element={<Chat />} />
           <Route path="/report-analyzer" element={<ReportAnalyzer />} />
           <Route path="/health-tips" element={<HealthTips />} />
-
           {/* Doctor Routes */}
           <Route path="/doctor/dashboard" element={<DoctorDashboard />} />
           <Route
             path="/doctor/create-prescription"
             element={<CreatePrescription />}
           />
-
           <Route
             path="/doctor/profile-setup"
             element={<DoctorProfileSetup />}
           />
           <Route path="/doctor/appointments" element={<DoctorAppointments />} />
+          <Route
+            path="/doctor/prescriptions"
+            element={<DoctorPrescriptions />}
+          />
+          {/* ← ADD THIS */}
+          <Route
+            path="/doctor/create-prescription"
+            element={<CreatePrescription />}
+          />{" "}
+          {/* ← ADD THIS */}
         </Route>
       </Route>
 
