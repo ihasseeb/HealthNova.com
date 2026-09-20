@@ -39,6 +39,7 @@ import MedicalRecordsPage from "../pages/patient/MedicalRecordsPage";
 import MentalHealth from "../pages/patient/MentalHealth";
 import VideoConsultation from "../pages/VideoConsultation";
 import DoctorPrescriptions from "../pages/doctor/DoctorPrescription";
+import PharmacyStore from "../pages/patient/PharmacyStore";
 const AppRoutes = () => {
   return (
     <Routes>
@@ -48,6 +49,7 @@ const AppRoutes = () => {
         <Route path="/doctors" element={<Doctors />} />
         <Route path="/pricing" element={<Pricing />} />
         <Route path="/auth/google/success" element={<GoogleSuccess />} />
+        <Route path="/pharmacy" element={<PharmacyStore />} />
       </Route>
 
       {/* Auth Routes */}

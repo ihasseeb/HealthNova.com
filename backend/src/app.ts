@@ -19,6 +19,7 @@ import medicalRecordRoutes from "./routes/medicalReports.routes";
 import { errorHandler, notFoundHandler } from "./middlewares/error.middleware";
 import mentalHealthRoutes from "./routes/mentalHealth.routes";
 import n8nRoutes from "./routes/n8n.routes";
+import pharmacyRoutes from "./routes/pharmacy.routes";
 
 const app: Application = express();
 
@@ -77,6 +78,7 @@ app.use("/api/payments", paymentRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/medical-records", medicalRecordRoutes);
 app.use("/api/mental-health", mentalHealthRoutes);
+app.use("/api/pharmacy", pharmacyRoutes);
 
 //n8n Routes
 app.use("/api/n8n-callback", n8nRoutes);

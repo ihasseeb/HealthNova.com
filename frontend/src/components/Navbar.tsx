@@ -170,6 +170,12 @@ const Navbar = () => {
           >
             Pricing
           </Link>
+          <Link
+            to="/pharmacy"
+            className="text-slate-600 hover:text-emerald-600 font-medium transition"
+          >
+            Pharmacy
+          </Link>
 
           {/* User Controls & Bell Icon */}
           <div className="border-l border-slate-200 pl-6 flex items-center gap-3">
@@ -452,6 +458,13 @@ const Navbar = () => {
             className="block py-2 text-slate-700 font-medium"
           >
             👨‍⚕️ Doctors
+          </Link>
+          <Link
+            to="/pharmacy"
+            onClick={() => setMobileMenuOpen(false)}
+            className="block py-2 text-slate-700 font-medium"
+          >
+            💊 Pharmacy
           </Link>
 
           <div className="pt-3 border-t border-slate-200">

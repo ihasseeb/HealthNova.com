@@ -229,6 +229,20 @@ export const handleStripeWebhookService = async (event: any) => {
           },
         });
       }
+
+      if (type === "pharmacy_order") {
+        await prisma.order.updateMany({
+          where: { stripeSession: session.id },
+          data: { status: "PAID" },
+        });
+      }
+
+      if (type === "lab_test_booking") {
+        await prisma.testBooking.updateMany({
+          where: { stripeSession: session.id },
+          data: { status: "PAID" },
+        });
+      }
       break;
     }
 

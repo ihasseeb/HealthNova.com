@@ -38,6 +38,8 @@ model User {
   notifications Notification[]
   medicalRecords MedicalRecord[]
   moodLogs    MoodLog[]
+    orders        Order[]
+  testBookings  TestBooking[]
   @@map("users")
 }
 
@@ -512,4 +514,94 @@ model MoodLog {
   
   @@map("mood_logs")
   @@index([userId, createdAt]) // Chart rendering fast karne ke liye index
+}
+
+// ============================================
+// E-PHARMACY & LAB TESTS (MODULE 9)
+// ============================================
+
+model Product {
+  id          String   @id @default(uuid())
+  name        String
+  description String   @db.Text
+  price       Float
+  category    String   // MEDICINE, SUPPLEMENT, EQUIPMENT
+  imageUrl    String?
+  stock       Int      @default(100)
+  requiresRx  Boolean  @default(false) // Requires Prescription
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  orderItems  OrderItem[]
+
+  @@map("products")
+}
+
+model LabTest {
+  id          String   @id @default(uuid())
+  name        String
+  description String   @db.Text
+  price       Float
+  category    String   // BLOOD_TEST, MRI, XRAY, FULL_BODY
+  homeSample  Boolean  @default(true) // Can sample be collected at home?
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  testBookings TestBooking[]
+
+  @@map("lab_tests")
+}
+
+// E-Commerce Orders
+model Order {
+  id            String      @id @default(uuid())
+  userId        String
+  totalAmount   Float
+  status        String      @default("PENDING") // PENDING, PAID, SHIPPED, DELIVERED, CANCELLED
+  stripeSession String?
+  shippingAdd   String      @db.Text
+  
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orderItems    OrderItem[]
+
+  @@map("orders")
+  @@index([userId])
+}
+
+model OrderItem {
+  id        String  @id @default(uuid())
+  orderId   String
+  productId String
+  quantity  Int     @default(1)
+  price     Float
+  
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product   Product @relation(fields: [productId], references: [id], onDelete: Restrict)
+
+  @@map("order_items")
+}
+
+// Lab Test Bookings
+model TestBooking {
+  id            String   @id @default(uuid())
+  userId        String
+  testId        String
+  bookingDate   DateTime
+  status        String   @default("PENDING") // PENDING, PAID, SAMPLE_COLLECTED, REPORT_READY
+  stripeSession String?
+  address       String?  @db.Text // Address for home collection
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  test          LabTest  @relation(fields: [testId], references: [id], onDelete: Restrict)
+
+  @@map("test_bookings")
+  @@index([userId])
 }
