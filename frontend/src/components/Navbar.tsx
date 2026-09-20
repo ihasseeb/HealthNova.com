@@ -59,7 +59,7 @@ const Navbar = () => {
 
         {/* DESKTOP LINKS */}
         <div className="hidden lg:flex items-center gap-1 bg-slate-100/50 p-1 rounded-full border border-slate-200/50">
-          {/* <Link
+          <Link
             to="/"
             className="px-4 py-2 rounded-full text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-white transition-all shadow-sm"
           >
@@ -92,7 +92,7 @@ const Navbar = () => {
             className="px-4 py-2 rounded-full text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-white transition-all shadow-sm"
           >
             Pharmacy
-          </Link> */}
+          </Link>
 
           {isAuthenticated && !isDoctor && !isAdmin && (
             <DropdownMenu modal={false}>
@@ -221,7 +221,7 @@ const Navbar = () => {
             className="lg:hidden absolute top-20 left-4 right-4 bg-white rounded-3xl shadow-2xl p-6 border border-slate-200 pointer-events-auto z-[110]"
           >
             <div className="flex flex-col gap-4">
-              {/* <Link
+              <Link
                 to="/"
                 onClick={() => setMobileMenuOpen(false)}
                 className="text-lg font-semibold text-slate-700 hover:text-primary-600"
@@ -258,7 +258,7 @@ const Navbar = () => {
                 className="text-lg font-semibold text-slate-700 hover:text-primary-600"
               >
                 Pharmacy Store
-              </Link> */}
+              </Link>
 
               {isAuthenticated ? (
                 <Button
