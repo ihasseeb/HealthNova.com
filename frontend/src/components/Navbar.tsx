@@ -59,7 +59,7 @@ const Navbar = () => {
 
         {/* DESKTOP LINKS */}
         <div className="hidden lg:flex items-center gap-1 bg-slate-100/50 p-1 rounded-full border border-slate-200/50">
-          <Link
+          {/* <Link
             to="/"
             className="px-4 py-2 rounded-full text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-white transition-all shadow-sm"
           >
@@ -92,7 +92,7 @@ const Navbar = () => {
             className="px-4 py-2 rounded-full text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-white transition-all shadow-sm"
           >
             Pharmacy
-          </Link>
+          </Link> */}
 
           {isAuthenticated && !isDoctor && !isAdmin && (
             <DropdownMenu modal={false}>
