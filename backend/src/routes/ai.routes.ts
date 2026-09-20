@@ -1,5 +1,10 @@
 // src/routes/ai.routes.ts (ya aapka existing AI controller)
 import { Router, Request, Response } from "express";
+import multer from "multer";
+import FormData from "form-data";
+import axios from "axios";
+import { AppError } from "../utils/AppError";
+
 import {
   symptomCheck,
   getSymptomHistory,
@@ -26,6 +31,7 @@ import {
   healthTipsSchema,
 } from "../validators/ai.validator";
 
+const upload = multer();
 const router = Router();
 
 // 🟢 1. TEST ROUTE SABSE UPAR (Bina Auth Ke)
@@ -61,6 +67,34 @@ router.post("/triage-test", async (req: Request, res: Response) => {
       message: "n8n AI Service Error",
       error: error.message,
     });
+  }
+});
+// Route directly in ai.routes.ts for simplicity
+router.post("/voice-scribe", upload.single("audio"), async (req, res, next) => {
+  try {
+    if (!req.file) throw new AppError("No audio file uploaded", 400);
+
+    // Create FormData to send to Flask
+    const form = new FormData();
+    form.append("audio", req.file.buffer, {
+      filename: req.file.originalname || "audio.webm",
+      contentType: req.file.mimetype,
+    });
+
+    // Call Flask AI Service
+    const AI_URL = process.env.AI_SERVICE_URL || "http://localhost:8000";
+    const aiResponse = await axios.post(
+      `${AI_URL}/api/health/voice-scribe`,
+      form,
+      {
+        headers: { ...form.getHeaders() },
+        timeout: 60000,
+      },
+    );
+
+    res.status(200).json(aiResponse.data);
+  } catch (error) {
+    next(error);
   }
 });
 
