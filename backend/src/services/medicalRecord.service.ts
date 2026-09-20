@@ -187,3 +187,165 @@ export const getSharedRecordsService = async (userId: string) => {
 
   return records;
 };
+
+// ============================================
+// COMPREHENSIVE EMR HEALTH TIMELINE AGGREGATOR
+// ============================================
+
+export interface TimelineEvent {
+  id: string;
+  type:
+    | "APPOINTMENT"
+    | "PRESCRIPTION"
+    | "SYMPTOM_CHECK"
+    | "HEALTH_REPORT"
+    | "MOOD_LOG";
+  title: string;
+  description: string;
+  date: Date;
+  metadata?: any;
+}
+
+export const getHealthTimelineService = async (userId: string) => {
+  // Aggregate data from 5 different tables in parallel for maximum speed!
+  const [appointments, prescriptions, symptomChecks, reports, moodLogs] =
+    await Promise.all([
+      // 1. Appointments
+      prisma.appointment.findMany({
+        where: { patientId: userId },
+        include: {
+          doctor: {
+            include: {
+              user: { select: { name: true } },
+            },
+          },
+        },
+        orderBy: { appointmentDate: "desc" },
+        take: 20,
+      }),
+
+      // 2. Prescriptions
+      prisma.prescription.findMany({
+        where: { patientId: userId },
+        include: {
+          doctor: {
+            include: {
+              user: { select: { name: true } },
+            },
+          },
+          medicines: true,
+        },
+        orderBy: { createdAt: "desc" },
+        take: 20,
+      }),
+
+      // 3. AI Symptom Checks
+      prisma.symptomCheck.findMany({
+        where: { userId },
+        orderBy: { createdAt: "desc" },
+        take: 20,
+      }),
+
+      // 4. Uploaded Health Reports
+      prisma.healthReport.findMany({
+        where: { userId },
+        orderBy: { createdAt: "desc" },
+        take: 20,
+      }),
+
+      // 5. Mental Health Mood Logs
+      prisma.moodLog.findMany({
+        where: { userId },
+        orderBy: { createdAt: "desc" },
+        take: 20,
+      }),
+    ]);
+
+  // Transform all different records into a unified Timeline Event format
+  const timeline: TimelineEvent[] = [];
+
+  // Map Appointments
+  appointments.forEach((apt) => {
+    timeline.push({
+      id: apt.id,
+      type: "APPOINTMENT",
+      title: `Doctor Consultation (${apt.type.replace("_", " ")})`,
+      description: `Doctor: Dr. ${apt.doctor.user.name} | Reason: ${apt.reason}`,
+      date: apt.appointmentDate,
+      metadata: {
+        status: apt.status,
+        fee: apt.consultationFee,
+        startTime: apt.startTime,
+      },
+    });
+  });
+
+  // Map Prescriptions
+  prescriptions.forEach((rx) => {
+    const medNames = rx.medicines.map((m) => m.medicineName).join(", ");
+    timeline.push({
+      id: rx.id,
+      type: "PRESCRIPTION",
+      title: `Digital Prescription Issued`,
+      description: `Diagnosis: ${rx.diagnosis} | Medicines: ${medNames || "None"}`,
+      date: rx.createdAt,
+      metadata: {
+        doctorName: rx.doctor.user.name,
+        medicinesCount: rx.medicines.length,
+        notes: rx.notes,
+      },
+    });
+  });
+
+  // Map Symptom Checks
+  symptomChecks.forEach((sc) => {
+    timeline.push({
+      id: sc.id,
+      type: "SYMPTOM_CHECK",
+      title: `AI Symptom Analysis (${sc.severity} Severity)`,
+      description: `Symptoms: "${sc.symptoms}" | Possible Causes: ${sc.possibleCauses.join(", ")}`,
+      date: sc.createdAt,
+      metadata: {
+        severity: sc.severity,
+        duration: sc.duration,
+      },
+    });
+  });
+
+  // Map Health Reports
+  reports.forEach((hr) => {
+    timeline.push({
+      id: hr.id,
+      type: "HEALTH_REPORT",
+      title: `Uploaded ${hr.reportType} Analysis`,
+      description: `Status: ${hr.overallStatus} | Summary: ${hr.summary}`,
+      date: hr.createdAt,
+      metadata: {
+        status: hr.overallStatus,
+        urgency: hr.urgency,
+      },
+    });
+  });
+
+  // Map Mood Logs
+  moodLogs.forEach((ml) => {
+    timeline.push({
+      id: ml.id,
+      type: "MOOD_LOG",
+      title: `Mental Health & Mood Log (Score: ${ml.moodScore}/5)`,
+      description: `Emotions: ${ml.emotions.join(", ")} | Note: ${ml.journalText || "No journal entry"}`,
+      date: ml.createdAt,
+      metadata: {
+        moodScore: ml.moodScore,
+        aiAnalysis: ml.aiAnalysis,
+      },
+    });
+  });
+
+  // Sort unified timeline by date in descending order (Newest first)
+  timeline.sort(
+    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+  );
+
+  return timeline;
+};

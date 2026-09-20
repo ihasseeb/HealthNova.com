@@ -40,6 +40,7 @@ import MentalHealth from "../pages/patient/MentalHealth";
 import VideoConsultation from "../pages/VideoConsultation";
 import DoctorPrescriptions from "../pages/doctor/DoctorPrescription";
 import PharmacyStore from "../pages/patient/PharmacyStore";
+import HealthTimelinePage from "../pages/patient/HealthTimelinePage";
 const AppRoutes = () => {
   return (
     <Routes>
@@ -74,6 +75,7 @@ const AppRoutes = () => {
           <Route path="/notifications" element={<NotificationsPage />} />
           <Route path="/medical-records" element={<MedicalRecordsPage />} />
           <Route path="/mental-health" element={<MentalHealth />} />
+          <Route path="/medical-history" element={<HealthTimelinePage />} />
           <Route
             path="/video-call/:appointmentId"
             element={<VideoConsultation />}

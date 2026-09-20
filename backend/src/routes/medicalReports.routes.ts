@@ -7,6 +7,7 @@ import {
   deleteRecord,
   shareRecord,
   getSharedRecords,
+  getHealthTimeline,
 } from "../controllers/medicalRecord.controller";
 import { validate } from "../middlewares/validate.middleware";
 import { authenticate, authorize } from "../middlewares/auth.middleware";
@@ -27,6 +28,7 @@ router.get("/:recordId", getRecordById);
 router.put("/:recordId", validate(updateRecordSchema), updateRecord);
 router.delete("/:recordId", deleteRecord);
 router.post("/:recordId/share", validate(shareRecordSchema), shareRecord);
+router.get("/timeline", getHealthTimeline);
 
 // Doctor Route
 router.get("/doctor/shared", authorize("DOCTOR"), getSharedRecords);

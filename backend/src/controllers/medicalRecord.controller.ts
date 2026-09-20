@@ -7,6 +7,7 @@ import {
   deleteRecordService,
   shareRecordService,
   getSharedRecordsService,
+  getHealthTimelineService,
 } from "../services/medicalRecord.service";
 import { successResponse } from "../utils/apiResponse";
 import { asyncHandler } from "../utils/asyncHandler";
@@ -74,5 +75,16 @@ export const getSharedRecords = asyncHandler(
     const userId = req.user!.userId;
     const records = await getSharedRecordsService(userId);
     return successResponse(res, 200, "Shared records", { records });
+  },
+);
+
+// Get Complete Patient EMR Timeline
+export const getHealthTimeline = asyncHandler(
+  async (req: Request, res: Response) => {
+    const userId = req.user!.userId;
+    const timeline = await getHealthTimelineService(userId);
+    return successResponse(res, 200, "Health timeline fetched successfully", {
+      timeline,
+    });
   },
 );

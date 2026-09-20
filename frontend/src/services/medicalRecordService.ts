@@ -38,3 +38,9 @@ export const getSharedRecordsForDoctor = async () => {
   const response = await api.get("/medical-records/doctor/shared");
   return response.data;
 };
+
+// Get Comprehensive EMR Timeline
+export const getHealthTimeline = async () => {
+  const response = await api.get("/medical-records/timeline");
+  return response.data;
+};

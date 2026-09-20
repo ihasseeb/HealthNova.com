@@ -5,6 +5,7 @@ import {
   deleteMedicalRecord,
   shareMedicalRecord,
   getSharedRecordsForDoctor,
+  getHealthTimeline,
 } from "../services/medicalRecordService";
 import {
   UploadRecordFormData,
@@ -76,5 +77,13 @@ export const useGetSharedRecordsForDoctor = () => {
   return useQuery({
     queryKey: ["sharedRecordsDoctor"],
     queryFn: getSharedRecordsForDoctor,
+  });
+};
+
+// Hook for Health Timeline
+export const useGetHealthTimeline = () => {
+  return useQuery({
+    queryKey: ["healthTimeline"],
+    queryFn: getHealthTimeline,
   });
 };

@@ -291,6 +291,12 @@ const Navbar = () => {
                           <span className="mr-2">📁</span> Medical Vault
                         </DropdownMenuItem>
                         <DropdownMenuItem
+                          onClick={() => navigate("/medical-history")}
+                          className="cursor-pointer"
+                        >
+                          <span className="mr-2">📈</span> Health Timeline (EMR)
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
                           onClick={() => navigate("/payment/history")}
                           className="cursor-pointer"
                         >
