@@ -221,7 +221,7 @@ const Navbar = () => {
             className="lg:hidden absolute top-20 left-4 right-4 bg-white rounded-3xl shadow-2xl p-6 border border-slate-200 pointer-events-auto z-[110]"
           >
             <div className="flex flex-col gap-4">
-              <Link
+              {/* <Link
                 to="/"
                 onClick={() => setMobileMenuOpen(false)}
                 className="text-lg font-semibold text-slate-700 hover:text-primary-600"
@@ -258,7 +258,7 @@ const Navbar = () => {
                 className="text-lg font-semibold text-slate-700 hover:text-primary-600"
               >
                 Pharmacy Store
-              </Link>
+              </Link> */}
 
               {isAuthenticated ? (
                 <Button
