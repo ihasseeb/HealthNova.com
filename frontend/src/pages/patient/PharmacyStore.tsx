@@ -12,6 +12,7 @@ import {
 import { useAuthStore } from "../../store/authStore";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { Pill, TestTubes, ShoppingCart, ArrowRight } from "lucide-react";
 
 const PharmacyStore = () => {
   const navigate = useNavigate();
@@ -94,160 +95,206 @@ const PharmacyStore = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-cyan-50 p-4 md:p-8">
+    <div className="min-h-screen bg-[#F8FAFC] p-4 md:p-8">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="max-w-6xl mx-auto space-y-6"
+        className="max-w-7xl mx-auto space-y-8"
       >
-        {/* Header */}
-        <div className="bg-gradient-to-r from-emerald-500 via-teal-600 to-cyan-600 rounded-3xl p-6 md:p-8 text-white shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
+        {/* Modern Header Banner */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="relative overflow-hidden rounded-[2rem] p-8 md:p-12 shadow-xl border border-slate-200/50 bg-white flex flex-col md:flex-row justify-between items-start md:items-center gap-6"
+        >
+          <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-primary-400/20 to-accent-500/20 rounded-full blur-[80px] pointer-events-none" />
+          <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr from-cyan-400/20 to-blue-500/20 rounded-full blur-[80px] pointer-events-none" />
+
           <div className="relative z-10">
-            <h1 className="text-2xl md:text-4xl font-bold flex items-center gap-3">
-              <span>🛒</span> HealthNova Store
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 mb-4">
+              <span className="w-2 h-2 rounded-full bg-primary-500 animate-pulse"></span>
+              <p className="text-xs font-semibold text-slate-600 uppercase tracking-wider">
+                Health Store
+              </p>
+            </div>
+            <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">
+              Order Medicines &{" "}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-accent-600">
+                Lab Tests
+              </span>
             </h1>
-            <p className="text-white/90 text-sm mt-1">
-              Order medicines and book diagnostic tests online.
+            <p className="text-slate-500 text-base mt-2 max-w-lg">
+              Get genuine medicines delivered home and book diagnostic tests at
+              your doorstep.
             </p>
           </div>
 
-          {/* Tabs */}
-          <div className="flex bg-white/20 p-1 rounded-xl gap-1 relative z-10">
+          {/* Premium Tab Selector */}
+          <div className="relative z-10 flex bg-slate-100/50 p-1.5 rounded-full border border-slate-200 shadow-sm w-full md:w-auto overflow-hidden">
             <button
               onClick={() => setActiveTab("MEDICINES")}
-              className={`px-4 py-2 rounded-lg text-xs font-bold transition ${activeTab === "MEDICINES" ? "bg-white text-emerald-700" : "text-white hover:bg-white/10"}`}
+              className={`flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 ${activeTab === "MEDICINES" ? "bg-white text-primary-700 shadow-md" : "text-slate-500 hover:text-slate-800"}`}
             >
-              💊 E-Pharmacy
+              <Pill size={16} /> E-Pharmacy
             </button>
             <button
               onClick={() => setActiveTab("LAB_TESTS")}
-              className={`px-4 py-2 rounded-lg text-xs font-bold transition ${activeTab === "LAB_TESTS" ? "bg-white text-emerald-700" : "text-white hover:bg-white/10"}`}
+              className={`flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 ${activeTab === "LAB_TESTS" ? "bg-white text-primary-700 shadow-md" : "text-slate-500 hover:text-slate-800"}`}
             >
-              🧪 Lab Tests
+              <TestTubes size={16} /> Lab Tests
             </button>
           </div>
-        </div>
+        </motion.div>
 
         {/* ======================= E-PHARMACY TAB ======================= */}
         {activeTab === "MEDICINES" && (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Product List */}
-            <div className="lg:col-span-2 space-y-4">
+          <div className="flex flex-col lg:flex-row gap-8 items-start">
+            {/* Main Content Area (Products) */}
+            <div className="w-full lg:flex-1 space-y-4">
               {loadingProducts ? (
-                <div className="text-center py-12 text-slate-500 animate-pulse">
-                  Loading products...
+                <div className="text-center py-12 text-slate-400 animate-pulse font-medium">
+                  Loading premium products...
                 </div>
               ) : products.length === 0 ? (
-                <div className="text-center py-12 bg-white rounded-2xl border border-slate-100 shadow-sm text-slate-500">
-                  No products found. Run seed script!
+                <div className="text-center py-12 bg-white rounded-2xl border border-slate-200 shadow-sm text-slate-500">
+                  No products found.
                 </div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {products.map((product: any) => (
-                    <motion.div
-                      key={product.id}
-                      whileHover={{ y: -4 }}
-                      className="bg-white p-5 rounded-2xl shadow-sm border border-emerald-100 flex flex-col justify-between h-full"
-                    >
-                      <div>
-                        {product.imageUrl && (
-                          <div className="w-full h-40 bg-slate-100 rounded-xl mb-4 overflow-hidden">
-                            <img
-                              src={product.imageUrl}
-                              alt={product.name}
-                              className="w-full h-full object-cover mix-blend-multiply"
-                            />
-                          </div>
-                        )}
-                        <div className="flex justify-between items-start mb-2">
-                          <h3 className="font-bold text-slate-800 line-clamp-1">
-                            {product.name}
-                          </h3>
-                          {product.requiresRx && (
-                            <span className="text-[10px] bg-amber-100 text-amber-700 px-2 py-0.5 rounded font-bold">
-                              Rx Req.
-                            </span>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-5">
+                  {products.map((product: any, index: number) => {
+                    // Logic for 2 cards in first row, 3 cards in next rows
+                    // First 2 items take 3 columns out of 6 (50%)
+                    // Next 3 items take 2 columns out of 6 (33.3%)
+                    const isFirstRow = index < 2;
+                    const colSpanClass = isFirstRow
+                      ? "lg:col-span-3"
+                      : "lg:col-span-2";
+
+                    return (
+                      <motion.div
+                        key={product.id}
+                        whileHover={{ y: -4 }}
+                        className={`bg-white p-5 rounded-[1.5rem] shadow-sm border border-slate-200/60 hover:shadow-xl hover:border-primary-200 transition-all flex flex-col justify-between group ${colSpanClass}`}
+                      >
+                        <div>
+                          {product.imageUrl && (
+                            <div
+                              className={`w-full bg-slate-50 rounded-2xl mb-4 overflow-hidden border border-slate-100 flex items-center justify-center ${isFirstRow ? "h-56" : "h-40"}`}
+                            >
+                              <img
+                                src={product.imageUrl}
+                                alt={product.name}
+                                className="w-full h-full object-cover mix-blend-multiply group-hover:scale-105 transition-transform duration-500"
+                              />
+                            </div>
                           )}
+                          <div className="flex justify-between items-start mb-2">
+                            <h3
+                              className={`font-bold text-slate-800 line-clamp-1 ${isFirstRow ? "text-lg" : "text-base"}`}
+                            >
+                              {product.name}
+                            </h3>
+                            {product.requiresRx && (
+                              <span className="text-[10px] bg-red-50 text-red-600 px-2 py-0.5 rounded-full font-bold border border-red-100">
+                                Rx Required
+                              </span>
+                            )}
+                          </div>
+                          <p
+                            className={`text-slate-500 line-clamp-2 mb-6 ${isFirstRow ? "text-sm" : "text-xs"}`}
+                          >
+                            {product.description}
+                          </p>
                         </div>
-                        <p className="text-xs text-slate-500 line-clamp-2 mb-4">
-                          {product.description}
-                        </p>
-                      </div>
-                      <div className="flex items-center justify-between mt-auto">
-                        <span className="text-xl font-bold text-emerald-600">
-                          ${product.price.toFixed(2)}
-                        </span>
-                        <Button
-                          onClick={() => addToCart(product)}
-                          size="sm"
-                          className="bg-emerald-600 hover:bg-emerald-700"
-                        >
-                          Add 🛒
-                        </Button>
-                      </div>
-                    </motion.div>
-                  ))}
+                        <div className="flex items-center justify-between mt-auto">
+                          <span
+                            className={`font-extrabold text-primary-600 ${isFirstRow ? "text-2xl" : "text-xl"}`}
+                          >
+                            ${product.price.toFixed(2)}
+                          </span>
+                          <Button
+                            onClick={() => addToCart(product)}
+                            size={isFirstRow ? "default" : "sm"}
+                            className="bg-slate-900 hover:bg-slate-800 text-white rounded-xl shadow-lg"
+                          >
+                            Add to Cart
+                          </Button>
+                        </div>
+                      </motion.div>
+                    );
+                  })}
                 </div>
               )}
             </div>
 
-            {/* Shopping Cart Side Panel */}
-            <div className="bg-white rounded-2xl p-6 shadow-xl border border-emerald-200 h-fit sticky top-24">
-              <h2 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
-                🛍️ Your Cart
+            {/* Shopping Cart Side Panel (Sticky) */}
+            <div className="w-full lg:w-[380px] bg-white rounded-[1.5rem] p-6 md:p-8 shadow-xl border border-slate-200/60 sticky top-28 shrink-0">
+              <h2 className="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2">
+                <ShoppingCart size={20} className="text-primary-600" /> Your
+                Cart
               </h2>
 
               {cart.length === 0 ? (
-                <p className="text-sm text-slate-400 py-8 text-center border-2 border-dashed rounded-xl">
-                  Your cart is empty.
-                </p>
+                <div className="py-12 flex flex-col items-center justify-center border-2 border-dashed border-slate-200 rounded-2xl bg-slate-50/50">
+                  <span className="text-4xl opacity-50 mb-2">🛍️</span>
+                  <p className="text-sm text-slate-500 font-medium">
+                    Your cart is empty
+                  </p>
+                </div>
               ) : (
-                <div className="space-y-4">
-                  <div className="max-h-[300px] overflow-y-auto space-y-3 pr-2">
+                <div className="space-y-6">
+                  <div className="max-h-[300px] overflow-y-auto space-y-3 pr-2 scrollbar-thin scrollbar-thumb-slate-200">
                     {cart.map((item) => (
                       <div
                         key={item.productId}
-                        className="flex justify-between items-center bg-slate-50 p-3 rounded-lg text-sm"
+                        className="flex justify-between items-center bg-slate-50 p-3 rounded-xl text-sm border border-slate-100"
                       >
-                        <div className="flex-1 min-w-0 pr-2">
+                        <div className="flex-1 min-w-0 pr-3">
                           <p className="font-bold text-slate-700 truncate">
                             {item.product.name}
                           </p>
-                          <p className="text-xs text-slate-500">
+                          <p className="text-xs text-slate-500 font-medium mt-0.5">
                             Qty: {item.quantity} × ${item.product.price}
                           </p>
                         </div>
-                        <p className="font-bold text-emerald-600">
+                        <p className="font-bold text-slate-900">
                           ${(item.quantity * item.product.price).toFixed(2)}
                         </p>
                       </div>
                     ))}
                   </div>
 
-                  <div className="border-t border-slate-200 pt-4 flex justify-between items-center text-lg font-bold">
-                    <span>Total:</span>
-                    <span className="text-emerald-600">
+                  <div className="border-t border-slate-200 pt-4 flex justify-between items-center text-lg font-extrabold text-slate-900">
+                    <span>Total Amount:</span>
+                    <span className="text-primary-600">
                       ${cartTotal.toFixed(2)}
                     </span>
                   </div>
 
-                  <div className="space-y-3 pt-4">
-                    <Label className="text-xs">Shipping Address *</Label>
-                    <textarea
-                      value={shippingAddress}
-                      onChange={(e) => setShippingAddress(e.target.value)}
-                      placeholder="Enter full delivery address..."
-                      className="w-full min-h-[80px] p-3 text-sm border rounded-lg outline-none focus:ring-2 focus:ring-emerald-500"
-                    />
+                  <div className="space-y-4 pt-4 border-t border-slate-200">
+                    <div className="space-y-1.5">
+                      <Label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                        Shipping Address *
+                      </Label>
+                      <textarea
+                        value={shippingAddress}
+                        onChange={(e) => setShippingAddress(e.target.value)}
+                        placeholder="Enter full delivery address..."
+                        className="w-full min-h-[90px] p-3 text-sm border border-slate-200 bg-slate-50/50 rounded-xl outline-none focus:ring-2 focus:ring-primary-500 focus:bg-white transition-all resize-none"
+                      />
+                    </div>
                     <Button
                       onClick={handlePharmacyCheckout}
                       disabled={checkoutPharmacy.isPending || cart.length === 0}
-                      className="w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:opacity-90 h-12 shadow-lg"
+                      className="w-full bg-primary-600 hover:bg-primary-700 text-white h-14 rounded-xl shadow-lg shadow-primary-600/20 text-base font-semibold flex items-center justify-center gap-2"
                     >
-                      {checkoutPharmacy.isPending
-                        ? "Processing..."
-                        : `Checkout ($${cartTotal.toFixed(2)})`}
+                      {checkoutPharmacy.isPending ? (
+                        "Processing..."
+                      ) : (
+                        <>
+                          Checkout Securely <ArrowRight size={18} />
+                        </>
+                      )}
                     </Button>
                   </div>
                 </div>
@@ -258,58 +305,63 @@ const PharmacyStore = () => {
 
         {/* ======================= LAB TESTS TAB ======================= */}
         {activeTab === "LAB_TESTS" && (
-          <div className="space-y-6">
+          <div className="space-y-6 max-w-5xl mx-auto">
             {loadingTests ? (
-              <div className="text-center py-12 text-slate-500 animate-pulse">
-                Loading tests...
+              <div className="text-center py-12 text-slate-400 animate-pulse font-medium">
+                Loading test catalog...
               </div>
             ) : labTests.length === 0 ? (
-              <div className="text-center py-12 bg-white rounded-2xl border border-slate-100 shadow-sm text-slate-500">
+              <div className="text-center py-12 bg-white rounded-2xl border border-slate-200 shadow-sm text-slate-500">
                 No lab tests available.
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {labTests.map((test: any) => (
                   <motion.div
                     key={test.id}
                     whileHover={{ y: -4 }}
-                    className="bg-white p-6 rounded-2xl shadow-lg border border-teal-100 flex flex-col justify-between"
+                    className="bg-white p-6 md:p-8 rounded-[1.5rem] shadow-sm border border-slate-200/60 hover:shadow-xl hover:border-primary-200 transition-all flex flex-col justify-between group"
                   >
                     <div>
-                      <div className="flex justify-between items-start mb-3">
-                        <div className="text-4xl">🧪</div>
+                      <div className="flex justify-between items-start mb-4">
+                        <div className="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600 border border-blue-100 group-hover:scale-110 transition-transform">
+                          <TestTubes size={24} strokeWidth={2} />
+                        </div>
                         {test.homeSample && (
-                          <span className="bg-blue-100 text-blue-700 text-[10px] font-bold px-2 py-1 rounded-full flex items-center gap-1">
-                            🏠 Home Sample
+                          <span className="bg-indigo-50 text-indigo-700 text-[10px] font-bold px-3 py-1 rounded-full border border-indigo-100 flex items-center gap-1.5 uppercase tracking-wide">
+                            <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse"></span>
+                            Home Collection
                           </span>
                         )}
                       </div>
-                      <h3 className="font-bold text-slate-800 text-lg leading-tight mb-2">
+                      <h3 className="font-bold text-slate-900 text-xl leading-tight mb-2 group-hover:text-primary-600 transition-colors">
                         {test.name}
                       </h3>
-                      <p className="text-xs text-slate-500 mb-4">
+                      <p className="text-sm text-slate-500 mb-6 leading-relaxed">
                         {test.description}
                       </p>
                     </div>
 
-                    <div className="space-y-3 bg-slate-50 p-4 rounded-xl">
-                      <div className="flex justify-between items-center mb-2">
-                        <span className="font-bold text-slate-700">Price:</span>
-                        <span className="text-xl font-bold text-teal-600">
+                    <div className="space-y-4 bg-slate-50/80 p-5 rounded-2xl border border-slate-100">
+                      <div className="flex justify-between items-center">
+                        <span className="font-bold text-slate-700 text-sm">
+                          Test Price:
+                        </span>
+                        <span className="text-2xl font-extrabold text-slate-900">
                           ${test.price.toFixed(2)}
                         </span>
                       </div>
 
-                      {/* Booking Form (Visible only if user intends to book this test) */}
+                      {/* Booking Form Toggle */}
                       {labBookingData.testId === test.id ? (
                         <AnimatePresence>
                           <motion.div
                             initial={{ opacity: 0, height: 0 }}
                             animate={{ opacity: 1, height: "auto" }}
-                            className="space-y-3 pt-2 border-t"
+                            className="space-y-4 pt-4 border-t border-slate-200"
                           >
-                            <div>
-                              <Label className="text-[10px]">
+                            <div className="space-y-1.5">
+                              <Label className="text-xs font-bold text-slate-500 uppercase">
                                 Preferred Date *
                               </Label>
                               <Input
@@ -322,13 +374,13 @@ const PharmacyStore = () => {
                                     date: e.target.value,
                                   })
                                 }
-                                className="h-8 text-xs mt-1"
+                                className="h-10 text-sm bg-white rounded-xl focus-visible:ring-primary-500"
                               />
                             </div>
                             {test.homeSample && (
-                              <div>
-                                <Label className="text-[10px]">
-                                  Home Collection Address *
+                              <div className="space-y-1.5">
+                                <Label className="text-xs font-bold text-slate-500 uppercase">
+                                  Collection Address *
                                 </Label>
                                 <Input
                                   placeholder="House/Apt, Street, City"
@@ -339,14 +391,13 @@ const PharmacyStore = () => {
                                       address: e.target.value,
                                     })
                                   }
-                                  className="h-8 text-xs mt-1"
+                                  className="h-10 text-sm bg-white rounded-xl focus-visible:ring-primary-500"
                                 />
                               </div>
                             )}
-                            <div className="flex gap-2 pt-2">
+                            <div className="flex gap-3 pt-2">
                               <Button
                                 variant="outline"
-                                size="sm"
                                 onClick={() =>
                                   setLabBookingData({
                                     testId: null,
@@ -354,17 +405,18 @@ const PharmacyStore = () => {
                                     address: "",
                                   })
                                 }
-                                className="flex-1 h-8 text-xs"
+                                className="flex-1 h-11 rounded-xl text-slate-600 hover:bg-slate-100"
                               >
                                 Cancel
                               </Button>
                               <Button
                                 onClick={() => handleLabCheckout(test)}
                                 disabled={checkoutLab.isPending}
-                                size="sm"
-                                className="flex-1 h-8 bg-teal-600 hover:bg-teal-700 text-xs text-white shadow-md"
+                                className="flex-1 h-11 bg-primary-600 hover:bg-primary-700 text-white rounded-xl shadow-lg shadow-primary-600/20"
                               >
-                                {checkoutLab.isPending ? "..." : "Pay Now"}
+                                {checkoutLab.isPending
+                                  ? "Processing..."
+                                  : "Pay Securely"}
                               </Button>
                             </div>
                           </motion.div>
@@ -378,9 +430,9 @@ const PharmacyStore = () => {
                               address: "",
                             })
                           }
-                          className="w-full bg-teal-600 hover:bg-teal-700 text-white shadow-md"
+                          className="w-full bg-slate-900 hover:bg-slate-800 text-white rounded-xl h-11 mt-2 font-medium"
                         >
-                          📅 Book This Test
+                          Book This Test
                         </Button>
                       )}
                     </div>
