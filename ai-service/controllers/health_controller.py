@@ -10,6 +10,7 @@ from services.health_ai_service import (
     generate_pre_consultation_hpi,
     analyze_mental_health
 )
+from services.groq_service import transcribe_audio, structure_prescription_from_text
 
 
 def symptom_checker_controller():
@@ -248,6 +249,35 @@ def mental_health_controller():
             "data": result
         }), 200
 
+    except Exception as e:
+        return jsonify({
+            "success": False,
+            "message": str(e)
+        }), 500
+
+        
+def ai_voice_scribe_controller():
+    """Handle Audio Upload -> Transcribe -> Structure JSON"""
+    try:
+        if 'audio' not in request.files:
+            return jsonify({"success": False, "message": "No audio file provided"}), 400
+            
+        audio_file = request.files['audio']
+        
+        # 1. Speech to Text
+        transcript = transcribe_audio(audio_file)
+        
+        # 2. Text to Structured JSON Prescription
+        structured_data = structure_prescription_from_text(transcript)
+        
+        return jsonify({
+            "success": True,
+            "message": "Voice prescription generated successfully",
+            "data": {
+                "transcript": transcript,
+                "prescription": structured_data
+            }
+        })
     except Exception as e:
         return jsonify({
             "success": False,

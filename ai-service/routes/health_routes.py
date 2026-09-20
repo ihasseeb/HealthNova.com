@@ -10,6 +10,7 @@ from controllers.health_controller import (
      analyze_report_image_controller, 
      mental_health_controller
 )
+from controllers.health_controller import ai_voice_scribe_controller
 
 # Create Blueprint
 health_bp = Blueprint("health", __name__, url_prefix="/api/health")
@@ -24,3 +25,4 @@ health_bp.route("/health-tips", methods=["POST"])(health_tips_controller)
 health_bp.route("/analyze-report-image", methods=["POST"])(analyze_report_image_controller)
 health_bp.route('/pre-consultation', methods=['POST'])(handle_pre_consultation)
 health_bp.route("/mental-health", methods=["POST"])(mental_health_controller)
+health_bp.route("/voice-scribe", methods=["POST"])(ai_voice_scribe_controller)

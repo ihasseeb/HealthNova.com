@@ -1,5 +1,5 @@
 // src/routes/ai.routes.ts (ya aapka existing AI controller)
-import { Router, Request, Response } from "express";
+import { Router, Request, Response, NextFunction } from "express";
 import multer from "multer";
 import FormData from "form-data";
 import axios from "axios";
@@ -69,34 +69,48 @@ router.post("/triage-test", async (req: Request, res: Response) => {
     });
   }
 });
-// Route directly in ai.routes.ts for simplicity
-router.post("/voice-scribe", upload.single("audio"), async (req, res, next) => {
-  try {
-    if (!req.file) throw new AppError("No audio file uploaded", 400);
+// Voice Scribe Route
+router.post(
+  "/voice-scribe",
+  upload.single("audio"),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      if (!req.file) {
+        return res
+          .status(400)
+          .json({ success: false, message: "No audio file uploaded" });
+      }
 
-    // Create FormData to send to Flask
-    const form = new FormData();
-    form.append("audio", req.file.buffer, {
-      filename: req.file.originalname || "audio.webm",
-      contentType: req.file.mimetype,
-    });
+      const form = new FormData();
+      form.append("audio", req.file.buffer, {
+        filename: req.file.originalname || "prescription.webm",
+        contentType: req.file.mimetype || "audio/webm",
+      });
 
-    // Call Flask AI Service
-    const AI_URL = process.env.AI_SERVICE_URL || "http://localhost:8000";
-    const aiResponse = await axios.post(
-      `${AI_URL}/api/health/voice-scribe`,
-      form,
-      {
-        headers: { ...form.getHeaders() },
-        timeout: 60000,
-      },
-    );
+      const AI_URL = process.env.AI_SERVICE_URL || "http://localhost:8000";
+      const aiResponse = await axios.post(
+        `${AI_URL}/api/health/voice-scribe`,
+        form,
+        {
+          headers: { ...form.getHeaders() },
+          timeout: 60000,
+        },
+      );
 
-    res.status(200).json(aiResponse.data);
-  } catch (error) {
-    next(error);
-  }
-});
+      return res.status(200).json(aiResponse.data);
+    } catch (error: any) {
+      console.error(
+        "❌ Voice Scribe Proxy Error:",
+        error.response?.data || error.message,
+      );
+      const errorMessage =
+        error.response?.data?.message ||
+        error.message ||
+        "Voice processing failed";
+      return res.status(500).json({ success: false, message: errorMessage });
+    }
+  },
+);
 
 // All routes require authentication
 router.use(authenticate);
