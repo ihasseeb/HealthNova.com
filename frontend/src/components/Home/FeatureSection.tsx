@@ -1,4 +1,12 @@
 import { motion, type Variants } from "framer-motion";
+import {
+  Brain,
+  Stethoscope,
+  Salad,
+  HeartPulse,
+  ShieldCheck,
+  Clock,
+} from "lucide-react";
 
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
@@ -20,52 +28,57 @@ const cardVariants: Variants = {
 const FeaturesSection = () => {
   const features = [
     {
-      icon: "🧠",
+      icon: <Brain size={24} strokeWidth={1.5} />,
       title: "AI Symptom Checker",
       description:
-        "Get instant analysis of your symptoms with our advanced AI.",
-      gradient: "from-emerald-400 to-emerald-600",
-      bg: "from-emerald-50",
+        "Get instant clinical analysis of your symptoms powered by our advanced medical LLM.",
+      color: "text-primary-600",
+      bg: "bg-primary-50",
     },
     {
-      icon: "👨‍⚕️",
+      icon: <Stethoscope size={24} strokeWidth={1.5} />,
       title: "Expert Consultations",
-      description: "Connect with certified doctors and specialists anytime.",
-      gradient: "from-teal-400 to-teal-600",
-      bg: "from-teal-50",
+      description:
+        "Connect with certified doctors via secure WebRTC video calls or real-time chat.",
+      color: "text-accent-600",
+      bg: "bg-accent-50",
     },
     {
-      icon: "🥗",
-      title: "Personalized Diet Plans",
-      description: "Custom meal plans crafted by AI based on your goals.",
-      gradient: "from-cyan-400 to-cyan-600",
-      bg: "from-cyan-50",
+      icon: <Salad size={24} strokeWidth={1.5} />,
+      title: "Personalized Diet",
+      description:
+        "Custom meal plans engineered by AI to match your specific health goals and BMI.",
+      color: "text-emerald-600",
+      bg: "bg-emerald-50",
     },
     {
-      icon: "❤️",
-      title: "Health Tracking",
-      description: "Monitor vital signs and wellness metrics beautifully.",
-      gradient: "from-rose-400 to-pink-600",
-      bg: "from-rose-50",
+      icon: <HeartPulse size={24} strokeWidth={1.5} />,
+      title: "Health Vault",
+      description:
+        "A centralized EMR timeline to store, manage, and share your complete medical history.",
+      color: "text-rose-600",
+      bg: "bg-rose-50",
     },
     {
-      icon: "🛡️",
-      title: "Secure & Private",
-      description: "Your health data is encrypted with bank-level security.",
-      gradient: "from-amber-400 to-orange-600",
-      bg: "from-amber-50",
+      icon: <ShieldCheck size={24} strokeWidth={1.5} />,
+      title: "Bank-Level Security",
+      description:
+        "Your sensitive health data is encrypted and protected by enterprise-grade Arcjet WAF.",
+      color: "text-amber-600",
+      bg: "bg-amber-50",
     },
     {
-      icon: "⏰",
+      icon: <Clock size={24} strokeWidth={1.5} />,
       title: "24/7 Availability",
-      description: "Access health support anytime, day or night.",
-      gradient: "from-purple-400 to-indigo-600",
-      bg: "from-purple-50",
+      description:
+        "Access your AI health assistant and medical records anytime, anywhere in the world.",
+      color: "text-blue-600",
+      bg: "bg-blue-50",
     },
   ];
 
   return (
-    <section className="px-4 md:px-8 lg:px-16 py-10 md:py-16 lg:py-20 bg-white">
+    <section className="px-4 md:px-8 lg:px-16 py-16 md:py-24 bg-white relative">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <motion.div
@@ -73,28 +86,22 @@ const FeaturesSection = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center space-y-3 md:space-y-4 mb-8 md:mb-12 lg:mb-16"
+          className="text-center space-y-4 mb-16 md:mb-20"
         >
-          <div className="inline-flex items-center gap-2 px-3 md:px-4 py-1.5 md:py-2 bg-teal-100 rounded-full">
-            <motion.span
-              animate={{ rotate: 360 }}
-              transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-            >
-              ✨
-            </motion.span>
-            <span className="text-xs md:text-sm font-semibold text-teal-700">
-              Features
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 rounded-full border border-slate-200">
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-600">
+              Core Capabilities
             </span>
           </div>
-          <h2 className="text-2xl md:text-4xl lg:text-5xl font-bold text-slate-800 px-2">
-            Everything You Need,{" "}
-            <span className="bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
-              Powered by AI
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-slate-900 tracking-tight max-w-3xl mx-auto">
+            Everything you need for a{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-accent-600">
+              healthier tomorrow.
             </span>
           </h2>
-          <p className="text-slate-600 max-w-2xl mx-auto text-sm md:text-lg px-4">
-            Discover the powerful features that make HealthNova your perfect
-            health companion.
+          <p className="text-slate-500 max-w-2xl mx-auto text-base md:text-lg font-medium">
+            A complete ecosystem combining human medical expertise with
+            cutting-edge artificial intelligence.
           </p>
         </motion.div>
 
@@ -104,26 +111,24 @@ const FeaturesSection = () => {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
         >
           {features.map((feature, index) => (
             <motion.div
               key={index}
               variants={cardVariants}
-              whileHover={{ y: -10, scale: 1.02 }}
-              className={`group p-4 md:p-6 lg:p-8 bg-gradient-to-br ${feature.bg} to-white rounded-2xl border border-emerald-100 hover:shadow-2xl transition-all cursor-pointer`}
+              whileHover={{ y: -8 }}
+              className="group p-8 bg-white rounded-[2rem] border border-slate-200/60 hover:shadow-xl hover:shadow-slate-200/50 hover:border-primary-200 transition-all duration-300 cursor-default"
             >
-              <motion.div
-                whileHover={{ rotate: 360, scale: 1.1 }}
-                transition={{ duration: 0.5 }}
-                className={`w-10 h-10 md:w-14 md:h-14 bg-gradient-to-br ${feature.gradient} rounded-xl md:rounded-2xl flex items-center justify-center mb-3 md:mb-6 shadow-lg text-lg md:text-2xl`}
+              <div
+                className={`w-14 h-14 ${feature.bg} ${feature.color} rounded-2xl flex items-center justify-center mb-6 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3`}
               >
                 {feature.icon}
-              </motion.div>
-              <h3 className="text-sm md:text-xl font-bold text-slate-800 mb-1 md:mb-2 leading-tight">
+              </div>
+              <h3 className="text-xl font-bold text-slate-900 mb-3 tracking-tight">
                 {feature.title}
               </h3>
-              <p className="text-slate-600 text-xs md:text-sm leading-snug md:leading-relaxed">
+              <p className="text-slate-500 text-sm leading-relaxed font-medium">
                 {feature.description}
               </p>
             </motion.div>

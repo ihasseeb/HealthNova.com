@@ -4,78 +4,43 @@ import { motion } from "framer-motion";
 
 const CTASection = () => {
   return (
-    <section className="px-8 lg:px-16 py-20">
+    <section className="px-4 md:px-8 lg:px-16 py-20 md:py-24 bg-white">
       <div className="max-w-5xl mx-auto">
         <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
+          initial={{ opacity: 0, scale: 0.98 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          whileHover={{ scale: 1.02 }}
-          className="relative overflow-hidden bg-gradient-to-br from-emerald-500 via-teal-600 to-cyan-700 rounded-3xl p-12 lg:p-16 text-center shadow-2xl shadow-emerald-200"
+          className="relative overflow-hidden bg-slate-900 rounded-[2.5rem] p-10 md:p-16 lg:p-20 text-center shadow-2xl"
         >
-          <motion.div
-            animate={{ scale: [1, 1.3, 1], x: [0, 30, 0] }}
-            transition={{ duration: 6, repeat: Infinity }}
-            className="absolute top-0 left-0 w-64 h-64 bg-white/10 rounded-full blur-3xl"
-          />
-          <motion.div
-            animate={{ scale: [1.3, 1, 1.3], x: [0, -30, 0] }}
-            transition={{ duration: 6, repeat: Infinity }}
-            className="absolute bottom-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl"
-          />
+          {/* Subtle Background Glows */}
+          <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-primary-500/20 rounded-full blur-[100px] pointer-events-none" />
+          <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-accent-500/20 rounded-full blur-[100px] pointer-events-none" />
 
-          <div className="relative space-y-6">
-            <motion.h2
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.2 }}
-              className="text-4xl lg:text-5xl font-bold text-white"
-            >
-              Ready to Transform Your Health?
-            </motion.h2>
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.4 }}
-              className="text-white/90 text-lg max-w-2xl mx-auto"
-            >
-              Join 50,000+ users who trust HealthNova AI for their daily health
-              needs.
-            </motion.p>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.6 }}
-              className="flex flex-wrap gap-4 justify-center pt-4"
-            >
+          <div className="relative z-10 space-y-8">
+            <h2 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight leading-tight">
+              Ready to take control of <br className="hidden md:block" /> your
+              health?
+            </h2>
+            <p className="text-slate-400 text-lg max-w-2xl mx-auto font-medium">
+              Join the ecosystem that is reshaping the future of digital
+              healthcare. Fast, secure, and powered by next-gen AI.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
               <Link to="/signup">
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <Button className="h-14 px-8 text-base bg-white text-emerald-600 hover:bg-slate-50 shadow-xl">
-                    Start Free Trial →
-                  </Button>
-                </motion.div>
+                <Button className="w-full sm:w-auto h-14 px-10 text-base bg-white text-slate-900 hover:bg-slate-100 font-bold rounded-xl shadow-lg transition-transform hover:-translate-y-1">
+                  Start Your Free Trial
+                </Button>
               </Link>
               <Link to="/login">
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+                <Button
+                  variant="outline"
+                  className="w-full sm:w-auto h-14 px-10 text-base bg-transparent border-slate-700 text-white hover:bg-slate-800 hover:border-slate-600 font-bold rounded-xl transition-colors"
                 >
-                  <Button
-                    variant="outline"
-                    className="h-14 px-8 text-base bg-transparent border-white text-white hover:bg-white/10"
-                  >
-                    Sign In
-                  </Button>
-                </motion.div>
+                  Sign In
+                </Button>
               </Link>
-            </motion.div>
+            </div>
           </div>
         </motion.div>
       </div>
