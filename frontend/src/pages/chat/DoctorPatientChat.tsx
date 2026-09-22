@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "../../components/ui/button";
@@ -39,21 +39,25 @@ const DoctorPatientChat = () => {
   const rooms = roomsData?.data?.rooms || [];
   const messages = messagesData?.data?.messages || [];
 
+  // 1. Fixed Resolver Type
   const {
     register,
     handleSubmit,
     reset,
     setValue,
+    watch,
     formState: { errors },
   } = useForm<SendMessageFormData>({
-    resolver: zodResolver(sendMessageSchema),
+    resolver: zodResolver(sendMessageSchema) as any,
     mode: "onChange",
     defaultValues: {
       roomId: selectedRoomId,
       content: "",
-      messageType: "TEXT" as const,
+      messageType: "TEXT",
     },
   });
+
+  const contentValue = watch("content");
 
   useEffect(() => {
     setValue("roomId", selectedRoomId);
@@ -110,7 +114,8 @@ const DoctorPatientChat = () => {
     }
   };
 
-  const onSubmit: SubmitHandler<SendMessageFormData> = (data) => {
+  // 2. Fixed Submit Handler
+  const handleFormSubmit = (data: SendMessageFormData) => {
     sendMessageMutation.mutate(data, {
       onSuccess: () => {
         reset({ roomId: selectedRoomId, content: "", messageType: "TEXT" });
@@ -123,6 +128,7 @@ const DoctorPatientChat = () => {
   };
 
   const getInitial = (name?: string) => name?.charAt(0).toUpperCase() || "U";
+  const contentRegister = register("content");
 
   return (
     <div className="min-h-screen bg-background p-4 md:p-8">
@@ -176,18 +182,26 @@ const DoctorPatientChat = () => {
                     }`}
                   >
                     <div
-                      className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm shrink-0 border-2 ${isSelected ? "bg-white/20 border-white/30 text-white" : "bg-primary-50 border-primary-100 text-primary-700"}`}
+                      className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm shrink-0 border-2 ${
+                        isSelected
+                          ? "bg-white/20 border-white/30 text-white"
+                          : "bg-primary-50 border-primary-100 text-primary-700"
+                      }`}
                     >
                       {getInitial(otherUserName)}
                     </div>
                     <div className="min-w-0 flex-1">
                       <p
-                        className={`font-bold text-sm truncate ${isSelected ? "text-white" : "text-slate-800"}`}
+                        className={`font-bold text-sm truncate ${
+                          isSelected ? "text-white" : "text-slate-800"
+                        }`}
                       >
                         {otherUserName}
                       </p>
                       <p
-                        className={`text-xs truncate mt-0.5 ${isSelected ? "text-primary-100" : "text-slate-500"}`}
+                        className={`text-xs truncate mt-0.5 ${
+                          isSelected ? "text-primary-100" : "text-slate-500"
+                        }`}
                       >
                         {lastMsg}
                       </p>
@@ -263,7 +277,9 @@ const DoctorPatientChat = () => {
                           key={msg.id}
                           initial={{ opacity: 0, y: 10, scale: 0.95 }}
                           animate={{ opacity: 1, y: 0, scale: 1 }}
-                          className={`flex gap-3 ${isMe ? "justify-end" : "justify-start"}`}
+                          className={`flex gap-3 ${
+                            isMe ? "justify-end" : "justify-start"
+                          }`}
                         >
                           {!isMe && (
                             <div className="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-600 text-xs font-bold shrink-0 mt-auto shadow-sm">
@@ -302,12 +318,17 @@ const DoctorPatientChat = () => {
               {/* Message Input Box */}
               <div className="p-4 bg-white border-t border-slate-100">
                 <form
-                  onSubmit={handleSubmit(onSubmit)}
+                  onSubmit={handleSubmit((data: any) =>
+                    handleFormSubmit(data as SendMessageFormData),
+                  )}
                   className="flex items-center gap-3 bg-slate-50/80 p-2 rounded-2xl border border-slate-200/60 shadow-inner"
                 >
                   <Input
-                    {...register("content")}
-                    onChange={handleInputChange}
+                    {...contentRegister}
+                    onChange={(e) => {
+                      contentRegister.onChange(e);
+                      handleInputChange(e);
+                    }}
                     placeholder="Type your medical query here..."
                     disabled={sendMessageMutation.isPending}
                     className="flex-1 border-0 bg-transparent shadow-none focus-visible:ring-0 text-sm font-medium placeholder:text-slate-400"
@@ -316,7 +337,7 @@ const DoctorPatientChat = () => {
                   <Button
                     type="submit"
                     disabled={
-                      sendMessageMutation.isPending || !register("content").name
+                      sendMessageMutation.isPending || !contentValue?.trim()
                     }
                     className="h-10 w-10 md:w-auto md:px-6 rounded-xl bg-primary-600 hover:bg-primary-700 text-white font-bold shadow-md shadow-primary-600/20 shrink-0 p-0"
                   >
