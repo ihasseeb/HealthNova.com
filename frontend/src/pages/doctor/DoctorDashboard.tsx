@@ -96,7 +96,7 @@ const DoctorDashboard = () => {
             </div>
             <div>
               <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight">
-                Welcome, Dr. {user?.name?.split(" ")[0]}
+                Welcome, {user?.name?.split(" ")[0]}
               </h1>
               <p className="text-slate-500 text-sm font-medium mt-1 flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-emerald-500"></span>

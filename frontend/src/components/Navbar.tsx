@@ -39,6 +39,7 @@ const Navbar = () => {
       .slice(0, 2) || "U";
   const isDoctor = user?.role === "DOCTOR";
   const isAdmin = user?.role === "ADMIN";
+  const isPatient = user?.role === "PATIENT"; // Default user is Patient
 
   return (
     <div className="fixed top-0 inset-x-0 z-[100] flex justify-center mt-4 px-4 pointer-events-none">
@@ -57,95 +58,133 @@ const Navbar = () => {
           </span>
         </Link>
 
-        {/* DESKTOP LINKS */}
+        {/* DESKTOP LINKS - STRICT ROLE-BASED */}
         <div className="hidden lg:flex items-center gap-1 bg-slate-100/50 p-1 rounded-full border border-slate-200/50">
-          <Link
-            to="/"
-            className="px-4 py-2 rounded-full text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-white transition-all shadow-sm"
-          >
-            Home
-          </Link>
-
-          {isAuthenticated && (
-            <Link
-              to={
-                isAdmin
-                  ? "/admin/dashboard"
-                  : isDoctor
-                    ? "/doctor/dashboard"
-                    : "/dashboard"
-              }
-              className="px-4 py-2 rounded-full text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-white transition-all shadow-sm"
-            >
-              Dashboard
-            </Link>
+          {/* Public & Patient Links */}
+          {(!isAuthenticated || isPatient) && (
+            <>
+              <Link
+                to="/"
+                className="px-4 py-2 rounded-full text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-white transition-all shadow-sm"
+              >
+                Home
+              </Link>
+              <Link
+                to="/doctors"
+                className="px-4 py-2 rounded-full text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-white transition-all shadow-sm"
+              >
+                Doctors
+              </Link>
+              <Link
+                to="/pharmacy"
+                className="px-4 py-2 rounded-full text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-white transition-all shadow-sm"
+              >
+                Pharmacy
+              </Link>
+            </>
           )}
 
-          <Link
-            to="/doctors"
-            className="px-4 py-2 rounded-full text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-white transition-all shadow-sm"
-          >
-            Doctors
-          </Link>
-          <Link
-            to="/pharmacy"
-            className="px-4 py-2 rounded-full text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-white transition-all shadow-sm"
-          >
-            Pharmacy
-          </Link>
-
-          {isAuthenticated && !isDoctor && !isAdmin && (
-            <DropdownMenu modal={false}>
-              <DropdownMenuTrigger asChild>
-                <button className="px-4 py-2 rounded-full text-sm font-medium text-accent-600 bg-accent-50 hover:bg-accent-100 flex items-center gap-2 transition-all outline-none">
-                  <Sparkles size={16} /> AI Tools
-                </button>
-              </DropdownMenuTrigger>
-              {/* SOLID BACKGROUND ADDED HERE */}
-              <DropdownMenuContent
-                align="center"
-                className="w-56 rounded-2xl p-2 bg-white shadow-2xl border border-slate-200 z-[110]"
+          {/* Patient Only - Dashboard & AI Tools */}
+          {isAuthenticated && isPatient && (
+            <>
+              <Link
+                to="/dashboard"
+                className="px-4 py-2 rounded-full text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-white transition-all shadow-sm"
               >
-                <DropdownMenuLabel className="text-xs text-slate-400">
-                  Intelligence Suite
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator className="bg-slate-100" />
-                <DropdownMenuItem
-                  onClick={() => navigate("/symptom-checker")}
-                  className="rounded-xl cursor-pointer py-2 hover:bg-slate-50 font-medium text-slate-700"
+                Dashboard
+              </Link>
+
+              <DropdownMenu modal={false}>
+                <DropdownMenuTrigger asChild>
+                  <button className="px-4 py-2 rounded-full text-sm font-medium text-accent-600 bg-accent-50 hover:bg-accent-100 flex items-center gap-2 transition-all outline-none">
+                    <Sparkles size={16} /> AI Tools
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  align="center"
+                  className="w-56 rounded-2xl p-2 bg-white shadow-2xl border border-slate-200 z-[110]"
                 >
-                  🩺 Symptom Checker
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => navigate("/diet-plan")}
-                  className="rounded-xl cursor-pointer py-2 hover:bg-slate-50 font-medium text-slate-700"
-                >
-                  🥗 AI Diet Plan
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => navigate("/workout-plan")}
-                  className="rounded-xl cursor-pointer py-2 hover:bg-slate-50 font-medium text-slate-700"
-                >
-                  💪 Workout Plan
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => navigate("/chat")}
-                  className="rounded-xl cursor-pointer py-2 hover:bg-slate-50 font-medium text-slate-700"
-                >
-                  💬 Health Chatbot
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => navigate("/report-analyzer")}
-                  className="rounded-xl cursor-pointer py-2 hover:bg-slate-50 font-medium text-slate-700"
-                >
-                  📄 Report Analyzer
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+                  <DropdownMenuLabel className="text-xs text-slate-400">
+                    Intelligence Suite
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator className="bg-slate-100" />
+                  <DropdownMenuItem
+                    onClick={() => navigate("/symptom-checker")}
+                    className="rounded-xl cursor-pointer py-2 hover:bg-slate-50 font-medium text-slate-700"
+                  >
+                    🩺 Symptom Checker
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => navigate("/diet-plan")}
+                    className="rounded-xl cursor-pointer py-2 hover:bg-slate-50 font-medium text-slate-700"
+                  >
+                    🥗 AI Diet Plan
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => navigate("/workout-plan")}
+                    className="rounded-xl cursor-pointer py-2 hover:bg-slate-50 font-medium text-slate-700"
+                  >
+                    💪 Workout Plan
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => navigate("/chat")}
+                    className="rounded-xl cursor-pointer py-2 hover:bg-slate-50 font-medium text-slate-700"
+                  >
+                    💬 Health Chatbot
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => navigate("/report-analyzer")}
+                    className="rounded-xl cursor-pointer py-2 hover:bg-slate-50 font-medium text-slate-700"
+                  >
+                    📄 Report Analyzer
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => navigate("/health-tips")}
+                    className="rounded-xl cursor-pointer py-2 hover:bg-slate-50 font-medium text-slate-700"
+                  >
+                    💡 Health Tips
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </>
+          )}
+
+          {/* Doctor Only Links */}
+          {isAuthenticated && isDoctor && (
+            <>
+              <Link
+                to="/doctor/dashboard"
+                className="px-4 py-2 rounded-full text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-white transition-all shadow-sm"
+              >
+                Doctor Portal
+              </Link>
+              <Link
+                to="/doctor/appointments"
+                className="px-4 py-2 rounded-full text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-white transition-all shadow-sm"
+              >
+                Schedule
+              </Link>
+              <Link
+                to="/doctor/prescriptions"
+                className="px-4 py-2 rounded-full text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-white transition-all shadow-sm"
+              >
+                Rx Center
+              </Link>
+            </>
+          )}
+
+          {/* Admin Only Links */}
+          {isAuthenticated && isAdmin && (
+            <Link
+              to="/admin/dashboard"
+              className="px-4 py-2 rounded-full text-sm font-bold text-accent-700 hover:text-accent-900 hover:bg-white transition-all shadow-sm"
+            >
+              Admin Command Center
+            </Link>
           )}
         </div>
 
-        {/* AUTH SECTION */}
+        {/* AUTH SECTION & AVATAR */}
         <div className="hidden lg:flex items-center gap-4">
           {isAuthenticated ? (
             <>
@@ -163,18 +202,48 @@ const Navbar = () => {
                     </span>
                   </button>
                 </DropdownMenuTrigger>
-                {/* SOLID BACKGROUND ADDED HERE */}
                 <DropdownMenuContent
                   align="end"
                   className="w-56 rounded-2xl p-2 bg-white shadow-2xl border border-slate-200 z-[110]"
                 >
-                  <DropdownMenuItem
-                    onClick={() => navigate("/profile")}
-                    className="rounded-xl cursor-pointer py-2 hover:bg-slate-50 font-medium text-slate-700"
-                  >
-                    <UserIcon size={16} className="mr-3 text-slate-500" /> My
-                    Profile
-                  </DropdownMenuItem>
+                  <DropdownMenuLabel>
+                    <div>
+                      <p className="font-semibold">{user?.name}</p>
+                      <p className="text-xs text-slate-500 font-normal">
+                        {user?.email}
+                      </p>
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator className="bg-slate-100" />
+
+                  {/* Dynamic Profile Settings based on Role */}
+                  {isDoctor ? (
+                    <DropdownMenuItem
+                      onClick={() => navigate("/doctor/profile-setup")}
+                      className="rounded-xl cursor-pointer py-2 hover:bg-slate-50 font-medium text-slate-700"
+                    >
+                      <UserIcon size={16} className="mr-3 text-slate-500" />{" "}
+                      Clinic Profile
+                    </DropdownMenuItem>
+                  ) : isAdmin ? null : (
+                    <DropdownMenuItem
+                      onClick={() => navigate("/profile")}
+                      className="rounded-xl cursor-pointer py-2 hover:bg-slate-50 font-medium text-slate-700"
+                    >
+                      <UserIcon size={16} className="mr-3 text-slate-500" /> My
+                      Profile
+                    </DropdownMenuItem>
+                  )}
+
+                  {!isAdmin && (
+                    <DropdownMenuItem
+                      onClick={() => navigate("/settings")}
+                      className="rounded-xl cursor-pointer py-2 hover:bg-slate-50 font-medium text-slate-700"
+                    >
+                      <span className="mr-3 text-slate-500">⚙️</span> Settings
+                    </DropdownMenuItem>
+                  )}
+
                   <DropdownMenuSeparator className="bg-slate-100" />
                   <DropdownMenuItem
                     onClick={() => logout()}
@@ -211,33 +280,47 @@ const Navbar = () => {
         </button>
       </motion.nav>
 
-      {/* MOBILE DRAWER */}
+      {/* MOBILE DRAWER (Simplified Role-Based) */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="lg:hidden absolute top-20 left-4 right-4 bg-white rounded-3xl shadow-2xl p-6 border border-slate-200 pointer-events-auto z-[110]"
+            className="lg:hidden absolute top-20 left-4 right-4 bg-white rounded-3xl shadow-2xl p-6 border border-slate-100 pointer-events-auto z-[110]"
           >
             <div className="flex flex-col gap-4">
-              <Link
-                to="/"
-                onClick={() => setMobileMenuOpen(false)}
-                className="text-lg font-semibold text-slate-700 hover:text-primary-600"
-              >
-                Home
-              </Link>
+              {/* Public/Patient Mobile Links */}
+              {(!isAuthenticated || isPatient) && (
+                <>
+                  <Link
+                    to="/"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="text-lg font-semibold text-slate-700 hover:text-primary-600"
+                  >
+                    Home
+                  </Link>
+                  <Link
+                    to="/doctors"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="text-lg font-semibold text-slate-700 hover:text-primary-600"
+                  >
+                    Find Doctors
+                  </Link>
+                  <Link
+                    to="/pharmacy"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="text-lg font-semibold text-slate-700 hover:text-primary-600"
+                  >
+                    Pharmacy Store
+                  </Link>
+                </>
+              )}
 
-              {isAuthenticated && (
+              {/* Patient Only Mobile Links */}
+              {isAuthenticated && isPatient && (
                 <Link
-                  to={
-                    isAdmin
-                      ? "/admin/dashboard"
-                      : isDoctor
-                        ? "/doctor/dashboard"
-                        : "/dashboard"
-                  }
+                  to="/dashboard"
                   onClick={() => setMobileMenuOpen(false)}
                   className="text-lg font-semibold text-slate-700 hover:text-primary-600"
                 >
@@ -245,49 +328,72 @@ const Navbar = () => {
                 </Link>
               )}
 
-              <Link
-                to="/doctors"
-                onClick={() => setMobileMenuOpen(false)}
-                className="text-lg font-semibold text-slate-700 hover:text-primary-600"
-              >
-                Find Doctors
-              </Link>
-              <Link
-                to="/pharmacy"
-                onClick={() => setMobileMenuOpen(false)}
-                className="text-lg font-semibold text-slate-700 hover:text-primary-600"
-              >
-                Pharmacy Store
-              </Link>
-
-              {isAuthenticated ? (
-                <Button
-                  onClick={() => {
-                    logout();
-                    setMobileMenuOpen(false);
-                  }}
-                  variant="destructive"
-                  className="mt-4 rounded-xl font-bold"
-                >
-                  Logout
-                </Button>
-              ) : (
-                <div className="flex flex-col gap-3 mt-4">
-                  <Link to="/login" onClick={() => setMobileMenuOpen(false)}>
-                    <Button
-                      variant="outline"
-                      className="w-full rounded-xl font-bold"
-                    >
-                      Login
-                    </Button>
+              {/* Doctor Only Mobile Links */}
+              {isAuthenticated && isDoctor && (
+                <>
+                  <Link
+                    to="/doctor/dashboard"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="text-lg font-semibold text-slate-700 hover:text-primary-600"
+                  >
+                    Doctor Portal
                   </Link>
-                  <Link to="/signup" onClick={() => setMobileMenuOpen(false)}>
-                    <Button className="w-full rounded-xl bg-slate-900 text-white font-bold">
-                      Get Started
-                    </Button>
+                  <Link
+                    to="/doctor/appointments"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="text-lg font-semibold text-slate-700 hover:text-primary-600"
+                  >
+                    Schedule
                   </Link>
-                </div>
+                  <Link
+                    to="/doctor/prescriptions"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="text-lg font-semibold text-slate-700 hover:text-primary-600"
+                  >
+                    Rx Center
+                  </Link>
+                </>
               )}
+
+              {/* Admin Only Mobile Links */}
+              {isAuthenticated && isAdmin && (
+                <Link
+                  to="/admin/dashboard"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-lg font-bold text-accent-600"
+                >
+                  Admin Command Center
+                </Link>
+              )}
+
+              {/* Mobile Auth Bottom Section */}
+              <div className="pt-4 border-t border-slate-200 mt-2">
+                {isAuthenticated ? (
+                  <Button
+                    onClick={() => {
+                      logout();
+                      setMobileMenuOpen(false);
+                    }}
+                    variant="destructive"
+                    className="w-full rounded-xl"
+                  >
+                    Logout
+                  </Button>
+                ) : (
+                  <div className="flex flex-col gap-3">
+                    <Link to="/login" onClick={() => setMobileMenuOpen(false)}>
+                      <Button variant="outline" className="w-full rounded-xl">
+                        Login
+                      </Button>
+                    </Link>
+                    <Link to="/signup" onClick={() => setMobileMenuOpen(false)}>
+                      <Button className="w-full rounded-xl bg-slate-900">
+                        Get Started
+                      </Button>
+                    </Link>
+                  </div>
+                )}
+              </div>
             </div>
           </motion.div>
         )}
