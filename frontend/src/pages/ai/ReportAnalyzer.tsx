@@ -4,6 +4,15 @@ import { Button } from "../../components/ui/button";
 import { useAnalyzeReportImage } from "../../hooks/useAi";
 import AILoadingScreen from "../../components/AILoadingScreen";
 import { toast } from "sonner";
+import {
+  FileText,
+  ImagePlus,
+  X,
+  RefreshCcw,
+  Activity,
+  AlertTriangle,
+  CheckCircle2,
+} from "lucide-react";
 
 const ReportAnalyzer = () => {
   const [image, setImage] = useState<string | null>(null);
@@ -15,21 +24,17 @@ const ReportAnalyzer = () => {
     isPending,
     data: result,
   } = useAnalyzeReportImage();
-
   const analysis = result?.data;
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
-    // Validate file
     if (!file.type.startsWith("image/")) {
-      toast.error("Please upload an image file");
+      toast.error("Upload a valid image file");
       return;
     }
-
-    if (file.size > 20 * 1024 * 1024) {
-      toast.error("Image size should be less than 20MB");
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error("Image size limit is 10MB");
       return;
     }
 
@@ -37,18 +42,13 @@ const ReportAnalyzer = () => {
     reader.onloadend = () => {
       const base64String = reader.result as string;
       setImagePreview(base64String);
-      // Remove data:image/xxx;base64, prefix
-      const base64Data = base64String.split(",")[1];
-      setImage(base64Data);
+      setImage(base64String.split(",")[1]);
     };
     reader.readAsDataURL(file);
   };
 
   const handleAnalyze = () => {
-    if (!image) {
-      toast.error("Please upload an image first");
-      return;
-    }
+    if (!image) return toast.error("Upload an image first");
     analyzeImage({ image, reportType });
   };
 
@@ -57,106 +57,86 @@ const ReportAnalyzer = () => {
     setImagePreview(null);
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "NORMAL":
-        return "bg-green-100 text-green-700 border-green-300";
-      case "ATTENTION_NEEDED":
-        return "bg-yellow-100 text-yellow-700 border-yellow-300";
-      case "CONCERNING":
-        return "bg-red-100 text-red-700 border-red-300";
-      default:
-        return "bg-gray-100 text-gray-700";
-    }
-  };
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-cyan-50 p-8">
+    <div className="min-h-screen bg-[#F8FAFC] p-4 md:p-8">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="max-w-5xl mx-auto space-y-6"
+        className="max-w-4xl mx-auto space-y-6"
       >
         {/* Header */}
-        <div className="bg-gradient-to-r from-emerald-500 via-teal-600 to-cyan-600 rounded-3xl p-8 text-white shadow-2xl relative overflow-hidden">
-          <motion.div
-            animate={{ scale: [1, 1.2, 1] }}
-            transition={{ duration: 4, repeat: Infinity }}
-            className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl"
-          />
-          <div className="relative">
-            <h1 className="text-4xl font-bold mb-2 flex items-center gap-3">
-              <span className="text-5xl">📄</span>
-              AI Report Analyzer
-            </h1>
-            <p className="text-white/90">
-              Upload medical report image and get AI analysis
-            </p>
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 md:p-8 rounded-[2rem] shadow-sm border border-slate-200/60">
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 bg-cyan-50 text-cyan-600 rounded-2xl flex items-center justify-center border border-cyan-100">
+              <FileText size={28} />
+            </div>
+            <div>
+              <h1 className="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight">
+                Vision Report AI
+              </h1>
+              <p className="text-slate-500 text-sm font-medium mt-1">
+                Upload lab results for intelligent OCR analysis
+              </p>
+            </div>
           </div>
         </div>
 
-        {/* Loading */}
         {isPending && (
-          <AILoadingScreen
-            emoji="📄"
-            title="Analyzing Your Report..."
-            description="Our AI is reading the image and extracting medical information"
-            steps={[
-              { icon: "📸", text: "Processing image" },
-              { icon: "🔍", text: "Extracting text and values" },
-              { icon: "🧠", text: "Analyzing findings" },
-              { icon: "💡", text: "Preparing recommendations" },
-              { icon: "✨", text: "Finalizing analysis" },
-            ]}
-            tip="AI can analyze various reports: blood tests, X-rays, prescriptions, and more!"
-          />
+          <div className="bg-white rounded-[2rem] p-8 shadow-sm border border-slate-200/60">
+            <AILoadingScreen
+              emoji="🔍"
+              title="Scanning Medical Report..."
+              description="Extracting clinical data and generating a comprehensive summary."
+              steps={[
+                { icon: "📸", text: "Processing image via Vision Model" },
+                { icon: "📊", text: "Identifying key biomarkers" },
+                { icon: "🧠", text: "Formulating insights" },
+              ]}
+            />
+          </div>
         )}
 
-        {/* Upload Form */}
         {!isPending && !analysis && (
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-white rounded-2xl p-8 shadow-lg"
+            initial={{ opacity: 0, scale: 0.98 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white rounded-[2rem] p-8 md:p-12 shadow-sm border border-slate-200/60"
           >
-            {/* Report Type */}
-            <div className="mb-6">
-              <label className="block text-sm font-semibold text-slate-700 mb-2">
-                Report Type
+            <div className="max-w-md mx-auto mb-8">
+              <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 text-center">
+                Select Report Category
               </label>
               <select
                 value={reportType}
                 onChange={(e) => setReportType(e.target.value)}
-                className="w-full h-11 px-4 border-2 border-slate-200 rounded-xl focus:border-emerald-500 focus:outline-none"
+                className="w-full h-12 px-4 border border-slate-200 bg-slate-50 rounded-xl outline-none focus:border-slate-400 font-semibold text-slate-700 text-center text-sm appearance-none cursor-pointer"
               >
-                <option value="Blood Test">Blood Test</option>
-                <option value="X-Ray">X-Ray</option>
-                <option value="MRI">MRI</option>
-                <option value="CT Scan">CT Scan</option>
-                <option value="Ultrasound">Ultrasound</option>
-                <option value="ECG">ECG</option>
-                <option value="Prescription">Prescription</option>
-                <option value="Urine Test">Urine Test</option>
-                <option value="Lipid Profile">Lipid Profile</option>
-                <option value="Thyroid">Thyroid Test</option>
-                <option value="Diabetes">Diabetes Report</option>
-                <option value="General">Other</option>
+                {[
+                  "Blood Test",
+                  "X-Ray",
+                  "MRI",
+                  "CT Scan",
+                  "Prescription",
+                  "General",
+                ].map((t) => (
+                  <option key={t} value={t}>
+                    {t}
+                  </option>
+                ))}
               </select>
             </div>
 
-            {/* Image Upload */}
             {!imagePreview ? (
-              <label className="block cursor-pointer">
-                <div className="border-4 border-dashed border-emerald-300 rounded-2xl p-12 text-center hover:border-emerald-500 hover:bg-emerald-50 transition">
-                  <div className="text-6xl mb-4">📸</div>
-                  <h3 className="text-xl font-bold text-slate-800 mb-2">
-                    Upload Report Image
+              <label className="block cursor-pointer group">
+                <div className="border-2 border-dashed border-slate-300 rounded-[2rem] p-16 text-center hover:border-slate-900 hover:bg-slate-50 transition-colors">
+                  <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-400 group-hover:text-slate-900 group-hover:scale-110 transition-all">
+                    <ImagePlus size={32} />
+                  </div>
+                  <h3 className="text-xl font-bold text-slate-900 mb-2">
+                    Tap to Upload Image
                   </h3>
-                  <p className="text-slate-500 mb-4">
-                    Click here or drag & drop your medical report
-                  </p>
-                  <p className="text-xs text-slate-400">
-                    Supported: JPG, PNG, WEBP (Max 20MB)
+                  <p className="text-slate-500 text-sm font-medium">
+                    JPEG, PNG or WEBP (Max 10MB)
                   </p>
                 </div>
                 <input
@@ -167,42 +147,31 @@ const ReportAnalyzer = () => {
                 />
               </label>
             ) : (
-              <div className="space-y-4">
-                <div className="relative rounded-2xl overflow-hidden border-2 border-emerald-300">
+              <div className="space-y-6">
+                <div className="relative rounded-[2rem] overflow-hidden border border-slate-200 bg-slate-100">
                   <img
                     src={imagePreview}
-                    alt="Report Preview"
-                    className="w-full max-h-96 object-contain bg-slate-50"
+                    alt="Preview"
+                    className="w-full max-h-[500px] object-contain"
                   />
                   <button
                     onClick={handleReset}
-                    className="absolute top-3 right-3 bg-red-500 text-white p-2 rounded-full hover:bg-red-600"
+                    className="absolute top-4 right-4 bg-white/90 backdrop-blur text-slate-900 p-2.5 rounded-full hover:bg-white shadow-lg hover:scale-110 transition-transform"
                   >
-                    ❌
+                    <X size={20} strokeWidth={3} />
                   </button>
                 </div>
-
-                <div className="flex gap-3">
-                  <Button
-                    onClick={handleAnalyze}
-                    className="flex-1 h-12 bg-gradient-to-r from-emerald-500 to-teal-600 hover:opacity-90"
-                  >
-                    🔍 Analyze Report
-                  </Button>
-                  <Button
-                    onClick={handleReset}
-                    variant="outline"
-                    className="h-12"
-                  >
-                    Change Image
-                  </Button>
-                </div>
+                <Button
+                  onClick={handleAnalyze}
+                  className="w-full h-14 bg-slate-900 hover:bg-slate-800 text-white font-bold text-lg rounded-xl shadow-xl shadow-slate-900/20"
+                >
+                  Extract & Analyze Data
+                </Button>
               </div>
             )}
           </motion.div>
         )}
 
-        {/* Results */}
         <AnimatePresence>
           {!isPending && analysis && (
             <motion.div
@@ -210,129 +179,73 @@ const ReportAnalyzer = () => {
               animate={{ opacity: 1, y: 0 }}
               className="space-y-6"
             >
-              {/* Status */}
-              <div
-                className={`p-6 rounded-2xl border-2 ${getStatusColor(analysis.overallStatus)}`}
-              >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-semibold mb-1">Overall Status</p>
-                    <p className="text-2xl font-bold">
-                      {analysis.overallStatus?.replace("_", " ")}
-                    </p>
-                  </div>
-                  <div className="text-5xl">
-                    {analysis.overallStatus === "NORMAL"
-                      ? "✅"
-                      : analysis.overallStatus === "ATTENTION_NEEDED"
-                        ? "⚠️"
-                        : "🚨"}
-                  </div>
+              <div className="bg-white rounded-[2rem] p-8 shadow-sm border border-slate-200/60 text-center">
+                <div className="w-20 h-20 mx-auto rounded-full flex items-center justify-center mb-4 shadow-sm border border-slate-100 bg-slate-50">
+                  {analysis.overallStatus === "NORMAL" ? (
+                    <CheckCircle2 size={40} className="text-emerald-500" />
+                  ) : analysis.overallStatus === "ATTENTION_NEEDED" ? (
+                    <AlertTriangle size={40} className="text-amber-500" />
+                  ) : (
+                    <Activity size={40} className="text-red-500" />
+                  )}
                 </div>
+                <h2 className="text-2xl font-bold text-slate-900 mb-2">
+                  Analysis Complete
+                </h2>
+                <p className="text-slate-600 font-medium max-w-2xl mx-auto">
+                  {analysis.summary}
+                </p>
               </div>
 
-              {/* Summary */}
-              <div className="bg-white rounded-2xl p-6 shadow-lg">
-                <h3 className="text-xl font-bold text-slate-800 mb-3 flex items-center gap-2">
-                  📋 Summary
-                </h3>
-                <p className="text-slate-700">{analysis.summary}</p>
-              </div>
-
-              {/* Key Findings */}
               {analysis.keyFindings?.length > 0 && (
-                <div className="bg-white rounded-2xl p-6 shadow-lg">
-                  <h3 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
-                    🔍 Key Findings
+                <div className="bg-white rounded-[2rem] p-6 md:p-8 shadow-sm border border-slate-200/60">
+                  <h3 className="text-lg font-bold text-slate-900 mb-6">
+                    Biomarker Results
                   </h3>
-                  <div className="space-y-3">
-                    {analysis.keyFindings.map((finding: any, i: number) => (
-                      <motion.div
-                        key={i}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: i * 0.1 }}
-                        className="p-4 bg-slate-50 rounded-xl border-l-4 border-emerald-500"
-                      >
-                        <div className="flex items-center justify-between mb-2">
-                          <h4 className="font-bold text-slate-800">
-                            {finding.test}
-                          </h4>
-                          <span
-                            className={`px-3 py-1 rounded-full text-xs font-bold ${
-                              finding.status === "NORMAL"
-                                ? "bg-green-100 text-green-700"
-                                : finding.status === "HIGH"
-                                  ? "bg-orange-100 text-orange-700"
-                                  : "bg-blue-100 text-blue-700"
-                            }`}
-                          >
-                            {finding.status}
-                          </span>
-                        </div>
-                        <p className="text-sm text-slate-600">
-                          <strong>Value:</strong> {finding.value} |{" "}
-                          <strong>Normal:</strong> {finding.normalRange}
-                        </p>
-                        <p className="text-sm text-slate-500 mt-2">
-                          💡 {finding.meaning}
-                        </p>
-                      </motion.div>
-                    ))}
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-sm">
+                      <thead className="bg-slate-50 text-slate-500 font-bold uppercase text-xs">
+                        <tr>
+                          <th className="p-4 rounded-l-xl">Test Name</th>
+                          <th className="p-4">Value</th>
+                          <th className="p-4">Normal Range</th>
+                          <th className="p-4 rounded-r-xl">Status</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100">
+                        {analysis.keyFindings.map((finding: any, i: number) => (
+                          <tr key={i}>
+                            <td className="p-4 font-semibold text-slate-800">
+                              {finding.test}
+                            </td>
+                            <td className="p-4 font-bold font-mono">
+                              {finding.value}
+                            </td>
+                            <td className="p-4 text-slate-500">
+                              {finding.normalRange}
+                            </td>
+                            <td className="p-4">
+                              <span
+                                className={`px-2.5 py-1 rounded text-[10px] font-bold uppercase ${finding.status === "NORMAL" ? "bg-emerald-50 text-emerald-700" : "bg-red-50 text-red-700"}`}
+                              >
+                                {finding.status}
+                              </span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
                   </div>
                 </div>
               )}
 
-              {/* Abnormal Values */}
-              {analysis.abnormalValues?.length > 0 && (
-                <div className="bg-red-50 rounded-2xl p-6 border-2 border-red-200">
-                  <h3 className="text-xl font-bold text-red-700 mb-4 flex items-center gap-2">
-                    ⚠️ Areas of Concern
-                  </h3>
-                  <div className="space-y-3">
-                    {analysis.abnormalValues.map((abnormal: any, i: number) => (
-                      <div key={i} className="p-3 bg-white rounded-lg">
-                        <p className="font-bold text-red-700">
-                          {abnormal.test}: {abnormal.value}
-                        </p>
-                        <p className="text-sm text-slate-600 mt-1">
-                          {abnormal.concern}
-                        </p>
-                        <p className="text-sm text-emerald-700 mt-2">
-                          ✓ {abnormal.recommendation}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Recommendations */}
-              {analysis.recommendations?.length > 0 && (
-                <div className="bg-white rounded-2xl p-6 shadow-lg">
-                  <h3 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
-                    💡 Recommendations
-                  </h3>
-                  <div className="space-y-2">
-                    {analysis.recommendations.map((rec: string, i: number) => (
-                      <div
-                        key={i}
-                        className="flex items-start gap-2 p-3 bg-emerald-50 rounded-lg"
-                      >
-                        <span className="text-emerald-600 font-bold">✓</span>
-                        <span>{rec}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Analyze Another */}
               <Button
                 onClick={handleReset}
-                className="w-full h-12 bg-gradient-to-r from-emerald-500 to-teal-600 hover:opacity-90"
+                variant="outline"
+                className="w-full h-14 border-slate-200 text-slate-700 font-bold rounded-xl bg-white hover:bg-slate-50"
               >
-                📄 Analyze Another Report
+                <RefreshCcw size={18} className="mr-2" /> Upload Another
+                Document
               </Button>
             </motion.div>
           )}

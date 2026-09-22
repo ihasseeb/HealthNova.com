@@ -27,36 +27,40 @@ const Login = () => {
         <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">
           Welcome back
         </h1>
-        <p className="text-slate-500 text-sm">
+        <p className="text-slate-500 text-sm font-medium">
           Enter your details to access your account.
         </p>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         <div className="space-y-2">
-          <Label className="text-sm font-semibold text-slate-700">Email</Label>
+          <Label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+            Email Address
+          </Label>
           <div className="relative">
             <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <Input
               type="email"
               placeholder="name@example.com"
-              className="pl-10 h-12 bg-slate-50/50 border-slate-200 rounded-xl focus-visible:ring-primary-500"
+              className="pl-10 h-12 bg-slate-50/50 border-slate-200 rounded-xl focus-visible:ring-primary-500 font-medium"
               {...register("email")}
             />
           </div>
           {errors.email && (
-            <p className="text-xs text-red-500">{errors.email.message}</p>
+            <p className="text-xs text-red-500 font-medium">
+              {errors.email.message}
+            </p>
           )}
         </div>
 
         <div className="space-y-2">
           <div className="flex justify-between items-center">
-            <Label className="text-sm font-semibold text-slate-700">
+            <Label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
               Password
             </Label>
             <Link
               to="/forgot-password"
-              className="text-xs font-semibold text-primary-600 hover:text-primary-700"
+              className="text-xs font-bold text-primary-600 hover:text-primary-700 transition-colors"
             >
               Forgot password?
             </Link>
@@ -66,33 +70,37 @@ const Login = () => {
             <Input
               type="password"
               placeholder="••••••••"
-              className="pl-10 h-12 bg-slate-50/50 border-slate-200 rounded-xl focus-visible:ring-primary-500"
+              className="pl-10 h-12 bg-slate-50/50 border-slate-200 rounded-xl focus-visible:ring-primary-500 font-medium"
               {...register("password")}
             />
           </div>
           {errors.password && (
-            <p className="text-xs text-red-500">{errors.password.message}</p>
+            <p className="text-xs text-red-500 font-medium">
+              {errors.password.message}
+            </p>
           )}
         </div>
 
         <Button
           type="submit"
           disabled={isPending}
-          className="w-full h-12 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold text-base shadow-lg shadow-slate-900/20"
+          className="w-full h-12 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-base shadow-lg shadow-slate-900/20 transition-all active:scale-[0.98]"
         >
           {isPending ? "Signing in..." : "Sign In"}
         </Button>
       </form>
 
-      <div className="flex items-center gap-4 text-sm text-slate-400">
+      <div className="flex items-center gap-4 text-sm text-slate-300">
         <div className="flex-1 border-t border-slate-200"></div>
-        <span>OR</span>
+        <span className="font-bold text-slate-400 text-xs uppercase tracking-widest">
+          or
+        </span>
         <div className="flex-1 border-t border-slate-200"></div>
       </div>
 
       <a
         href={`${import.meta.env.VITE_API_URL}/auth/google`}
-        className="w-full flex items-center justify-center gap-3 h-12 border border-slate-200 bg-white rounded-xl hover:bg-slate-50 transition font-semibold text-slate-700 shadow-sm"
+        className="w-full flex items-center justify-center gap-3 h-12 border border-slate-200 bg-white rounded-xl hover:bg-slate-50 transition-all font-bold text-slate-700 shadow-sm active:scale-[0.98]"
       >
         <svg className="w-5 h-5" viewBox="0 0 24 24">
           <path
@@ -117,7 +125,10 @@ const Login = () => {
 
       <p className="text-center text-sm text-slate-500 font-medium">
         Don't have an account?{" "}
-        <Link to="/signup" className="text-primary-600 hover:text-primary-700">
+        <Link
+          to="/signup"
+          className="text-primary-600 hover:text-primary-700 font-bold transition-colors"
+        >
           Sign up
         </Link>
       </p>

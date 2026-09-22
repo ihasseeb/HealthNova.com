@@ -4,9 +4,18 @@ import { Button } from "../../components/ui/button";
 import { Label } from "../../components/ui/label";
 import { useGenerateWorkoutPlan, useWorkoutPlans } from "../../hooks/useAi";
 import AILoadingScreen from "../../components/AILoadingScreen";
+import {
+  Dumbbell,
+  Home,
+  RotateCcw,
+  AlertTriangle,
+  Calendar,
+  Flame,
+} from "lucide-react";
 
 const WorkoutPlan = () => {
   const [showHistory, setShowHistory] = useState(false);
+  const [showForm, setShowForm] = useState(true);
   const [selectedDay, setSelectedDay] = useState(0);
   const [location, setLocation] = useState("HOME");
   const [experience, setExperience] = useState("BEGINNER");
@@ -23,111 +32,110 @@ const WorkoutPlan = () => {
 
   const handleGenerate = () => {
     generatePlan({ location, experience });
+    setShowForm(false);
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-cyan-50 p-4 md:p-8">
+    <div className="min-h-screen bg-[#F8FAFC] p-4 md:p-8">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="max-w-6xl mx-auto space-y-4 md:space-y-6"
+        className="max-w-6xl mx-auto space-y-6"
       >
         {/* Header */}
-        <div className="bg-gradient-to-r from-emerald-500 via-teal-600 to-cyan-600 rounded-2xl md:rounded-3xl p-5 md:p-8 text-white shadow-2xl relative overflow-hidden">
-          <div className="hidden md:block absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
-          <div className="relative flex items-start justify-between gap-3">
-            <div className="flex items-center gap-3 flex-1 min-w-0">
-              <span className="text-4xl md:text-5xl flex-shrink-0">💪</span>
-              <div className="min-w-0">
-                <h1 className="text-xl md:text-3xl font-bold leading-tight">
-                  AI Workout Plan
-                </h1>
-                <p className="text-white/90 text-xs md:text-base mt-1">
-                  Personalized 7-day routine
-                </p>
-              </div>
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 md:p-8 rounded-[2rem] shadow-sm border border-slate-200/60">
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center border border-blue-100">
+              <Dumbbell size={28} />
             </div>
-            <Button
-              onClick={() => setShowHistory(!showHistory)}
-              size="sm"
-              className="bg-white text-emerald-600 hover:bg-slate-50 flex-shrink-0 text-xs md:text-sm"
-            >
-              {showHistory ? "🏋️ New" : "📊 History"}
-            </Button>
+            <div>
+              <h1 className="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight">
+                AI Workout Plan
+              </h1>
+              <p className="text-slate-500 text-sm font-medium mt-1">
+                Personalized 7-day fitness routine
+              </p>
+            </div>
           </div>
+          <Button
+            onClick={() => {
+              setShowHistory(!showHistory);
+              setShowForm(true);
+            }}
+            variant="outline"
+            className="w-full md:w-auto rounded-xl font-semibold border-slate-200 text-slate-700"
+          >
+            {showHistory ? "← Create New" : "View History"}
+          </Button>
         </div>
 
         {!showHistory ? (
           <>
             {isPending && (
-              <AILoadingScreen
-                emoji="💪"
-                title="Building Your Workout..."
-                description="AI is crafting a personalized 7-day routine"
-                steps={[
-                  { icon: "📊", text: "Analyzing fitness level" },
-                  { icon: "🎯", text: "Setting goals" },
-                  { icon: "🏋️", text: "Selecting exercises" },
-                  { icon: "📅", text: "Creating schedule" },
-                  { icon: "✨", text: "Adding safety notes" },
-                ]}
-                tip="Consistency beats intensity!"
-              />
+              <div className="bg-white rounded-[2rem] p-8 shadow-sm border border-slate-200/60 mt-6">
+                <AILoadingScreen
+                  emoji="💪"
+                  title="Designing Your Routine..."
+                  description="AI is structuring exercises based on your fitness level and goal."
+                  steps={[
+                    { icon: "📊", text: "Analyzing physical metrics" },
+                    { icon: "🏋️", text: "Selecting optimal exercises" },
+                    { icon: "📅", text: "Structuring weekly volume" },
+                  ]}
+                />
+              </div>
             )}
 
-            {!isPending && !currentPlan && (
+            {!isPending && showForm && !currentPlan && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-white rounded-2xl p-4 md:p-8 shadow-lg"
+                className="bg-white rounded-[2rem] p-8 md:p-12 shadow-sm border border-slate-200/60 max-w-2xl mx-auto mt-6"
               >
-                <h2 className="text-lg md:text-2xl font-bold text-slate-800 mb-4 md:mb-6 text-center">
-                  🎯 Customize Your Workout
-                </h2>
+                <div className="text-center mb-10">
+                  <h2 className="text-2xl font-bold text-slate-900">
+                    Customize Parameters
+                  </h2>
+                  <p className="text-slate-500 text-sm mt-2">
+                    Tell the AI where you train and your current level.
+                  </p>
+                </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-4 md:mb-6">
-                  <div className="space-y-2 md:space-y-3">
-                    <Label className="text-sm md:text-lg font-semibold">
+                <div className="space-y-8">
+                  <div className="space-y-3">
+                    <Label className="text-sm font-bold text-slate-700 uppercase tracking-wide">
                       Location
                     </Label>
-                    <div className="grid grid-cols-2 gap-2 md:gap-3">
+                    <div className="grid grid-cols-2 gap-3">
                       {["HOME", "GYM"].map((loc) => (
                         <button
                           key={loc}
                           onClick={() => setLocation(loc)}
-                          className={`p-3 md:p-4 rounded-xl border-2 transition ${
-                            location === loc
-                              ? "border-emerald-500 bg-emerald-50 text-emerald-700 font-semibold"
-                              : "border-slate-200"
-                          }`}
+                          className={`flex items-center justify-center gap-3 p-4 rounded-xl border-2 transition-all ${location === loc ? "border-slate-900 bg-slate-50 text-slate-900 font-bold shadow-sm" : "border-slate-200 text-slate-500 hover:border-slate-300"}`}
                         >
-                          <div className="text-2xl md:text-3xl mb-1">
-                            {loc === "HOME" ? "🏠" : "🏋️"}
-                          </div>
-                          <span className="text-xs md:text-base">{loc}</span>
+                          {loc === "HOME" ? (
+                            <Home size={20} />
+                          ) : (
+                            <Dumbbell size={20} />
+                          )}{" "}
+                          {loc}
                         </button>
                       ))}
                     </div>
                   </div>
 
-                  <div className="space-y-2 md:space-y-3">
-                    <Label className="text-sm md:text-lg font-semibold">
+                  <div className="space-y-3">
+                    <Label className="text-sm font-bold text-slate-700 uppercase tracking-wide">
                       Experience
                     </Label>
-                    <div className="space-y-2">
+                    <div className="grid grid-cols-3 gap-3">
                       {["BEGINNER", "INTERMEDIATE", "ADVANCED"].map((exp) => (
                         <button
                           key={exp}
                           onClick={() => setExperience(exp)}
-                          className={`w-full p-2 md:p-3 rounded-xl border-2 transition text-left text-sm md:text-base ${
-                            experience === exp
-                              ? "border-emerald-500 bg-emerald-50 text-emerald-700 font-semibold"
-                              : "border-slate-200"
-                          }`}
+                          className={`p-4 rounded-xl border-2 transition-all text-xs sm:text-sm ${experience === exp ? "border-slate-900 bg-slate-50 text-slate-900 font-bold shadow-sm" : "border-slate-200 text-slate-500 hover:border-slate-300"}`}
                         >
-                          {exp === "BEGINNER" && "🌱 Beginner"}
-                          {exp === "INTERMEDIATE" && "🔥 Intermediate"}
-                          {exp === "ADVANCED" && "⚡ Advanced"}
+                          {exp}
                         </button>
                       ))}
                     </div>
@@ -136,13 +144,10 @@ const WorkoutPlan = () => {
 
                 <Button
                   onClick={handleGenerate}
-                  className="w-full h-12 md:h-14 bg-gradient-to-r from-emerald-500 to-teal-600 hover:opacity-90 text-sm md:text-lg font-semibold shadow-xl shadow-emerald-200"
+                  className="w-full h-14 mt-10 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-base shadow-lg transition-transform hover:-translate-y-1"
                 >
-                  ✨ Generate AI Workout Plan
+                  Generate Routine
                 </Button>
-                <p className="text-xs text-slate-500 text-center mt-3 md:mt-4">
-                  Takes 10-20 seconds
-                </p>
               </motion.div>
             )}
 
@@ -150,136 +155,196 @@ const WorkoutPlan = () => {
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="space-y-4 md:space-y-6"
+                className="space-y-6 mt-6"
               >
-                <div className="bg-white rounded-2xl p-4 md:p-6 shadow-lg">
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="min-w-0 flex-1">
-                      <h2 className="text-lg md:text-2xl font-bold text-slate-800">
-                        {currentPlan.planName}
-                      </h2>
-                      <p className="text-xs md:text-base text-slate-500 mt-1">
-                        {currentPlan.duration} • {currentPlan.daysPerWeek}{" "}
-                        days/week
-                      </p>
+                {/* Stats Header */}
+                <div className="bg-white rounded-[2rem] p-6 md:p-8 shadow-sm border border-slate-200/60 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                  <div>
+                    <h2 className="text-2xl font-bold text-slate-900">
+                      {currentPlan.planName}
+                    </h2>
+                    <div className="flex gap-3 mt-2">
+                      <span className="px-3 py-1 bg-slate-100 text-slate-600 rounded-md text-xs font-bold">
+                        {currentPlan.duration}
+                      </span>
+                      <span className="px-3 py-1 bg-slate-100 text-slate-600 rounded-md text-xs font-bold">
+                        {currentPlan.daysPerWeek} Days/Week
+                      </span>
                     </div>
-                    <div className="text-right flex-shrink-0">
-                      <p className="text-xs text-slate-500">Burn</p>
-                      <p className="text-sm md:text-xl font-bold text-orange-600">
+                  </div>
+                  <div className="bg-orange-50 px-4 py-3 rounded-xl border border-orange-100 flex items-center gap-3">
+                    <Flame className="text-orange-500" size={24} />
+                    <div>
+                      <p className="text-[10px] font-bold text-orange-600 uppercase tracking-wider">
+                        Est. Burn
+                      </p>
+                      <p className="text-lg font-extrabold text-slate-900 leading-none">
                         {currentPlan.estimatedCaloriesBurn}
                       </p>
                     </div>
                   </div>
                 </div>
 
-                <div className="bg-white rounded-2xl p-3 md:p-4 shadow-lg overflow-x-auto">
-                  <div className="flex gap-2 min-w-max">
-                    {currentPlan.weeklySchedule?.map((day: any, i: number) => (
-                      <button
-                        key={i}
-                        onClick={() => setSelectedDay(i)}
-                        className={`px-4 md:px-6 py-2 md:py-3 rounded-xl font-semibold text-xs md:text-base transition whitespace-nowrap ${
-                          selectedDay === i
-                            ? "bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-lg"
-                            : "bg-slate-100 text-slate-600"
-                        }`}
+                {/* Day Selector */}
+                <div className="bg-white rounded-[2rem] p-3 shadow-sm border border-slate-200/60 overflow-x-auto flex gap-2 hide-scrollbar">
+                  {currentPlan.weeklySchedule?.map((day: any, i: number) => (
+                    <button
+                      key={i}
+                      onClick={() => setSelectedDay(i)}
+                      className={`px-5 py-2.5 rounded-xl font-bold text-sm transition-all whitespace-nowrap flex flex-col items-center min-w-[100px] ${selectedDay === i ? "bg-slate-900 text-white shadow-md" : "bg-transparent text-slate-500 hover:bg-slate-100"}`}
+                    >
+                      <span>{day.day}</span>
+                      <span
+                        className={`text-[10px] mt-1 ${selectedDay === i ? "text-slate-300" : "text-slate-400"}`}
                       >
-                        <div>{day.day}</div>
-                        <div className="text-[10px] md:text-xs opacity-75 mt-0.5 md:mt-1">
-                          {day.focus}
-                        </div>
-                      </button>
-                    ))}
-                  </div>
+                        {day.focus}
+                      </span>
+                    </button>
+                  ))}
                 </div>
 
+                {/* Day Details */}
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={selectedDay}
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    className="space-y-3 md:space-y-4"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="space-y-6"
                   >
-                    <div className="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl p-4 md:p-6 text-white shadow-xl">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="text-white/80 text-xs md:text-sm">
-                            Focus
-                          </p>
-                          <p className="text-lg md:text-2xl font-bold">
-                            {currentPlan.weeklySchedule[selectedDay]?.focus}
-                          </p>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-white/80 text-xs md:text-sm">
-                            Duration
-                          </p>
-                          <p className="text-base md:text-xl font-bold">
-                            {currentPlan.weeklySchedule[selectedDay]?.duration}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-
                     {currentPlan.weeklySchedule[selectedDay]?.exercises
-                      ?.length > 0 && (
-                      <div className="bg-white rounded-2xl p-4 md:p-6 shadow-lg">
-                        <h3 className="text-base md:text-xl font-bold text-slate-800 mb-3 md:mb-4">
-                          💪 Exercises
+                      ?.length === 0 ? (
+                      <div className="bg-white rounded-[2rem] p-16 shadow-sm border border-slate-200/60 text-center">
+                        <div className="text-6xl mb-4">🧘</div>
+                        <h3 className="text-2xl font-bold text-slate-900">
+                          Active Recovery Day
                         </h3>
-                        <div className="space-y-3 md:space-y-4">
-                          {currentPlan.weeklySchedule[
-                            selectedDay
-                          ]?.exercises?.map((exercise: any, i: number) => (
-                            <div
-                              key={i}
-                              className="p-3 md:p-4 bg-slate-50 rounded-xl border-2 border-slate-100"
-                            >
-                              <div className="flex items-start justify-between mb-2 gap-2">
-                                <h4 className="text-sm md:text-lg font-bold text-slate-800 flex-1">
-                                  {i + 1}. {exercise.name}
-                                </h4>
-                                <div className="flex flex-col gap-1 text-xs flex-shrink-0">
-                                  <span className="px-2 py-1 bg-emerald-100 text-emerald-700 rounded-full font-semibold text-center">
-                                    {exercise.sets} sets
-                                  </span>
-                                  <span className="px-2 py-1 bg-cyan-100 text-cyan-700 rounded-full font-semibold text-center">
-                                    {exercise.reps}
-                                  </span>
-                                </div>
-                              </div>
-                              <p className="text-xs md:text-sm text-slate-600 mb-2">
-                                {exercise.instructions}
-                              </p>
-                              <p className="text-xs text-slate-500">
-                                ⏱️ Rest: {exercise.rest}
-                              </p>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    {currentPlan.weeklySchedule[selectedDay]?.exercises
-                      ?.length === 0 && (
-                      <div className="bg-purple-50 rounded-2xl p-8 md:p-12 text-center border-2 border-purple-200">
-                        <div className="text-5xl md:text-6xl mb-3">😴</div>
-                        <h3 className="text-xl md:text-2xl font-bold text-purple-700">
-                          Rest Day
-                        </h3>
-                        <p className="text-purple-600 mt-2 text-sm md:text-base">
-                          Recover and prepare!
+                        <p className="text-slate-500 mt-2">
+                          Rest is crucial for muscle growth and central nervous
+                          system recovery.
                         </p>
                       </div>
+                    ) : (
+                      <>
+                        <div className="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-200/60">
+                          <h3 className="text-lg font-bold text-slate-900 mb-4">
+                            Workout Structure
+                          </h3>
+                          <div className="space-y-3">
+                            {currentPlan.weeklySchedule[
+                              selectedDay
+                            ]?.exercises?.map((exercise: any, i: number) => (
+                              <div
+                                key={i}
+                                className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-slate-50 rounded-xl border border-slate-100 gap-4"
+                              >
+                                <div className="flex-1">
+                                  <h4 className="font-bold text-slate-800 text-base">
+                                    {i + 1}. {exercise.name}
+                                  </h4>
+                                  <p className="text-sm text-slate-500 mt-1">
+                                    {exercise.instructions}
+                                  </p>
+                                </div>
+                                <div className="flex sm:flex-col gap-2 sm:gap-1 shrink-0 text-xs font-bold text-slate-600 bg-white p-3 rounded-lg border border-slate-200 shadow-sm min-w-[120px]">
+                                  <div className="flex justify-between w-full">
+                                    <span>Sets:</span>{" "}
+                                    <span className="text-slate-900">
+                                      {exercise.sets}
+                                    </span>
+                                  </div>
+                                  <div className="flex justify-between w-full">
+                                    <span>Reps:</span>{" "}
+                                    <span className="text-slate-900">
+                                      {exercise.reps}
+                                    </span>
+                                  </div>
+                                  <div className="flex justify-between w-full">
+                                    <span>Rest:</span>{" "}
+                                    <span className="text-slate-900">
+                                      {exercise.rest}
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Warmup & Cooldown Grid */}
+                        <div className="grid md:grid-cols-2 gap-6">
+                          <div className="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-200/60">
+                            <h3 className="text-base font-bold text-slate-900 mb-3">
+                              🔥 Warmup Protocol
+                            </h3>
+                            <ul className="space-y-2">
+                              {currentPlan.weeklySchedule[
+                                selectedDay
+                              ]?.warmup?.map((item: string, i: number) => (
+                                <li
+                                  key={i}
+                                  className="text-sm text-slate-600 flex items-start gap-2"
+                                >
+                                  <span className="text-slate-400">•</span>{" "}
+                                  {item}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                          <div className="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-200/60">
+                            <h3 className="text-base font-bold text-slate-900 mb-3">
+                              ❄️ Cooldown Routine
+                            </h3>
+                            <ul className="space-y-2">
+                              {currentPlan.weeklySchedule[
+                                selectedDay
+                              ]?.cooldown?.map((item: string, i: number) => (
+                                <li
+                                  key={i}
+                                  className="text-sm text-slate-600 flex items-start gap-2"
+                                >
+                                  <span className="text-slate-400">•</span>{" "}
+                                  {item}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        </div>
+                      </>
                     )}
                   </motion.div>
                 </AnimatePresence>
 
+                {/* Safety & Action */}
+                <div className="bg-red-50/50 rounded-[2rem] p-6 border border-red-100 flex items-start gap-4">
+                  <AlertTriangle
+                    className="text-red-500 shrink-0 mt-1"
+                    size={24}
+                  />
+                  <div>
+                    <h3 className="font-bold text-red-900 mb-1">
+                      Safety Protocols
+                    </h3>
+                    <p className="text-sm text-red-800/80 mb-3">
+                      Maintain proper form over weight to prevent injuries.
+                    </p>
+                    <ul className="space-y-1 text-sm text-red-700 font-medium">
+                      {currentPlan.safetyNotes?.map(
+                        (note: string, i: number) => (
+                          <li key={i}>- {note}</li>
+                        ),
+                      )}
+                    </ul>
+                  </div>
+                </div>
+
                 <Button
-                  onClick={() => generatePlan({ location, experience })}
-                  className="w-full h-12 md:h-14 bg-gradient-to-r from-emerald-500 to-teal-600 text-sm md:text-lg"
+                  onClick={() => {
+                    setShowForm(true);
+                  }}
+                  className="w-full h-14 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-base shadow-lg transition-transform hover:-translate-y-1"
                 >
-                  🔄 Generate New Plan
+                  <RotateCcw size={18} className="mr-2" /> Adjust Parameters
                 </Button>
               </motion.div>
             )}
@@ -288,30 +353,39 @@ const WorkoutPlan = () => {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="space-y-3 md:space-y-4"
+            className="space-y-4 mt-6"
           >
-            <h2 className="text-xl md:text-2xl font-bold text-slate-800">
-              📊 Past Plans
-            </h2>
             {plans.length === 0 ? (
-              <div className="bg-white rounded-2xl p-8 md:p-12 text-center shadow-lg">
-                <p className="text-3xl md:text-4xl mb-3">📭</p>
-                <p className="text-slate-500 text-sm md:text-base">
-                  No plans yet
-                </p>
+              <div className="bg-white rounded-[2rem] p-12 text-center shadow-sm border border-slate-200/60">
+                <div className="w-16 h-16 bg-slate-100 text-slate-400 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <Calendar size={32} />
+                </div>
+                <h3 className="text-xl font-bold text-slate-900">
+                  No History Found
+                </h3>
               </div>
             ) : (
               plans.map((plan: any) => (
                 <div
                   key={plan.id}
-                  className="bg-white rounded-2xl p-4 md:p-6 shadow-lg"
+                  className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200/60 flex items-center justify-between hover:border-slate-300"
                 >
-                  <p className="text-xs md:text-sm text-slate-500">
-                    {new Date(plan.createdAt).toLocaleString()}
-                  </p>
-                  <p className="text-lg md:text-xl font-bold text-slate-800 mt-1">
-                    {plan.planName}
-                  </p>
+                  <div>
+                    <p className="text-xs font-semibold text-slate-400 uppercase mb-1">
+                      {new Date(plan.createdAt).toLocaleDateString()}
+                    </p>
+                    <p className="font-bold text-slate-800 text-base">
+                      {plan.planName}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-[10px] font-bold text-slate-400 uppercase">
+                      Est. Burn
+                    </p>
+                    <p className="font-bold text-orange-600">
+                      {plan.estimatedCaloriesBurn}
+                    </p>
+                  </div>
                 </div>
               ))
             )}

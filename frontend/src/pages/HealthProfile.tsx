@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
@@ -8,6 +8,15 @@ import {
   useCreateHealthProfile,
   useUpdateHealthProfile,
 } from "../hooks/useHealthProfile";
+import {
+  User,
+  Activity,
+  Edit2,
+  CheckCircle2,
+  Ruler,
+  Weight,
+  Target,
+} from "lucide-react";
 
 const HealthProfile = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -33,7 +42,6 @@ const HealthProfile = () => {
     targetWeight: "",
   });
 
-  // Fill form on edit
   const handleEdit = () => {
     if (profile) {
       setFormData({
@@ -77,442 +85,360 @@ const HealthProfile = () => {
     };
 
     if (profile) {
-      updateProfile(payload, {
-        onSuccess: () => setIsEditing(false),
-      });
+      updateProfile(payload, { onSuccess: () => setIsEditing(false) });
     } else {
       createProfile(payload);
     }
   };
 
   const getBMICategory = (bmi: number) => {
-    if (bmi < 18.5) return { text: "Underweight", color: "text-blue-600" };
-    if (bmi < 25) return { text: "Normal", color: "text-emerald-600" };
-    if (bmi < 30) return { text: "Overweight", color: "text-yellow-600" };
-    return { text: "Obese", color: "text-red-600" };
+    if (bmi < 18.5)
+      return { text: "Underweight", color: "text-blue-600", bg: "bg-blue-50" };
+    if (bmi < 25)
+      return { text: "Normal", color: "text-emerald-600", bg: "bg-emerald-50" };
+    if (bmi < 30)
+      return {
+        text: "Overweight",
+        color: "text-yellow-600",
+        bg: "bg-yellow-50",
+      };
+    return { text: "Obese", color: "text-red-600", bg: "bg-red-50" };
   };
 
-  // Loading state
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-4xl animate-spin">⚕️</div>
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="w-10 h-10 border-4 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
   }
 
-  // Show form if no profile OR editing
-  if (!profile || isEditing) {
+  // View Mode
+  if (profile && !isEditing) {
+    const bmiCategory = getBMICategory(profile.bmi || 0);
+
     return (
-      <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-cyan-50 p-8">
+      <div className="min-h-screen bg-[#F8FAFC] p-4 md:p-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="max-w-4xl mx-auto"
+          className="max-w-5xl mx-auto space-y-6"
         >
           {/* Header */}
-          <div className="bg-gradient-to-r from-emerald-500 to-teal-600 rounded-3xl p-8 text-white mb-6 shadow-2xl">
-            <h1 className="text-4xl font-bold mb-2">
-              {profile
-                ? "✏️ Edit Health Profile"
-                : "🩺 Setup Your Health Profile"}
-            </h1>
-            <p className="text-white/90">
-              {profile
-                ? "Update your health information"
-                : "Help us personalize your experience"}
-            </p>
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 md:p-8 rounded-[2rem] shadow-sm border border-slate-200/60">
+            <div className="flex items-center gap-4">
+              <div className="w-14 h-14 bg-primary-50 text-primary-600 rounded-2xl flex items-center justify-center">
+                <User size={28} />
+              </div>
+              <div>
+                <h1 className="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight">
+                  Clinical Profile
+                </h1>
+                <p className="text-slate-500 text-sm font-medium mt-1">
+                  Your core health metrics and medical history
+                </p>
+              </div>
+            </div>
+            <Button
+              onClick={handleEdit}
+              className="w-full md:w-auto rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold"
+            >
+              <Edit2 size={16} className="mr-2" /> Edit Profile
+            </Button>
           </div>
 
-          {/* Form */}
-          <form
-            onSubmit={handleSubmit}
-            className="bg-white rounded-2xl p-8 shadow-lg space-y-8"
-          >
-            {/* Basic Info */}
-            <div>
-              <h2 className="text-2xl font-bold text-slate-800 mb-4">
-                👤 Basic Information
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>Age *</Label>
-                  <Input
-                    type="number"
-                    value={formData.age}
-                    onChange={(e) =>
-                      setFormData({ ...formData, age: e.target.value })
-                    }
-                    placeholder="25"
-                    required
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Gender *</Label>
-                  <select
-                    value={formData.gender}
-                    onChange={(e) =>
-                      setFormData({ ...formData, gender: e.target.value })
-                    }
-                    className="w-full h-10 px-3 border rounded-md"
-                    required
-                  >
-                    <option value="MALE">Male</option>
-                    <option value="FEMALE">Female</option>
-                    <option value="OTHER">Other</option>
-                  </select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Height (cm) *</Label>
-                  <Input
-                    type="number"
-                    value={formData.height}
-                    onChange={(e) =>
-                      setFormData({ ...formData, height: e.target.value })
-                    }
-                    placeholder="175"
-                    required
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Weight (kg) *</Label>
-                  <Input
-                    type="number"
-                    value={formData.weight}
-                    onChange={(e) =>
-                      setFormData({ ...formData, weight: e.target.value })
-                    }
-                    placeholder="70"
-                    required
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Blood Group</Label>
-                  <select
-                    value={formData.bloodGroup}
-                    onChange={(e) =>
-                      setFormData({ ...formData, bloodGroup: e.target.value })
-                    }
-                    className="w-full h-10 px-3 border rounded-md"
-                  >
-                    <option value="">Select</option>
-                    <option value="A+">A+</option>
-                    <option value="A-">A-</option>
-                    <option value="B+">B+</option>
-                    <option value="B-">B-</option>
-                    <option value="O+">O+</option>
-                    <option value="O-">O-</option>
-                    <option value="AB+">AB+</option>
-                    <option value="AB-">AB-</option>
-                  </select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Target Weight (kg)</Label>
-                  <Input
-                    type="number"
-                    value={formData.targetWeight}
-                    onChange={(e) =>
-                      setFormData({ ...formData, targetWeight: e.target.value })
-                    }
-                    placeholder="68"
-                  />
-                </div>
+          {/* Main Stats Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* BMI Card */}
+            <div
+              className={`p-8 rounded-[2rem] border shadow-sm flex flex-col items-center justify-center ${bmiCategory.bg} border-white`}
+            >
+              <p className="text-sm font-bold text-slate-500 uppercase tracking-wider mb-2">
+                BMI Score
+              </p>
+              <p
+                className={`text-6xl font-extrabold tracking-tighter ${bmiCategory.color}`}
+              >
+                {profile.bmi}
+              </p>
+              <div
+                className={`mt-4 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider ${bmiCategory.color} bg-white/50 backdrop-blur-md`}
+              >
+                {bmiCategory.text}
               </div>
             </div>
 
-            {/* Health Info */}
-            <div>
-              <h2 className="text-2xl font-bold text-slate-800 mb-4">
-                💪 Health Preferences
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="space-y-2">
-                  <Label>Activity Level *</Label>
-                  <select
-                    value={formData.activityLevel}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        activityLevel: e.target.value,
-                      })
-                    }
-                    className="w-full h-10 px-3 border rounded-md"
-                  >
-                    <option value="SEDENTARY">Sedentary</option>
-                    <option value="LIGHT">Light</option>
-                    <option value="MODERATE">Moderate</option>
-                    <option value="ACTIVE">Active</option>
-                    <option value="VERY_ACTIVE">Very Active</option>
-                  </select>
+            {/* Metrics */}
+            <div className="md:col-span-2 grid grid-cols-2 gap-4">
+              <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex items-center gap-4">
+                <div className="p-3 bg-slate-50 rounded-xl text-slate-600">
+                  <Ruler size={24} />
                 </div>
-
-                <div className="space-y-2">
-                  <Label>Goal *</Label>
-                  <select
-                    value={formData.goal}
-                    onChange={(e) =>
-                      setFormData({ ...formData, goal: e.target.value })
-                    }
-                    className="w-full h-10 px-3 border rounded-md"
-                  >
-                    <option value="WEIGHT_LOSS">Weight Loss</option>
-                    <option value="WEIGHT_GAIN">Weight Gain</option>
-                    <option value="MAINTAIN">Maintain</option>
-                    <option value="MUSCLE_GAIN">Muscle Gain</option>
-                    <option value="IMPROVE_HEALTH">Improve Health</option>
-                  </select>
+                <div>
+                  <p className="text-sm font-medium text-slate-500">Height</p>
+                  <p className="text-2xl font-bold text-slate-900">
+                    {profile.height} cm
+                  </p>
                 </div>
-
-                <div className="space-y-2">
-                  <Label>Diet Preference *</Label>
-                  <select
-                    value={formData.dietaryPreference}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        dietaryPreference: e.target.value,
-                      })
-                    }
-                    className="w-full h-10 px-3 border rounded-md"
-                  >
-                    <option value="VEG">Vegetarian</option>
-                    <option value="NON_VEG">Non-Vegetarian</option>
-                    <option value="VEGAN">Vegan</option>
-                    <option value="KETO">Keto</option>
-                    <option value="PALEO">Paleo</option>
-                    <option value="MEDITERRANEAN">Mediterranean</option>
-                  </select>
+              </div>
+              <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex items-center gap-4">
+                <div className="p-3 bg-slate-50 rounded-xl text-slate-600">
+                  <Weight size={24} />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-slate-500">Weight</p>
+                  <p className="text-2xl font-bold text-slate-900">
+                    {profile.weight} kg
+                  </p>
+                </div>
+              </div>
+              <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex items-center gap-4">
+                <div className="p-3 bg-slate-50 rounded-xl text-slate-600">
+                  <Target size={24} />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-slate-500">
+                    Target Weight
+                  </p>
+                  <p className="text-2xl font-bold text-slate-900">
+                    {profile.targetWeight || "-"} kg
+                  </p>
+                </div>
+              </div>
+              <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex items-center gap-4">
+                <div className="p-3 bg-slate-50 rounded-xl text-slate-600">
+                  <Activity size={24} />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-slate-500">
+                    Blood Group
+                  </p>
+                  <p className="text-2xl font-bold text-slate-900">
+                    {profile.bloodGroup || "-"}
+                  </p>
                 </div>
               </div>
             </div>
+          </div>
 
-            {/* Medical Info */}
-            <div>
-              <h2 className="text-2xl font-bold text-slate-800 mb-4">
-                🏥 Medical Info
-              </h2>
+          {/* Details Section */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="bg-white rounded-[2rem] p-8 shadow-sm border border-slate-100 space-y-6">
+              <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+                <CheckCircle2 size={20} className="text-primary-500" />{" "}
+                Preferences
+              </h3>
               <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label>Allergies (comma separated)</Label>
-                  <Input
-                    value={formData.allergies}
-                    onChange={(e) =>
-                      setFormData({ ...formData, allergies: e.target.value })
-                    }
-                    placeholder="Peanuts, Dust, Pollen"
-                  />
+                <div className="flex justify-between items-center py-3 border-b border-slate-50">
+                  <span className="text-sm font-medium text-slate-500">
+                    Activity Level
+                  </span>
+                  <span className="text-sm font-bold text-slate-800">
+                    {profile.activityLevel}
+                  </span>
                 </div>
-
-                <div className="space-y-2">
-                  <Label>Medical Conditions (comma separated)</Label>
-                  <Input
-                    value={formData.medicalConditions}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        medicalConditions: e.target.value,
-                      })
-                    }
-                    placeholder="Diabetes, Hypertension"
-                  />
+                <div className="flex justify-between items-center py-3 border-b border-slate-50">
+                  <span className="text-sm font-medium text-slate-500">
+                    Health Goal
+                  </span>
+                  <span className="text-sm font-bold text-slate-800">
+                    {profile.goal.replace("_", " ")}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center py-3">
+                  <span className="text-sm font-medium text-slate-500">
+                    Dietary Preference
+                  </span>
+                  <span className="text-sm font-bold text-slate-800">
+                    {profile.dietaryPreference.replace("_", " ")}
+                  </span>
                 </div>
               </div>
             </div>
 
-            {/* Buttons */}
-            <div className="flex gap-3 pt-4 border-t">
+            <div className="space-y-6">
+              <div className="bg-white rounded-[2rem] p-8 shadow-sm border border-slate-100">
+                <h3 className="text-lg font-bold text-slate-900 mb-4">
+                  Allergies
+                </h3>
+                {profile.allergies?.length ? (
+                  <div className="flex flex-wrap gap-2">
+                    {profile.allergies.map((a: string, i: number) => (
+                      <span
+                        key={i}
+                        className="px-3 py-1 bg-red-50 text-red-600 border border-red-100 rounded-full text-xs font-bold"
+                      >
+                        {a}
+                      </span>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-slate-400">No known allergies</p>
+                )}
+              </div>
+
+              <div className="bg-white rounded-[2rem] p-8 shadow-sm border border-slate-100">
+                <h3 className="text-lg font-bold text-slate-900 mb-4">
+                  Medical Conditions
+                </h3>
+                {profile.medicalConditions?.length ? (
+                  <div className="flex flex-wrap gap-2">
+                    {profile.medicalConditions.map((c: string, i: number) => (
+                      <span
+                        key={i}
+                        className="px-3 py-1 bg-amber-50 text-amber-700 border border-amber-100 rounded-full text-xs font-bold"
+                      >
+                        {c}
+                      </span>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-slate-400">
+                    No medical conditions reported
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    );
+  }
+
+  // Setup / Edit Form
+  return (
+    <div className="min-h-screen bg-[#F8FAFC] p-4 md:p-8">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="max-w-4xl mx-auto space-y-6"
+      >
+        <div className="bg-white p-8 rounded-[2rem] shadow-sm border border-slate-200/60">
+          <h1 className="text-2xl font-bold text-slate-900 mb-2">
+            {profile ? "Update Health Profile" : "Complete Your Profile"}
+          </h1>
+          <p className="text-sm text-slate-500 mb-8 font-medium">
+            Accurate data helps our AI provide safe and personalized health
+            advice.
+          </p>
+
+          <form onSubmit={handleSubmit} className="space-y-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <Label className="text-xs font-bold text-slate-500 uppercase">
+                  Age *
+                </Label>
+                <Input
+                  type="number"
+                  value={formData.age}
+                  onChange={(e) =>
+                    setFormData({ ...formData, age: e.target.value })
+                  }
+                  required
+                  className="h-12 bg-slate-50/50 rounded-xl"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label className="text-xs font-bold text-slate-500 uppercase">
+                  Gender *
+                </Label>
+                <select
+                  value={formData.gender}
+                  onChange={(e) =>
+                    setFormData({ ...formData, gender: e.target.value })
+                  }
+                  required
+                  className="w-full h-12 px-4 border border-slate-200 bg-slate-50/50 rounded-xl outline-none focus:ring-2 focus:ring-primary-500 text-sm font-medium"
+                >
+                  <option value="MALE">Male</option>
+                  <option value="FEMALE">Female</option>
+                  <option value="OTHER">Other</option>
+                </select>
+              </div>
+              <div className="space-y-2">
+                <Label className="text-xs font-bold text-slate-500 uppercase">
+                  Height (cm) *
+                </Label>
+                <Input
+                  type="number"
+                  value={formData.height}
+                  onChange={(e) =>
+                    setFormData({ ...formData, height: e.target.value })
+                  }
+                  required
+                  className="h-12 bg-slate-50/50 rounded-xl"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label className="text-xs font-bold text-slate-500 uppercase">
+                  Weight (kg) *
+                </Label>
+                <Input
+                  type="number"
+                  value={formData.weight}
+                  onChange={(e) =>
+                    setFormData({ ...formData, weight: e.target.value })
+                  }
+                  required
+                  className="h-12 bg-slate-50/50 rounded-xl"
+                />
+              </div>
+            </div>
+
+            <hr className="border-slate-100" />
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <Label className="text-xs font-bold text-slate-500 uppercase">
+                  Allergies (comma separated)
+                </Label>
+                <Input
+                  value={formData.allergies}
+                  onChange={(e) =>
+                    setFormData({ ...formData, allergies: e.target.value })
+                  }
+                  placeholder="Peanuts, Penicillin..."
+                  className="h-12 bg-slate-50/50 rounded-xl"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label className="text-xs font-bold text-slate-500 uppercase">
+                  Medical Conditions
+                </Label>
+                <Input
+                  value={formData.medicalConditions}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      medicalConditions: e.target.value,
+                    })
+                  }
+                  placeholder="Asthma, Diabetes..."
+                  className="h-12 bg-slate-50/50 rounded-xl"
+                />
+              </div>
+            </div>
+
+            <div className="flex gap-4 pt-4">
               <Button
                 type="submit"
                 disabled={isCreating || isUpdating}
-                className="bg-gradient-to-r from-emerald-500 to-teal-600 h-11 px-8"
+                className="flex-1 h-12 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-bold"
               >
-                {isCreating || isUpdating
-                  ? "Saving..."
-                  : profile
-                    ? "💾 Save Changes"
-                    : "🎯 Create Profile"}
+                {isCreating || isUpdating ? "Saving..." : "Save Profile"}
               </Button>
-              {isEditing && (
+              {profile && (
                 <Button
                   type="button"
                   variant="outline"
                   onClick={() => setIsEditing(false)}
+                  className="flex-1 h-12 rounded-xl font-bold"
                 >
                   Cancel
                 </Button>
               )}
             </div>
           </form>
-        </motion.div>
-      </div>
-    );
-  }
-
-  // View Mode
-  const bmiCategory = getBMICategory(profile.bmi || 0);
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-cyan-50 p-8">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="max-w-6xl mx-auto space-y-6"
-      >
-        {/* Header */}
-        <div className="bg-gradient-to-r from-emerald-500 via-teal-600 to-cyan-600 rounded-3xl p-8 text-white shadow-2xl flex items-center justify-between">
-          <div>
-            <h1 className="text-4xl font-bold mb-2">🩺 Health Profile</h1>
-            <p className="text-white/90">Your health snapshot</p>
-          </div>
-          <Button
-            onClick={handleEdit}
-            className="bg-white text-emerald-600 hover:bg-slate-50"
-          >
-            ✏️ Edit Profile
-          </Button>
-        </div>
-
-        {/* BMI Card */}
-        <motion.div
-          initial={{ scale: 0.9 }}
-          animate={{ scale: 1 }}
-          className="bg-white rounded-2xl p-8 shadow-lg"
-        >
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 items-center">
-            <div className="col-span-1 text-center">
-              <p className="text-6xl font-bold bg-gradient-to-r from-emerald-600 to-cyan-600 bg-clip-text text-transparent">
-                {profile.bmi}
-              </p>
-              <p className="text-slate-500 mt-2">BMI</p>
-              <p className={`font-bold mt-1 ${bmiCategory.color}`}>
-                {bmiCategory.text}
-              </p>
-            </div>
-            <div className="col-span-3 grid grid-cols-3 gap-4">
-              <div className="p-4 bg-emerald-50 rounded-xl text-center">
-                <div className="text-3xl mb-1">📏</div>
-                <p className="text-2xl font-bold text-slate-800">
-                  {profile.height}
-                </p>
-                <p className="text-sm text-slate-500">Height (cm)</p>
-              </div>
-              <div className="p-4 bg-cyan-50 rounded-xl text-center">
-                <div className="text-3xl mb-1">⚖️</div>
-                <p className="text-2xl font-bold text-slate-800">
-                  {profile.weight}
-                </p>
-                <p className="text-sm text-slate-500">Weight (kg)</p>
-              </div>
-              <div className="p-4 bg-teal-50 rounded-xl text-center">
-                <div className="text-3xl mb-1">🎯</div>
-                <p className="text-2xl font-bold text-slate-800">
-                  {profile.targetWeight || "-"}
-                </p>
-                <p className="text-sm text-slate-500">Target (kg)</p>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Info Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Basic Info */}
-          <div className="bg-white rounded-2xl p-6 shadow-lg">
-            <h2 className="text-xl font-bold text-slate-800 mb-4">
-              👤 Basic Info
-            </h2>
-            <div className="space-y-3">
-              <div className="flex justify-between p-3 bg-slate-50 rounded-lg">
-                <span className="text-slate-600">Age</span>
-                <span className="font-semibold">{profile.age} years</span>
-              </div>
-              <div className="flex justify-between p-3 bg-slate-50 rounded-lg">
-                <span className="text-slate-600">Gender</span>
-                <span className="font-semibold">{profile.gender}</span>
-              </div>
-              <div className="flex justify-between p-3 bg-slate-50 rounded-lg">
-                <span className="text-slate-600">Blood Group</span>
-                <span className="font-semibold">
-                  {profile.bloodGroup || "-"}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* Preferences */}
-          <div className="bg-white rounded-2xl p-6 shadow-lg">
-            <h2 className="text-xl font-bold text-slate-800 mb-4">
-              💪 Preferences
-            </h2>
-            <div className="space-y-3">
-              <div className="flex justify-between p-3 bg-slate-50 rounded-lg">
-                <span className="text-slate-600">Activity</span>
-                <span className="font-semibold">{profile.activityLevel}</span>
-              </div>
-              <div className="flex justify-between p-3 bg-slate-50 rounded-lg">
-                <span className="text-slate-600">Goal</span>
-                <span className="font-semibold">
-                  {profile.goal.replace("_", " ")}
-                </span>
-              </div>
-              <div className="flex justify-between p-3 bg-slate-50 rounded-lg">
-                <span className="text-slate-600">Diet</span>
-                <span className="font-semibold">
-                  {profile.dietaryPreference.replace("_", " ")}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* Allergies */}
-          <div className="bg-white rounded-2xl p-6 shadow-lg">
-            <h2 className="text-xl font-bold text-slate-800 mb-4">
-              ⚠️ Allergies
-            </h2>
-            {profile.allergies && profile.allergies.length > 0 ? (
-              <div className="flex flex-wrap gap-2">
-                {profile.allergies.map((allergy: string, i: number) => (
-                  <span
-                    key={i}
-                    className="px-3 py-1 bg-red-100 text-red-700 rounded-full text-sm"
-                  >
-                    {allergy}
-                  </span>
-                ))}
-              </div>
-            ) : (
-              <p className="text-slate-500">No allergies</p>
-            )}
-          </div>
-
-          {/* Medical Conditions */}
-          <div className="bg-white rounded-2xl p-6 shadow-lg">
-            <h2 className="text-xl font-bold text-slate-800 mb-4">
-              🏥 Medical Conditions
-            </h2>
-            {profile.medicalConditions &&
-            profile.medicalConditions.length > 0 ? (
-              <div className="flex flex-wrap gap-2">
-                {profile.medicalConditions.map(
-                  (condition: string, i: number) => (
-                    <span
-                      key={i}
-                      className="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-sm"
-                    >
-                      {condition}
-                    </span>
-                  ),
-                )}
-              </div>
-            ) : (
-              <p className="text-slate-500">No conditions</p>
-            )}
-          </div>
         </div>
       </motion.div>
     </div>

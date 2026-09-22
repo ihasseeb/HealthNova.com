@@ -6,7 +6,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signupSchema, type SignupFormData } from "../../schemas/authSchemas";
 import { useSignup } from "../../hooks/useAuth";
-import { motion, AnimatePresence } from "framer-motion";
 import {
   Mail,
   Lock,
@@ -49,32 +48,21 @@ const Signup = () => {
         </p>
       </div>
 
-      {/* Modern Role Decider Tabs */}
-      <div className="relative flex bg-slate-100/50 p-1.5 rounded-2xl border border-slate-200/50">
-        {/* Animated Active Background */}
+      <div className="relative flex bg-slate-100/80 p-1.5 rounded-2xl border border-slate-200/60">
         <div
-          className={`absolute top-1.5 bottom-1.5 w-[calc(50%-6px)] bg-white rounded-xl shadow-sm transition-transform duration-300 ease-out ${role === "DOCTOR" ? "translate-x-full" : "translate-x-0"}`}
+          className={`absolute top-1.5 bottom-1.5 w-[calc(50%-6px)] bg-white rounded-xl shadow-sm border border-slate-200/50 transition-transform duration-300 cubic-bezier(0.4, 0, 0.2, 1) ${role === "DOCTOR" ? "translate-x-full" : "translate-x-0"}`}
         />
-
         <button
           type="button"
           onClick={() => handleRoleChange("PATIENT")}
-          className={`relative z-10 flex-1 py-2.5 text-sm font-bold rounded-xl transition-colors flex items-center justify-center gap-2 ${
-            role === "PATIENT"
-              ? "text-primary-600"
-              : "text-slate-500 hover:text-slate-700"
-          }`}
+          className={`relative z-10 flex-1 py-2.5 text-sm font-bold rounded-xl transition-colors flex items-center justify-center gap-2 ${role === "PATIENT" ? "text-primary-600" : "text-slate-500 hover:text-slate-700"}`}
         >
           <UserPlus size={16} /> Patient
         </button>
         <button
           type="button"
           onClick={() => handleRoleChange("DOCTOR")}
-          className={`relative z-10 flex-1 py-2.5 text-sm font-bold rounded-xl transition-colors flex items-center justify-center gap-2 ${
-            role === "DOCTOR"
-              ? "text-accent-600"
-              : "text-slate-500 hover:text-slate-700"
-          }`}
+          className={`relative z-10 flex-1 py-2.5 text-sm font-bold rounded-xl transition-colors flex items-center justify-center gap-2 ${role === "DOCTOR" ? "text-accent-600" : "text-slate-500 hover:text-slate-700"}`}
         >
           <Stethoscope size={16} /> Doctor
         </button>
@@ -89,7 +77,7 @@ const Signup = () => {
             <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <Input
               placeholder={role === "DOCTOR" ? "Dr. John Doe" : "John Doe"}
-              className="pl-10 h-12 bg-slate-50/50 border-slate-200 rounded-xl focus-visible:ring-primary-500"
+              className="pl-10 h-12 bg-slate-50/50 border-slate-200 rounded-xl focus-visible:ring-primary-500 font-medium"
               {...register("name")}
             />
           </div>
@@ -109,7 +97,7 @@ const Signup = () => {
             <Input
               type="email"
               placeholder="name@example.com"
-              className="pl-10 h-12 bg-slate-50/50 border-slate-200 rounded-xl focus-visible:ring-primary-500"
+              className="pl-10 h-12 bg-slate-50/50 border-slate-200 rounded-xl focus-visible:ring-primary-500 font-medium"
               {...register("email")}
             />
           </div>
@@ -130,7 +118,7 @@ const Signup = () => {
               <Input
                 type="password"
                 placeholder="••••••••"
-                className="pl-10 h-12 bg-slate-50/50 border-slate-200 rounded-xl focus-visible:ring-primary-500"
+                className="pl-10 h-12 bg-slate-50/50 border-slate-200 rounded-xl focus-visible:ring-primary-500 font-medium"
                 {...register("password")}
               />
             </div>
@@ -150,7 +138,7 @@ const Signup = () => {
               <Input
                 type="password"
                 placeholder="••••••••"
-                className="pl-10 h-12 bg-slate-50/50 border-slate-200 rounded-xl focus-visible:ring-primary-500"
+                className="pl-10 h-12 bg-slate-50/50 border-slate-200 rounded-xl focus-visible:ring-primary-500 font-medium"
                 {...register("confirmPassword")}
               />
             </div>
@@ -165,20 +153,21 @@ const Signup = () => {
         <Button
           type="submit"
           disabled={isPending}
-          className={`w-full h-12 rounded-xl text-white font-bold text-base shadow-lg transition-all mt-2 ${
+          className={`w-full h-12 rounded-xl text-white font-bold text-base shadow-lg transition-all mt-2 active:scale-[0.98] ${
             role === "DOCTOR"
-              ? "bg-accent-600 hover:bg-accent-700 shadow-accent-600/20"
-              : "bg-slate-900 hover:bg-slate-800 shadow-slate-900/20"
+              ? "bg-slate-900 hover:bg-slate-800 shadow-slate-900/20"
+              : "bg-primary-600 hover:bg-primary-700 shadow-primary-600/20"
           }`}
         >
-          {isPending ? "Creating Account..." : "Create Account"}
+          {isPending
+            ? "Creating Account..."
+            : `Join as ${role === "PATIENT" ? "Patient" : "Doctor"}`}
         </Button>
       </form>
 
-      {/* Google Auth & Dividers */}
       <div className="flex items-center gap-4 text-sm text-slate-300">
         <div className="flex-1 border-t border-slate-200"></div>
-        <span className="font-semibold text-slate-400 text-xs uppercase tracking-widest">
+        <span className="font-bold text-slate-400 text-xs uppercase tracking-widest">
           or
         </span>
         <div className="flex-1 border-t border-slate-200"></div>
@@ -186,7 +175,7 @@ const Signup = () => {
 
       <a
         href={`${import.meta.env.VITE_API_URL}/auth/google`}
-        className="w-full flex items-center justify-center gap-3 h-12 border border-slate-200 bg-white rounded-xl hover:bg-slate-50 transition font-bold text-slate-700 shadow-sm"
+        className="w-full flex items-center justify-center gap-3 h-12 border border-slate-200 bg-white rounded-xl hover:bg-slate-50 transition-all font-bold text-slate-700 shadow-sm active:scale-[0.98]"
       >
         <svg className="w-5 h-5" viewBox="0 0 24 24">
           <path
@@ -213,7 +202,7 @@ const Signup = () => {
         Already have an account?{" "}
         <Link
           to="/login"
-          className="text-primary-600 hover:text-primary-700 font-bold"
+          className="text-primary-600 hover:text-primary-700 font-bold transition-colors"
         >
           Sign in
         </Link>

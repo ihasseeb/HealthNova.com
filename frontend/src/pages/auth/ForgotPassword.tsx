@@ -9,8 +9,8 @@ import {
   type ForgotPasswordFormData,
 } from "../../schemas/authSchemas";
 import { useForgotPassword } from "../../hooks/useAuth";
-import { motion } from "framer-motion";
 import { useState } from "react";
+import { KeyRound, Mail, ArrowLeft, CheckCircle2 } from "lucide-react";
 
 const ForgotPassword = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -19,69 +19,51 @@ const ForgotPassword = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
     getValues,
+    formState: { errors },
   } = useForm<ForgotPasswordFormData>({
     resolver: zodResolver(forgotPasswordSchema),
   });
 
   const onSubmit = (data: ForgotPasswordFormData) => {
-    mutate(data, {
-      onSuccess: () => setIsSubmitted(true),
-    });
+    mutate(data, { onSuccess: () => setIsSubmitted(true) });
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="space-y-6"
-    >
+    <div className="space-y-8">
       {!isSubmitted ? (
         <>
-          {/* Icon */}
           <div className="flex justify-center">
-            <motion.div
-              initial={{ scale: 0, rotate: -180 }}
-              animate={{ scale: 1, rotate: 0 }}
-              transition={{ duration: 0.6, type: "spring" }}
-              className="w-16 h-16 bg-gradient-to-br from-emerald-400 via-teal-500 to-cyan-600 rounded-2xl flex items-center justify-center shadow-xl shadow-emerald-200 text-3xl"
-            >
-              🔑
-            </motion.div>
+            <div className="w-16 h-16 bg-primary-50 rounded-2xl flex items-center justify-center border border-primary-100 text-primary-600">
+              <KeyRound size={32} strokeWidth={2} />
+            </div>
           </div>
 
-          {/* Header */}
           <div className="text-center space-y-2">
-            <h1 className="text-3xl font-bold text-slate-800">
+            <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">
               Forgot Password?
             </h1>
-            <p className="text-slate-500 text-sm">
-              No worries! Enter your email and we'll send you a reset link.
+            <p className="text-slate-500 text-sm font-medium">
+              No worries, we'll send you reset instructions.
             </p>
           </div>
 
-          {/* Form */}
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-slate-700 font-medium">
+              <Label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
                 Email Address
               </Label>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-emerald-500">
-                  📧
-                </span>
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                 <Input
-                  id="email"
                   type="email"
-                  placeholder="john@example.com"
-                  className="pl-10 h-11 border-slate-200 focus-visible:ring-emerald-500"
+                  placeholder="name@example.com"
+                  className="pl-10 h-12 bg-slate-50/50 border-slate-200 rounded-xl focus-visible:ring-primary-500 font-medium"
                   {...register("email")}
                 />
               </div>
               {errors.email && (
-                <p className="text-xs text-red-500 mt-1">
+                <p className="text-xs text-red-500 font-medium">
                   {errors.email.message}
                 </p>
               )}
@@ -90,73 +72,64 @@ const ForgotPassword = () => {
             <Button
               type="submit"
               disabled={isPending}
-              className="w-full bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-600 hover:opacity-90 h-12 text-base font-semibold shadow-lg shadow-emerald-200"
+              className="w-full h-12 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-base shadow-lg shadow-slate-900/20 transition-all active:scale-[0.98]"
             >
-              {isPending ? "Sending..." : "Send Reset Link"}
+              {isPending ? "Sending..." : "Reset Password"}
             </Button>
           </form>
 
-          {/* Back to Login */}
-          <p className="text-center text-sm text-slate-500">
-            Remember your password?{" "}
+          <div className="text-center">
             <Link
               to="/login"
-              className="text-emerald-600 hover:text-emerald-700 hover:underline font-semibold"
+              className="inline-flex items-center text-sm font-bold text-slate-500 hover:text-slate-900 transition-colors"
             >
-              Back to Login
+              <ArrowLeft size={16} className="mr-2" /> Back to log in
             </Link>
-          </p>
+          </div>
         </>
       ) : (
         <>
-          {/* Success State */}
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ type: "spring", stiffness: 200 }}
-            className="flex justify-center"
-          >
-            <div className="w-20 h-20 bg-gradient-to-br from-emerald-400 to-teal-600 rounded-full flex items-center justify-center text-4xl shadow-xl shadow-emerald-200">
-              ✅
+          <div className="flex justify-center">
+            <div className="w-16 h-16 bg-emerald-50 rounded-full flex items-center justify-center border border-emerald-100 text-emerald-600">
+              <CheckCircle2 size={32} strokeWidth={2.5} />
             </div>
-          </motion.div>
+          </div>
 
           <div className="text-center space-y-2">
-            <h1 className="text-3xl font-bold text-slate-800">
-              Check Your Email!
+            <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">
+              Check your email
             </h1>
-            <p className="text-slate-500 text-sm">
-              We've sent a password reset link to
+            <p className="text-slate-500 text-sm font-medium">
+              We sent a password reset link to
             </p>
-            <p className="text-emerald-600 font-semibold">
+            <p className="text-slate-900 font-bold text-sm">
               {getValues("email")}
             </p>
           </div>
 
-          <div className="p-4 bg-emerald-50 rounded-xl border border-emerald-100">
-            <p className="text-sm text-slate-600 text-center">
-              💡 Didn't receive it? Check your spam folder or try again in a few
-              minutes.
+          <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 text-center">
+            <p className="text-xs text-slate-500 font-medium">
+              Didn't receive the email? Check your spam filter, or{" "}
+              <button
+                onClick={() => setIsSubmitted(false)}
+                className="text-primary-600 font-bold hover:underline"
+              >
+                try another email address
+              </button>
             </p>
           </div>
 
-          <div className="space-y-3">
-            <Button
-              onClick={() => setIsSubmitted(false)}
-              variant="outline"
-              className="w-full h-11 border-emerald-200 hover:bg-emerald-50"
+          <div className="text-center pt-2">
+            <Link
+              to="/login"
+              className="inline-flex items-center text-sm font-bold text-slate-500 hover:text-slate-900 transition-colors"
             >
-              Try Another Email
-            </Button>
-            <Link to="/login" className="block">
-              <Button className="w-full bg-gradient-to-r from-emerald-500 to-teal-600 h-11">
-                Back to Login
-              </Button>
+              <ArrowLeft size={16} className="mr-2" /> Back to log in
             </Link>
           </div>
         </>
       )}
-    </motion.div>
+    </div>
   );
 };
 

@@ -3,6 +3,15 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "../../components/ui/button";
 import { useHealthTips } from "../../hooks/useAi";
 import AILoadingScreen from "../../components/AILoadingScreen";
+import {
+  Lightbulb,
+  Target,
+  Zap,
+  Quote,
+  Ban,
+  BellRing,
+  RefreshCcw,
+} from "lucide-react";
 
 const HealthTips = () => {
   const [category, setCategory] = useState("GENERAL");
@@ -21,56 +30,49 @@ const HealthTips = () => {
   };
 
   const categories = [
-    { value: "GENERAL", label: "🌟 General", color: "emerald" },
-    { value: "DIET", label: "🥗 Diet", color: "orange" },
-    { value: "FITNESS", label: "💪 Fitness", color: "blue" },
-    { value: "MENTAL", label: "🧠 Mental", color: "purple" },
-    { value: "SLEEP", label: "😴 Sleep", color: "indigo" },
+    { value: "GENERAL", label: "General" },
+    { value: "DIET", label: "Diet & Nutrition" },
+    { value: "FITNESS", label: "Fitness" },
+    { value: "MENTAL", label: "Mental Health" },
+    { value: "SLEEP", label: "Sleep & Recovery" },
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-cyan-50 p-8">
+    <div className="min-h-screen bg-[#F8FAFC] p-4 md:p-8">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="max-w-5xl mx-auto space-y-6"
       >
         {/* Header */}
-        <div className="bg-gradient-to-r from-emerald-500 via-teal-600 to-cyan-600 rounded-3xl p-8 text-white shadow-2xl relative overflow-hidden">
-          <motion.div
-            animate={{ scale: [1, 1.2, 1] }}
-            transition={{ duration: 4, repeat: Infinity }}
-            className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl"
-          />
-          <div className="relative">
-            <h1 className="text-4xl font-bold mb-2 flex items-center gap-3">
-              <motion.span
-                animate={{ rotate: [0, 15, -15, 0] }}
-                transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
-                className="text-5xl inline-block"
-              >
-                💡
-              </motion.span>
-              Health Tips
-            </h1>
-            <p className="text-white/90">
-              Personalized daily wellness advice powered by AI
-            </p>
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 md:p-8 rounded-[2rem] shadow-sm border border-slate-200/60">
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 bg-yellow-50 text-yellow-600 rounded-2xl flex items-center justify-center border border-yellow-100">
+              <Lightbulb size={28} />
+            </div>
+            <div>
+              <h1 className="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight">
+                AI Health Tips
+              </h1>
+              <p className="text-slate-500 text-sm font-medium mt-1">
+                Personalized daily wellness advice
+              </p>
+            </div>
           </div>
         </div>
 
-        {/* Category Selector */}
-        <div className="bg-white rounded-2xl p-4 shadow-lg overflow-x-auto">
-          <div className="flex gap-2 min-w-max">
+        {/* Category Selector (Modern Pills) */}
+        <div className="bg-white rounded-2xl p-2 shadow-sm border border-slate-200/60 overflow-x-auto hide-scrollbar">
+          <div className="flex gap-2 min-w-max p-1">
             {categories.map((cat) => (
               <button
                 key={cat.value}
                 onClick={() => handleCategoryChange(cat.value)}
                 disabled={isPending}
-                className={`px-6 py-3 rounded-xl font-semibold transition ${
+                className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all whitespace-nowrap ${
                   category === cat.value
-                    ? "bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-lg"
-                    : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                    ? "bg-slate-900 text-white shadow-md"
+                    : "bg-transparent text-slate-500 hover:bg-slate-100 hover:text-slate-800"
                 }`}
               >
                 {cat.label}
@@ -81,19 +83,18 @@ const HealthTips = () => {
 
         {/* Loading */}
         {isPending && (
-          <AILoadingScreen
-            emoji="💡"
-            title="Getting Your Health Tips..."
-            description="Our AI is preparing personalized health advice based on your profile"
-            steps={[
-              { icon: "📊", text: "Analyzing your profile" },
-              { icon: "🎯", text: "Selecting relevant tips" },
-              { icon: "💡", text: "Crafting daily advice" },
-              { icon: "🎁", text: "Preparing your wellness plan" },
-              { icon: "✨", text: "Finalizing tips" },
-            ]}
-            tip="Small daily changes lead to big health improvements!"
-          />
+          <div className="bg-white rounded-[2rem] p-8 shadow-sm border border-slate-200/60 mt-6">
+            <AILoadingScreen
+              emoji="💡"
+              title="Curating Insights..."
+              description="AI is filtering the best health advice tailored to your medical profile."
+              steps={[
+                { icon: "🔍", text: "Analyzing your profile data" },
+                { icon: "🎯", text: "Selecting relevant topics" },
+                { icon: "📝", text: "Formulating daily action plan" },
+              ]}
+            />
+          </div>
         )}
 
         {/* Tips Display */}
@@ -101,201 +102,191 @@ const HealthTips = () => {
           {!isPending && tips && (
             <motion.div
               key={category}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
+              exit={{ opacity: 0, y: -10 }}
               className="space-y-6"
             >
               {/* Daily Tip - Hero Card */}
               <motion.div
-                initial={{ scale: 0.95 }}
+                initial={{ scale: 0.98 }}
                 animate={{ scale: 1 }}
-                className="bg-gradient-to-br from-emerald-500 via-teal-600 to-cyan-600 rounded-3xl p-8 text-white shadow-2xl relative overflow-hidden"
+                className="bg-slate-900 rounded-[2rem] p-8 md:p-10 text-white shadow-xl relative overflow-hidden"
               >
-                <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
-                <div className="relative">
-                  <div className="flex items-center gap-2 mb-4">
-                    <span className="text-4xl">🎯</span>
-                    <span className="text-sm font-semibold bg-white/20 px-3 py-1 rounded-full">
-                      TODAY'S TIP
+                <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-primary-500/20 rounded-full blur-[100px] pointer-events-none" />
+
+                <div className="relative z-10">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full border border-white/20 mb-6">
+                    <Target size={14} className="text-primary-400" />
+                    <span className="text-xs font-bold uppercase tracking-wider text-white">
+                      Focus of the Day
                     </span>
                   </div>
-                  <h2 className="text-3xl font-bold mb-3">
+
+                  <h2 className="text-3xl md:text-4xl font-extrabold mb-4 tracking-tight leading-tight">
                     {tips.dailyTip?.title}
                   </h2>
-                  <p className="text-white/90 text-lg mb-6 leading-relaxed">
+                  <p className="text-slate-300 text-base md:text-lg mb-8 leading-relaxed font-medium max-w-2xl">
                     {tips.dailyTip?.description}
                   </p>
-                  <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 mb-4">
-                    <p className="text-sm text-white/80 mb-1">
-                      🎯 Take Action:
+
+                  <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-5 md:p-6 inline-block w-full">
+                    <p className="text-xs font-bold text-primary-400 uppercase tracking-wider mb-2">
+                      Actionable Step
                     </p>
                     <p className="font-semibold text-lg">
                       {tips.dailyTip?.actionable}
                     </p>
-                  </div>
-                  <div className="flex items-start gap-2 text-white/90">
-                    <span className="text-2xl">✨</span>
-                    <div>
-                      <p className="text-sm font-semibold">Why it works:</p>
-                      <p className="text-sm">{tips.dailyTip?.benefit}</p>
-                    </div>
+                    <p className="text-sm text-slate-400 mt-2 flex items-start gap-2">
+                      <Zap
+                        size={16}
+                        className="text-yellow-400 shrink-0 mt-0.5"
+                      />
+                      {tips.dailyTip?.benefit}
+                    </p>
                   </div>
                 </div>
               </motion.div>
 
-              {/* Today's Focus */}
-              {tips.todaysFocus && (
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.2 }}
-                  className="bg-white rounded-2xl p-6 shadow-lg border-l-4 border-emerald-500"
-                >
-                  <h3 className="text-xl font-bold text-slate-800 mb-3 flex items-center gap-2">
-                    🌟 Today's Focus: {tips.todaysFocus.area}
-                  </h3>
-                  <p className="text-slate-600 mb-3">
-                    <strong>Why:</strong> {tips.todaysFocus.why}
-                  </p>
-                  <p className="text-slate-700">
-                    <strong>How:</strong> {tips.todaysFocus.how}
-                  </p>
-                </motion.div>
-              )}
-
-              {/* Weekly Goals */}
-              {tips.weeklyGoals?.length > 0 && (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3 }}
-                  className="bg-white rounded-2xl p-6 shadow-lg"
-                >
-                  <h3 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
-                    📅 Weekly Goals
-                  </h3>
-                  <div className="grid md:grid-cols-2 gap-4">
-                    {tips.weeklyGoals.map((goal: any, i: number) => (
-                      <motion.div
-                        key={i}
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: i * 0.1 }}
-                        className="p-4 bg-gradient-to-br from-emerald-50 to-cyan-50 rounded-xl border border-emerald-200"
-                      >
-                        <h4 className="font-bold text-slate-800 mb-2">
-                          🎯 {goal.goal}
-                        </h4>
-                        <p className="text-sm text-slate-600 mb-2">
-                          {goal.description}
-                        </p>
-                        <div className="bg-white px-3 py-1 rounded-full inline-block">
-                          <p className="text-xs font-semibold text-emerald-700">
-                            Target: {goal.target}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Weekly Goals */}
+                {tips.weeklyGoals?.length > 0 && (
+                  <div className="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-200/60 h-full">
+                    <h3 className="text-lg font-bold text-slate-900 mb-5 flex items-center gap-2">
+                      <Target size={20} className="text-primary-600" /> Weekly
+                      Objectives
+                    </h3>
+                    <div className="space-y-4">
+                      {tips.weeklyGoals.map((goal: any, i: number) => (
+                        <div
+                          key={i}
+                          className="p-4 bg-slate-50 rounded-xl border border-slate-100 relative overflow-hidden group"
+                        >
+                          <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary-500 rounded-l-xl opacity-50 group-hover:opacity-100 transition-opacity" />
+                          <h4 className="font-bold text-slate-800 text-sm mb-1">
+                            {goal.goal}
+                          </h4>
+                          <p className="text-xs text-slate-500 mb-3 leading-relaxed">
+                            {goal.description}
                           </p>
+                          <div className="inline-block bg-white px-2.5 py-1 rounded-md border border-slate-200">
+                            <p className="text-[10px] font-bold text-primary-700 uppercase">
+                              Target: {goal.target}
+                            </p>
+                          </div>
                         </div>
-                      </motion.div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
-                </motion.div>
-              )}
+                )}
 
-              {/* Quick Tips */}
-              {tips.quickTips?.length > 0 && (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.4 }}
-                  className="bg-white rounded-2xl p-6 shadow-lg"
-                >
-                  <h3 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
-                    ⚡ Quick Tips
-                  </h3>
-                  <div className="space-y-2">
-                    {tips.quickTips.map((tip: string, i: number) => (
-                      <motion.div
-                        key={i}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: i * 0.1 }}
-                        className="flex items-start gap-3 p-3 bg-emerald-50 rounded-lg"
-                      >
-                        <span className="text-emerald-600 font-bold text-lg">
-                          {i + 1}.
-                        </span>
-                        <span className="text-slate-700">{tip}</span>
-                      </motion.div>
-                    ))}
+                <div className="space-y-6">
+                  {/* Today's Focus Mini-card */}
+                  {tips.todaysFocus && (
+                    <div className="bg-primary-50 rounded-[2rem] p-6 border border-primary-100">
+                      <h3 className="text-sm font-bold text-primary-800 uppercase tracking-wider mb-2">
+                        Area: {tips.todaysFocus.area}
+                      </h3>
+                      <p className="text-slate-700 text-sm font-medium mb-1">
+                        <strong className="text-primary-900">Why:</strong>{" "}
+                        {tips.todaysFocus.why}
+                      </p>
+                      <p className="text-slate-600 text-sm">
+                        <strong className="text-primary-900">How:</strong>{" "}
+                        {tips.todaysFocus.how}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Motivational Quote */}
+                  {tips.motivationalQuote && (
+                    <div className="bg-white rounded-[2rem] p-8 shadow-sm border border-slate-200/60 text-center relative">
+                      <Quote
+                        className="absolute top-4 left-4 text-slate-100"
+                        size={40}
+                      />
+                      <p className="text-lg font-bold italic text-slate-700 relative z-10 leading-relaxed">
+                        "{tips.motivationalQuote}"
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Quick Tips */}
+                {tips.quickTips?.length > 0 && (
+                  <div className="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-200/60">
+                    <h3 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+                      <Zap size={20} className="text-yellow-500" /> Quick Bytes
+                    </h3>
+                    <div className="space-y-3">
+                      {tips.quickTips.map((tip: string, i: number) => (
+                        <div
+                          key={i}
+                          className="flex items-start gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100"
+                        >
+                          <span className="text-primary-500 font-bold text-sm bg-white w-6 h-6 flex items-center justify-center rounded-full shrink-0 border border-slate-200">
+                            {i + 1}
+                          </span>
+                          <span className="text-slate-600 text-sm font-medium pt-0.5">
+                            {tip}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                </motion.div>
-              )}
+                )}
 
-              {/* Motivational Quote */}
-              {tips.motivationalQuote && (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.5 }}
-                  className="bg-gradient-to-r from-purple-500 to-pink-600 rounded-2xl p-8 text-white shadow-xl text-center"
-                >
-                  <div className="text-6xl mb-4">💫</div>
-                  <p className="text-2xl font-bold italic leading-relaxed">
-                    "{tips.motivationalQuote}"
-                  </p>
-                </motion.div>
-              )}
-
-              {/* Avoid Today */}
-              {tips.avoidToday?.length > 0 && (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.6 }}
-                  className="bg-red-50 rounded-2xl p-6 border-2 border-red-200"
-                >
-                  <h3 className="text-xl font-bold text-red-700 mb-4 flex items-center gap-2">
-                    🚫 Avoid Today
-                  </h3>
-                  <div className="space-y-2">
-                    {tips.avoidToday.map((item: string, i: number) => (
-                      <div key={i} className="flex items-start gap-2">
-                        <span className="text-red-600">❌</span>
-                        <span className="text-slate-700">{item}</span>
+                <div className="space-y-6">
+                  {/* Avoid Today */}
+                  {tips.avoidToday?.length > 0 && (
+                    <div className="bg-red-50/50 rounded-[2rem] p-6 border border-red-100">
+                      <h3 className="text-base font-bold text-red-800 mb-4 flex items-center gap-2">
+                        <Ban size={18} /> Avoid Today
+                      </h3>
+                      <div className="space-y-2">
+                        {tips.avoidToday.map((item: string, i: number) => (
+                          <div
+                            key={i}
+                            className="flex items-start gap-2 text-sm text-red-700 font-medium"
+                          >
+                            <span className="shrink-0 mt-0.5">•</span>
+                            <span>{item}</span>
+                          </div>
+                        ))}
                       </div>
-                    ))}
-                  </div>
-                </motion.div>
-              )}
+                    </div>
+                  )}
 
-              {/* Reminders */}
-              {tips.reminders?.length > 0 && (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.7 }}
-                  className="bg-blue-50 rounded-2xl p-6 border-2 border-blue-200"
-                >
-                  <h3 className="text-xl font-bold text-blue-700 mb-4 flex items-center gap-2">
-                    🔔 Reminders
-                  </h3>
-                  <div className="space-y-2">
-                    {tips.reminders.map((reminder: string, i: number) => (
-                      <div key={i} className="flex items-start gap-2">
-                        <span className="text-blue-600">📌</span>
-                        <span className="text-slate-700">{reminder}</span>
+                  {/* Reminders */}
+                  {tips.reminders?.length > 0 && (
+                    <div className="bg-blue-50/50 rounded-[2rem] p-6 border border-blue-100">
+                      <h3 className="text-base font-bold text-blue-800 mb-4 flex items-center gap-2">
+                        <BellRing size={18} /> Reminders
+                      </h3>
+                      <div className="space-y-2">
+                        {tips.reminders.map((reminder: string, i: number) => (
+                          <div
+                            key={i}
+                            className="flex items-start gap-2 text-sm text-blue-700 font-medium"
+                          >
+                            <span className="shrink-0 mt-0.5">•</span>
+                            <span>{reminder}</span>
+                          </div>
+                        ))}
                       </div>
-                    ))}
-                  </div>
-                </motion.div>
-              )}
+                    </div>
+                  )}
+                </div>
+              </div>
 
               {/* Refresh Button */}
               <Button
                 onClick={() => generateTips({ category })}
-                className="w-full h-14 bg-gradient-to-r from-emerald-500 to-teal-600 hover:opacity-90 text-lg"
+                className="w-full h-14 bg-slate-900 hover:bg-slate-800 text-white text-base font-bold rounded-xl shadow-lg transition-transform hover:-translate-y-1 mt-4"
               >
-                🔄 Get New Tips
+                <RefreshCcw size={18} className="mr-2" /> Generate New Tips
               </Button>
             </motion.div>
           )}
